@@ -1999,6 +1999,7 @@ Virus Total Hash Analysis
 Function Execute 
 {
 	if (-not $script:OUT_DIR){$ConfigSuccess = config} #scan vars have not been configured enter configuration mode
+	else{$ConfigSuccess = $true}
 	if(-not $ConfigSuccess){Return}
 	
 	if($script:CompsDate){
