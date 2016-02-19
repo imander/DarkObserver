@@ -168,7 +168,7 @@ Function CheckDependancies
 			$script:scan.psexec = Get-Command ".\psexec.exe" -ErrorAction Stop
 			Return
 		}
-		elseif(Get-Command "psexec.exe" -ErrorAction Stop){Return}
+		elseif($script:scan.psexec = Get-Command "psexec.exe" -ErrorAction Stop){Return}
 		
     } Catch {  #psexec not in path. Check in script directory
 		if (test-path $PSScriptRoot\psexec.exe)
@@ -177,8 +177,8 @@ Function CheckDependancies
 		}
 		else
 		{
-			Write-Warning "Unable to find psexec.exe.  Make sure that psexec.exe is in your PATH"
-			exit 1
+			Write-Warning "Unable to find psexec.exe in your PATH.  Payloads will default to WMI for remote execution"
+			Return
 		}	
     }
 }
@@ -396,9 +396,9 @@ Function SetOutFile
 		#User changed default choice.  Make sure choice is full path
 		else
 		{
-			$input = [System.IO.Path]::GetFullPath("$CurrentChoice") #full path needed for script to run properly
-			"${input}\Scans${today}"
-			"${input}\Scans${today}_TEMP"
+			$input = (Get-Item "$CurrentChoice").FullName #full path needed for script to run properly
+			"${input}Scans${today}"
+			"${input}Scans${today}_TEMP"
 			$script:OUT_DIR_root = $CurrentChoice
 			return
 		}
@@ -412,9 +412,9 @@ Function SetOutFile
 		}
 		else #path is a directory
 		{
-			$input = [System.IO.Path]::GetFullPath("$input") #full path needed for script to run properly
-			"${input}\Scans${today}"
-			"${input}\Scans${today}_TEMP"
+			$input = (Get-Item "$input").FullName #full path needed for script to run properly
+			"${input}Scans${today}"
+			"${input}Scans${today}_TEMP"
 			$script:OUT_DIR_root = $input
 			return
 		}
@@ -1076,7 +1076,7 @@ Function GetComputers
 	if(-not ($HostFile -eq "ALL")) #host names to scan provided by user
 	{
 		$Hosts = Get-Content $HostFile
-		RunScriptBlock $GetComputersSB $Hosts $scan
+		RunScriptBlock $GetComputersSB $Hosts $scan | sort -Unique
 	}
 	else #grab all computers
 	{
@@ -1087,7 +1087,7 @@ Function GetComputers
 				$name=$_.name
 				$os=$_.OperatingSystem
 				$ver=$_.OperatingSystemVersion
-				"$name,$os,$ver" | Select-String "Windows"
+				"$name,$os,$ver" | Select-String "Windows" | Select-String -NotMatch $env:COMPUTERNAME
 			}
 		}
 	}
@@ -1107,8 +1107,8 @@ Function GetActiveComputers
 	[string[]] $ActiveComputers = RunScriptBlock $ActiveComputers_SB $Computers $scan
 	$scan.Throttle = $Threads #re-set throttle
 
+	$ActiveComputers = $ActiveComputers | Sort -Unique | Select-String -NotMatch $env:COMPUTERNAME #remove scanning machine and any duplicates
 	$numActOrig = $ActiveComputers.count #number of active computers returned
-	$ActiveComputers = $ActiveComputers | Sort -Unique #remove any duplicates
 	
 	#Write list of computers to file starting with column names
 	"Host Name,IP Address,Operating System,Version"|Add-Content "$TEMP_DIR\$ScannedHosts"
@@ -2123,7 +2123,7 @@ Function RunScriptBlock #Create multiple threads to do work
 
 Function ExecutePSexec #Copy and execute deployable payload
 {
-	Write-Host -ForegroundColor Yellow "Executing PSexec on remote hosts"
+	Write-Host -ForegroundColor Yellow "Executing payload on remote hosts"
 	$PSexecJob = Start-Job -ScriptBlock $PSexecWatcher
 	$Script:CollectComputers = RunScriptBlock $PSExec_SB $ActiveComputers $scan
 	Stop-Job $PSexecJob
@@ -2161,10 +2161,10 @@ Function ParseData #Build compile results into a single csv file
         8{"Host Name,Name,StartMode,State,Status" |Add-Content $Results}
         9{"Host Name,Source IP,Source Port,Destination IP,Destination Port,State,Process Name,Process ID"|Add-Content $Results}
 		10{"Host Name,InstallDate,InstallLocation,Name,Vendor,Version" |Add-Content $Results}
-        11{"Host Name,Description,Name,Path" |Add-Content $Results}
-        13{"Host Name,Description,HotFixID,InstalledBy,InstalledOn" |Add-Content $Results}
-		14{"Host Name,Display Name,Enabled,UptoDate,Version"|Add-Content $Results}
-		15{"Host Name,Account Name,Account Active,Last Logon"|Add-Content $Results}
+        11{"Host Name,Description,Name,Path" |Add-Content $Results} 
+		13{"Host Name,Display Name,Enabled,UptoDate,Version"|Add-Content $Results}
+		14{"Host Name,Account Name,Account Active,Last Logon"|Add-Content $Results}
+		16{"Host Name,Description,HotFixID,InstalledBy,InstalledOn" |Add-Content $Results}
 		101{"Host Name,File Name,Path" |Add-Content $Results}
 		102{"Host Name,File Name,Path" |Add-Content $Results}
 		103{"Host Name,File Name,Path" |Add-Content $Results}
@@ -2568,7 +2568,7 @@ Function ConvertFileFormat
         $worksheet.name = $($File.split("012")[0])
 
         #Define the connection string and where the data is supposed to go
-		$TxtConnector = ("TEXT;" + $CSV)
+		$TxtConnector = ("TEXT;" + (Get-Item $CSV).FullName)
 		$CellRef = $worksheet.Range("A1")
 		
 		#Build, use and remove the text file connector
@@ -2591,7 +2591,7 @@ Function ConvertFileFormat
 		
         $i++
 	}
-
+	
 	switch($OutputFormat)
 	{
 		#File Extension ".xlsb" --> XlFileFormat= 50 
@@ -2683,16 +2683,14 @@ Function ConvertFileFormat
 	
 	$Hostname = $RHost.split(",")[0] #in case file is hostname, os,version number csv grab only the hostname
 	
-	if(VerifyIP $Hostname -ErrorAction SilentlyContinue)
+	if(VerifyIP $Hostname -ErrorAction SilentlyContinue) #If true Host name is an IP address
 	{
-		$CompName = ([System.Net.Dns]::GetHostEntry("$Hostname")).Hostname.split(".")[0]
-		if($CompName)
+		$HostIP = $Hostname
+		$Hostname = ([System.Net.Dns]::GetHostEntry("$HostIP")).Hostname.split(".")[0]
+
+		if( -not $Hostname) #Reverse DNS failed
 		{
-			$Hostname = "$CompName"
-		}
-		else
-		{
-			Return "$Hostname"
+			Return "$HostIP" #Return IP
 		}
 	}
 
@@ -2705,11 +2703,15 @@ Function ConvertFileFormat
 			$name=$_.name
 			$os=$_.OperatingSystem
 			$ver=$_.OperatingSystemVersion
-			"$name,$os,$ver" | Select-String "Windows"	
+			Return "$name,$os,$ver" | Select-String "Windows"	
 		}
 	}
-	$RHost
-
+	
+	else #Host not found in Active Directory.  Return IP
+	{
+		$HostIP = ([System.Net.Dns]::GetHostEntry("$Hostname")).addresslist|%{$_.IPAddressToString}
+		Return $HostIP
+	}
 }
 
 #script block to find active machines
@@ -2717,31 +2719,33 @@ Function ConvertFileFormat
     param($RHost, $scan)
     $RHost | % {
         $Comp = $_.split(",")[0]
-		$Caption = $_.split(",")[1]
+		$OSCaption = $_.split(",")[1]
 		$Ver = $_.split(",")[2]
-		if(-not $Ver)
+		if(-not $Ver) #If version was not found then $Comp is an IP address
 		{
-			if(Test-Path  "\\$Comp\c$\")
+			$HostIP = $Comp
+			if(Test-Path  "\\$HostIP\c$\")
 			{
 				try {
-					$OS = Get-WmiObject -ComputerName $Comp Win32_OperatingSystem -ErrorAction Stop
+					$OS = Get-WmiObject -ComputerName $HostIP Win32_OperatingSystem -ErrorAction Stop
 				} Catch {Return}
 				
-				$IPaddr = $Comp
+				$IPaddr = $HostIP
 				$Comp = $OS.CSName
-				$Caption = $OS.caption.replace(',', '').replace('Microsoft ', '')
+				$OSCaption = $OS.caption.replace(',', '').replace('Microsoft ', '')
 				$Ver = $OS.version
+				Return $Comp+","+$IPaddr+","+$OSCaption+","+$Ver
 			}
-			else{Return}
+			else{Return} 
 		}
 		else{
 			$IPaddr = ([System.Net.Dns]::GetHostEntry("$Comp")).addresslist|%{$_.IPAddressToString}
-			if(-not $IPaddr){Return}
+			if(-not $IPaddr){Return} #Host name cannot be resolved
 		}
         if (Test-Path  "\\$Comp\c$\")
         {
 			$Ver = $Ver.substring(0,3)
-            Return $Comp+","+$IPaddr+","+$Caption+","+$Ver
+            Return $Comp+","+$IPaddr+","+$OSCaption+","+$Ver
         }
     }
 }
@@ -2779,20 +2783,37 @@ Function ConvertFileFormat
         "$((get-date).ToString('yyyy-MMM-dd hh:mm:ss')),$HostName,Copy failed" | Add-Content "$($scan.TEMP_DIR)\ErrorLog.csv"
         continue
     } 
-    if($ps)
-    {	
-		$Success = (&$scan.psexec -accepteula -s -d "\\$HostIP" cmd /c $PSexecArgs 2>&1|Select-String "started on $HostIP")
+	if ($scan.psexec)
+	{
+		if($ps)
+		{	
+			$Success = (&$scan.psexec -accepteula -s -d "\\$HostIP" cmd /c $PSexecArgs 2>&1|Select-String "started on $HostIP")
+		}
+		else
+		{    
+			$Success = (&$scan.psexec -accepteula -s -d "\\$HostIP" "c:\PSExecShellCode.bat" 2>&1|Select-String "started on $HostIP")
+		}
+		if($Success){
+			Return $RHost
+		}
 	}
-    else
-    {    
-		$Success = (&$scan.psexec -accepteula -s -d "\\$HostIP" "c:\PSExecShellCode.bat" 2>&1|Select-String "started on $HostIP")
+	if (-not $Success)
+	{
+		if($ps)
+		{	
+			$Success = (&wmic /node:"$HostIP" process call create "cmd /c $PSexecArgs" 2>&1|Select-String "ProcessId")
+		}
+		else
+		{    
+			$Success = (&wmic /node:"$HostIP" process call create "cmd /c c:\PSExecShellCode.bat" 2>&1|Select-String "ProcessId")
+		}
 	}
 	if($Success){
 		Return $RHost
 	}
 	else
 	{
-		"$((get-date).ToString('yyyy-MMM-dd hh:mm:ss')),$HostName,PSExec failed" | Add-Content "$($scan.TEMP_DIR)\ErrorLog.csv"
+		"$((get-date).ToString('yyyy-MMM-dd hh:mm:ss')),$HostName,Remote Execution failed" | Add-Content "$($scan.TEMP_DIR)\ErrorLog.csv"
 		Remove-Item -Path "\\$HostIP\c$\PSExecShellCode.*" -Force -ErrorAction SilentlyContinue
 	} 
 }
