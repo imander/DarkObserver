@@ -2716,7 +2716,9 @@ Function ConvertFileFormat
 
 #script block to find active machines
 [ScriptBlock] $ActiveComputers_SB = {
+
     param($RHost, $scan)
+	
     $RHost | % {
         $Comp = $_.split(",")[0]
 		$OSCaption = $_.split(",")[1]
