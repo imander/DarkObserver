@@ -243,7 +243,7 @@ Choice: " -NoNewLine
 		12{
 			#If network shares permissions is chosen make sure that network shares data is present.
 			#If Network shares scan has not been run then run it before network shares permissions.
-			if(-not ((gci "$OUT_DIR\NetworkShares*.csv") -or (gci "$OUT_DIR\CSV\NetworkShares*.csv" -ErrorAction SilentlyContinue)))
+			if(-not ((Get-ChildItem "$OUT_DIR\NetworkShares*.csv") -or (Get-ChildItem "$OUT_DIR\CSV\NetworkShares*.csv" -ErrorAction SilentlyContinue)))
 			{				
 				$ScanChoice = "11,12"
 			}
@@ -382,7 +382,7 @@ Function SetOutFile
 {
 	param($CurrentChoice)
 	$input = ReadYellow
-	if(-not $input) #no user input save file in current directory
+	if(-not $input) #no user input. use current choice
 	{
 		#Current choice is users current directory
 		if($CurrentChoice -eq $(Get-Location).path)
@@ -407,8 +407,15 @@ Function SetOutFile
 	{
 		if(-not (Test-Path $input -PathType Container)) #path must be a directory
 		{
-			Write-Host -ForegroundColor Red "  $input does not exist or is not a directory."
-			return $false
+			if(ReturnFunction $input) #User is trying to exit or return to prompt
+			{
+				Return $True
+			}
+			Else
+			{
+				Write-Host -ForegroundColor Red "  $input does not exist or is not a directory."
+				return $false
+			}
 		}
 		else #path is a directory
 		{
@@ -499,26 +506,41 @@ Function ScanHostsFile
 {
 	param($CurrentChoice)
 	$input = ReadYellow
-	if(-not $input){return $CurrentChoice} #no user input return current choice
-	
+	if(-not $input){$input = $CurrentChoice} #keep current value
+
 	#generate list of all active hosts in domain
 	if($input -eq "ALL") 
 	{
-		$script:FirstRunComps = $True
-		Return $input 
+		if($script:ScanDomain -eq $null)
+		{
+			Write-Warning "Host-File is required for deployable scans when domain is null"
+			Return $input
+		}
+		else 
+		{
+			$script:FirstRunComps = $True
+			Return $input 
+		}
 	}
 	
 	#User input is not valid.  Either does not exist or is not a file
 	elseif(-not (Test-Path $input -PathType Leaf))
 	{
-		Write-Host -ForegroundColor Red "  $input not found"
+		if(ReturnFunction $input) #User is trying to exit or return to prompt
+		{
+			Return $True
+		}
+		Else
+		{
+			Write-Host -ForegroundColor Red "  $input not found"
+		}		
 	}
 	
 	#User input is valid.  Return user input
 	else
 	{
 		$script:FirstRunComps = $True
-		$script:HostFileModTime = (gci $input).LastWriteTime
+		$script:HostFileModTime = (Get-ChildItem $input).LastWriteTime
 		Return $input
 	}
 }
@@ -534,8 +556,17 @@ Function OutputFormat
 		"xls"{$input}
 		"xlsx"{$input}
 		"xlsb"{$input}
-		default{Write-Host -ForegroundColor Red "  Choices are: csv, xls, xlsx, xlsb"; return $false}
-	}
+		default{
+			if(ReturnFunction $input) #User is trying to exit or return to prompt
+			{
+				Return $True
+			}
+			Else
+			{
+				Write-Host -ForegroundColor Red "  Choices are: csv, xls, xlsx, xlsb"; return $false
+			}
+		}
+	}	
 }
 
 Function ThreadCount
@@ -552,7 +583,14 @@ Function ThreadCount
 		if($input -ge $min -and $input -le $max){$input; return}
 		else {Write-Host -ForegroundColor Red "  Choose a number from $min to $max"; return $false}
 	} catch {
-		Write-Host -ForegroundColor Red "  Choose a number from $min to $max"; return $false
+		if(ReturnFunction $input) #User is trying to exit or return to prompt
+		{
+			Return $True
+		}
+		Else
+		{
+			Write-Host -ForegroundColor Red "  Choose a number from $min to $max"; return $false
+		}
 	}
 }
 
@@ -563,7 +601,8 @@ Function SetScanDomain
 	if(-not $input)
 	{
 		if(-not $CurrentChoice){
-			Write-Host -ForegroundColor Red "  Domain name cannot be null"
+			#Write-Host -ForegroundColor Red "  Domain name cannot be null"
+			#Write-Warning "Hostname/IP list required for null domain"
 			Return
 		}
 		$script:DistinguishedName = "DC=$($CurrentChoice.Replace('.',',DC='))" #convert fqdn into distinguished name
@@ -594,7 +633,8 @@ Function SetScanDomain
 		if(ReturnFunction $input){Return $True}
 		else
 		{
-			Write-Host -ForegroundColor Red  "  Domain not found: $fqdn"
+			Write-Host -ForegroundColor Red  "  Domain cannot be reached: $fqdn"
+			Return $False
 		}
 	} #Finally {$True}
 }
@@ -608,26 +648,46 @@ Function Config #prompt user for required scan variables
 	if(-not $OUT_DIR_root){$OUT_DIR_root=$(Get-Location).path}
 	if(-not $OutputFormat){$OutputFormat="xlsb"}
 	if(-not $ThreadCount){$ThreadCount = (gwmi win32_computersystem).NumberofLogicalProcessors}
-	if(-not $ScanDomain){$ScanDomain = $env:USERDNSDOMAIN}
+	if(-not $ScanDomain){
+		$ScanDomain = ([ADSI] "").DistinguishedName.ToString
+		if($ScanDomain){
+			$ScanDomain = $ScanDomain.Replace('DC=','').Replace(',','.')
+		}
+	}
+	if(-not $scan.creds)
+	{
+		if($env:USERDOMAIN -eq $env:COMPUTERNAME)
+		{
+			$UserDomain = '.'
+		}
+		else
+		{
+			$UserDomain = $env:USERDOMAIN
+		}
+		
+	}
 	
 	while($true) #loop until input is valid
 	{
 		Write-Host "  Domain [$ScanDomain]: " -NoNewLine #set out file
 		$ScanDomain_temp = SetScanDomain $ScanDomain
+		if($ScanDomain_temp -eq $True){Write-Host; Return $False} #Boolena returned.  Return to prompt
 		if($ScanDomain_temp)
 		{
-			if($ScanDomain_temp -eq $True){Write-Host; Return $False}
-			else
-			{
-				$script:ScanDomain = $ScanDomain_temp
-				break
-			}
+			$script:ScanDomain = $ScanDomain_temp
+			break
+		}
+		elseif($ScanDomain_temp -eq $null)
+		{
+			$script:ScanDomain = $null
+			break
 		}
 	}
 	while($true)
 	{
 		Write-Host "  Data directory [$OUT_DIR_root]: " -NoNewLine #set out file
 		$OUT_DIR_temp,$TEMP_DIR_temp = SetOutFile $OUT_DIR_root
+		if($OUT_DIR_temp -eq $True){Write-Host; Return $False}
 		if($OUT_DIR_temp) #setOutFile was successful
 		{
 			$script:OUT_DIR, $script:TEMP_DIR = $OUT_DIR_temp, $TEMP_DIR_temp
@@ -640,6 +700,7 @@ Function Config #prompt user for required scan variables
 	{
 		Write-Host "  Hosts to scan [$ScanHostsFile]: " -NoNewLine
 		$ScanHostsFile_temp = ScanHostsFile $ScanHostsFile
+		if($ScanHostsFile_temp -eq $True){Write-Host; Return $False}
 		if($ScanHostsFile_temp)
 		{
 			$script:ScanHostsFile = $ScanHostsFile_temp
@@ -650,6 +711,7 @@ Function Config #prompt user for required scan variables
 	{
 		Write-Host "  Output format [$OutputFormat]: " -NoNewLine
 		$OutputFormat_temp = OutputFormat $OutputFormat
+		if($OutputFormat_temp -eq $True){Write-Host; Return $False}
 		if($OutputFormat_temp)
 		{
 			$script:OutputFormat = $OutputFormat_temp
@@ -660,6 +722,7 @@ Function Config #prompt user for required scan variables
 	{
 		Write-Host "  Thread count [$ThreadCount]: " -NoNewLine
 		$ThreadCount_temp = ThreadCount $ThreadCount
+		if($ThreadCount_temp -eq $True){Write-Host; Return $False}
 		if($ThreadCount_temp)
 		{
 			$script:ThreadCount = $ThreadCount_temp
@@ -667,7 +730,26 @@ Function Config #prompt user for required scan variables
 			break
 		}
 	}
+	while($true)
+	{
+		Write-Host "  Set Credentials [y/N]: " -NoNewLine
+		$credsChoice = ReadYellow
+		if(($credsChoice -eq 'Y') -or ($credsChoice -eq 'y'))
+		{
+			Set-Creds
+		}
+		elseif(ReturnFunction $credsChoice)
+		{
+			Write-Host; Return $False
+		}
+		else
+		{
+			$script:scan.creds = $null
+		}
+		break
+	}
 	Write-Host
+	$script:ConfigSuccess = $True
 	Return $True
 }
 
@@ -680,18 +762,32 @@ Function Set-Creds #Get different credential than logged on user.  This Function
 
 Function CurrentConfig #display currently set scan variables
 {	
-	#if(-not $scan.creds) {$uname="Default"}
-	#else {$uname=$scan.creds.GetNetworkCredential().username}
+	if(-not $scan.creds) 
+	{
+		if($env:USERDOMAIN -eq $env:COMPUTERNAME)
+		{
+			$dname = '.'
+		}
+		else
+		{
+			$dname = $env:USERDOMAIN
+		}
+		$uname = $env:USERNAME
+	}
+	else 
+	{
+		$dname = $scan.creds.GetNetworkCredential().domain
+		$uname = $scan.creds.GetNetworkCredential().username
+	}
 	if(-not $script:ScanDomain) {$script:ScanDomain=$env:USERDNSDOMAIN}
 	Write-Host 
 	Write-Host "            Domain: $ScanDomain"
 	Write-Host "    Data directory: $OUT_DIR_root" 
 	Write-Host "     Hosts to scan: $ScanHostsFile" 
 	Write-Host "     Output format: $OutputFormat" 
-	Write-Host "      Thread count: $ThreadCount
-	"
-	#Write-Host "  User Credentials: $uname
-	#" 
+	Write-Host "      Thread count: $ThreadCount"
+	Write-Host "  User Credentials: $dname\$uname
+	" 
 }
 
 Function DarkObserver #darkobserver command prompt
@@ -1113,12 +1209,14 @@ Function GetActiveComputers
 	#Write list of computers to file starting with column names
 	"Host Name,IP Address,Operating System,Version"|Add-Content "$TEMP_DIR\$ScannedHosts"
 	$ActiveComputers |Add-Content "$TEMP_DIR\$ScannedHosts"
-	ConvertFileFormat "$TEMP_DIR\$ScannedHosts" $true 
+	$ConvertFiles = "$TEMP_DIR\ErrorLog.csv", "$TEMP_DIR\$ScannedHosts"
+	ConvertFileFormat $ConvertFiles $true 
 	
 	#list of computers has been generated
 	$Script:FirstRunComps = $false 
 	$numTot = $Computers.count
 	$numAct = $ActiveComputers.Count
+	if(-not ($numAct -ge 0)){$numAct = 0}
 	$numDif = $numActOrig - $numAct #in case there were duplicate hosts found
 	$numTot = $numTot - $numDif
 	Write-Host -ForegroundColor Yellow "$numAct/$numTot active computers found
@@ -1798,10 +1896,10 @@ Function NetworkSharesPermissions
 	
 	if(Test-Path $OUT_DIR) #look for network shares data in $OUT_DIR
 	{
-		$NetShareFile = $(gci "$OUT_DIR\NetworkShares*.csv" |sort -Property LastWriteTime|select -first 1)
+		$NetShareFile = $(Get-ChildItem "$OUT_DIR\NetworkShares*.csv" |sort -Property LastWriteTime|select -first 1)
 		if(Test-Path "$OUT_DIR\CSV")
 		{
-			$NetShareFile1 = $(gci "$OUT_DIR\CSV\NetworkShares*.csv" |sort -Property LastWriteTime|select -first 1)
+			$NetShareFile1 = $(Get-ChildItem "$OUT_DIR\CSV\NetworkShares*.csv" |sort -Property LastWriteTime|select -first 1)
 		}
 	}
 	
@@ -1998,9 +2096,9 @@ Virus Total Hash Analysis
 #Run the Scan
 Function Execute 
 {
-	if (-not $script:OUT_DIR){$ConfigSuccess = config} #scan vars have not been configured enter configuration mode
-	else{$ConfigSuccess = $true}
-	if(-not $ConfigSuccess){Return}
+	if (-not $script:ConfigSuccess){$script:ConfigSuccess = config} #scan vars have not been configured enter configuration mode
+	#else{$ConfigSuccess = $true}
+	if(-not $script:ConfigSuccess){Return}
 	
 	if($script:CompsDate){
 		#refresh list of active computers after 3 hours
@@ -2009,7 +2107,7 @@ Function Execute
 	
 	if(-not ($ScanHostsFile -eq "ALL"))
 	{
-		$ModTime = (gci $ScanHostsFile).LastWriteTime
+		$ModTime = (Get-ChildItem $ScanHostsFile).LastWriteTime
 		if ($HostFileModTime -lt $ModTime)
 		{
 			$script:HostFileModTime = $ModTime
@@ -2043,10 +2141,19 @@ Function Execute
 			if($script:FirstRunComps) #Test to see if list of active computers exists or not
 			{
 				if(-not (Test-Path $TEMP_DIR)){CreateTempDir}
-				$script:ActiveComputers = GetActiveComputers 
+				if($script:ScanDomain -or (-not ($ScanHostsFile -eq "ALL")))
+				{
+					"Time Stamp,Host Name, Error" | Add-Content "$TEMP_DIR\ErrorLog.csv"
+					$script:ActiveComputers = GetActiveComputers 
+				}
+				else
+				{
+					Write-Host -ForegroundColor Red "Host-File required for deployable scans when domain is null"
+					Return
+				}
 			}
 		
-			CreateTempDir
+			if(-not (Test-Path $TEMP_DIR)){CreateTempDir}
 		
 			(get-Date).ToString()
 			Write-Host -ForegroundColor Yellow "Performing $ScanType"
@@ -2199,7 +2306,7 @@ Function ParseData #Build compile results into a single csv file
     return
 }
 
-#Create a count or unique data
+#Create a count of unique data
 Function UniqueFilter 
 {
 	$data|group|Select count,name|
@@ -2554,7 +2661,7 @@ Function ConvertFileFormat
 	foreach ($CSV in $FileNames)
 	{
 		if(-not (Test-Path "$CSV")){continue}
-		$File = (GCI $CSV).BaseName.split(".")[0]
+		$File = (Get-ChildItem $CSV).BaseName.split(".")[0]
 		
 		#If more than one file, create another worksheet for each file
         If ($i -gt 1) {
@@ -2680,17 +2787,20 @@ Function ConvertFileFormat
 		}
 		Return $true
 	}
-	
+
 	$Hostname = $RHost.split(",")[0] #in case file is hostname, os,version number csv grab only the hostname
-	
+
 	if(VerifyIP $Hostname -ErrorAction SilentlyContinue) #If true Host name is an IP address
 	{
 		$HostIP = $Hostname
-		$Hostname = ([System.Net.Dns]::GetHostEntry("$HostIP")).Hostname.split(".")[0]
-
-		if( -not $Hostname) #Reverse DNS failed
+		$Hostname = ([System.Net.Dns]::GetHostEntry("$HostIP")).Hostname
+		if( VerifyIP $Hostname) #Reverse DNS failed
 		{
 			Return "$HostIP" #Return IP
+		}
+		else
+		{
+			$Hostname = $Hostname.split(".")[0]
 		}
 	}
 
@@ -2718,6 +2828,40 @@ Function ConvertFileFormat
 [ScriptBlock] $ActiveComputers_SB = {
 
     param($RHost, $scan)
+
+	$UserDomain = $scan.Creds.GetNetworkCredential().domain
+	$UserName = $scan.Creds.GetNetworkCredential().username
+	if($userDomain)
+	{
+		$UserLogon = "$UserDomain\$UserName"
+	}
+	else
+	{
+		$UserLogon = ".\$UserName"
+	}
+	Function DeleteShare
+	{
+		param($IPAddress)
+		
+		if($scan.Creds)
+		{
+			net use \\$IPAddress\c$ /delete 2>&1|Out-Null
+		}
+	}
+	
+	Function MapDrive
+	{
+		param($IPAddress)
+		
+		net use \\$IPAddress\c$ /user:$UserLogon $($scan.Creds.GetNetworkCredential().password) 2>&1|Out-Null
+		if(-not $?)
+		{
+			"$((get-date).ToString('yyyy-MMM-dd hh:mm:ss')),$HostIP,Can't Map Drive" | 
+			Add-Content "$($scan.TEMP_DIR)\ErrorLog.csv"
+			Return $FALSE
+		}
+		Return $TRUE
+	}
 	
     $RHost | % {
         $Comp = $_.split(",")[0]
@@ -2726,39 +2870,99 @@ Function ConvertFileFormat
 		if(-not $Ver) #If version was not found then $Comp is an IP address
 		{
 			$HostIP = $Comp
+			if($scan.Creds)
+			{
+				If(-not (MapDrive $HostIP)){Return}
+			}
 			if(Test-Path  "\\$HostIP\c$\")
 			{
 				try {
-					$OS = Get-WmiObject -ComputerName $HostIP Win32_OperatingSystem -ErrorAction Stop
-				} Catch {Return}
+					if($scan.Creds)
+					{
+						$OS = Get-WmiObject -ComputerName $HostIP Win32_OperatingSystem -Credential $scan.Creds -ErrorAction Stop 
+					}
+					Else
+					{
+						$OS = Get-WmiObject -ComputerName $HostIP Win32_OperatingSystem -ErrorAction Stop
+					}
+				} Catch {
+					"$((get-date).ToString('yyyy-MMM-dd hh:mm:ss')),$HostIP,WMI failed" | 
+					Add-Content "$($scan.TEMP_DIR)\ErrorLog.csv"
+					DeleteShare $HostIP
+					Return
+				}
 				
 				$IPaddr = $HostIP
 				$Comp = $OS.CSName
 				$OSCaption = $OS.caption.replace(',', '').replace('Microsoft ', '')
 				$Ver = $OS.version
+				DeleteShare $HostIP
 				Return $Comp+","+$IPaddr+","+$OSCaption+","+$Ver
 			}
-			else{Return} 
+			else
+			{
+				"$((get-date).ToString('yyyy-MMM-dd hh:mm:ss')),$HostIP,Test-Path failed" | 
+				Add-Content "$($scan.TEMP_DIR)\ErrorLog.csv"
+				DeleteShare $HostIP
+				Return
+			} 
 		}
 		else{
 			$IPaddr = ([System.Net.Dns]::GetHostEntry("$Comp")).addresslist|%{$_.IPAddressToString}
-			if(-not $IPaddr){Return} #Host name cannot be resolved
+			if(-not $IPaddr)  #Host name cannot be resolved
+			{
+				"$((get-date).ToString('yyyy-MMM-dd hh:mm:ss')),$HostIP,Can't Resolve DNS" | 
+				Add-Content "$($scan.TEMP_DIR)\ErrorLog.csv"
+				Return
+			}
 		}
-        if (Test-Path  "\\$Comp\c$\")
+		if($scan.Creds)
+		{
+			MapDrive $IPaddr
+		}
+        if (Test-Path  "\\$IPaddr\c$\")
         {
 			$Ver = $Ver.substring(0,3)
-            Return $Comp+","+$IPaddr+","+$OSCaption+","+$Ver
+            DeleteShare $IPaddr
+			Return $Comp+","+$IPaddr+","+$OSCaption+","+$Ver
         }
+		else
+		{
+			"$((get-date).ToString('yyyy-MMM-dd hh:mm:ss')),$HostIP,Test-Path failed" | 
+			Add-Content "$($scan.TEMP_DIR)\ErrorLog.csv"
+			DeleteShare $IPaddr
+			Return
+		}
     }
 }
 
 #scriptblock to execute psexec on remote hosts
 [ScriptBlock] $PSExec_SB = {
     param($RHost, $scan)
+	
 
     $HostName=$RHost.split(",")[0]
 	$HostIP=$RHost.split(",")[1]
     $ver=$RHost.split(",")[3]
+	
+	$UserDomain = $scan.Creds.GetNetworkCredential().domain
+	$UserName = $scan.Creds.GetNetworkCredential().username
+	if($userDomain)
+	{
+		$UserLogon = "$UserDomain\$UserName"
+	}
+	else
+	{
+		$UserLogon = ".\$UserName"
+	}
+	
+	Function DeleteShare
+	{
+		if($scan.Creds)
+		{
+			net use \\$HostIP\c$ /delete |Out-Null
+		}
+	}
 	
     if($ver.split(".")[0] -ge 6) #powershell for vista+
 	{
@@ -2772,6 +2976,18 @@ Function ConvertFileFormat
 		$Rcode = "PSExecShellCode.bat"
 		$PSCode = $scan.BATCode
 		$ps=$false
+		switch($scan.RemoteDataFile)
+		{
+			#Scans only available on win7+
+			"HashDump392125281" {Return} 
+			"FileHashes223711" {Return}
+		}
+	}
+	
+	if($scan.Creds)
+	{
+		net use \\$HostIP\c$ /user:$UserLogon $($scan.Creds.GetNetworkCredential().password) |Out-Null
+		if(-not $?){Return}
 	}
 	
     if (Test-Path "\\$HostIP\c$\$Rcode")
@@ -2783,19 +2999,37 @@ Function ConvertFileFormat
 		$PSCode | Add-Content "\\$HostIP\c$\$Rcode" -ErrorAction Stop
     } catch {
         "$((get-date).ToString('yyyy-MMM-dd hh:mm:ss')),$HostName,Copy failed" | Add-Content "$($scan.TEMP_DIR)\ErrorLog.csv"
-        continue
+		DeleteShare
+        Return
     } 
 	if ($scan.psexec)
 	{
 		if($ps)
 		{	
-			$Success = (&$scan.psexec -accepteula -s -d "\\$HostIP" cmd /c $PSexecArgs 2>&1|Select-String "started on $HostIP")
+			if($scan.Creds)
+			{
+				$Success = (&$scan.psexec -accepteula -s -d "\\$HostIP" -u $UserLogon -p $($scan.Creds.GetNetworkCredential().password) cmd /c $PSexecArgs 2>&1|
+				Select-String "started on $HostIP")
+			}
+			else
+			{
+				$Success = (&$scan.psexec -accepteula -s -d "\\$HostIP" cmd /c $PSexecArgs 2>&1|Select-String "started on $HostIP")
+			}
 		}
 		else
 		{    
-			$Success = (&$scan.psexec -accepteula -s -d "\\$HostIP" "c:\PSExecShellCode.bat" 2>&1|Select-String "started on $HostIP")
+			if($scan.Creds)
+			{
+				$Success = (&$scan.psexec -accepteula -s -d "\\$HostIP" -u $UserLogon -p $($scan.Creds.GetNetworkCredential().password) "c:\PSExecShellCode.bat" 2>&1|
+				Select-String "started on $HostIP")
+			}
+			else
+			{
+				$Success = (&$scan.psexec -accepteula -s -d "\\$HostIP" "c:\PSExecShellCode.bat" 2>&1|Select-String "started on $HostIP")
+			}			
 		}
 		if($Success){
+			DeleteShare
 			Return $RHost
 		}
 	}
@@ -2803,20 +3037,45 @@ Function ConvertFileFormat
 	{
 		if($ps)
 		{	
-			$Success = (&wmic /node:"$HostIP" process call create "cmd /c $PSexecArgs" 2>&1|Select-String "ProcessId")
+			if($scan.Creds)
+			{
+				$Success = (&wmic /node:"$HostIP" /user:$UserLogon /password:$($scan.Creds.GetNetworkCredential().password) process call create "cmd /c $PSexecArgs" 2>&1|
+				#$Success = (Invoke-WmiMethod -ComputerName $HostIP -Class Win32_Process -Name Create -Credential $creds -ArgumentList "cmd /c $PSexecArgs" 2>&1|
+				Select-String "ProcessId")
+			}
+			else
+			{
+				$Success = (Invoke-WmiMethod -ComputerName $HostIP -Class Win32_Process -Name Create -ArgumentList "cmd /c $PSexecArgs" 2>&1|Select-String "ProcessId")
+				#$Success = (&wmic /node:"$HostIP" process call create "cmd /c $PSexecArgs" 2>&1|Select-String "ProcessId")
+			}
 		}
 		else
-		{    
-			$Success = (&wmic /node:"$HostIP" process call create "cmd /c c:\PSExecShellCode.bat" 2>&1|Select-String "ProcessId")
+		{
+			if($scan.Creds)
+			{
+			
+				$Success = (Invoke-WmiMethod -ComputerName $HostIP -Class Win32_Process -Name Create -Credential $creds -ArgumentList "cmd /c c:\PSExecShellCode.bat" 2>&1|
+				Select-String "ProcessId")
+				#$Success = (&wmic /node:"$HostIP" /user:"$scan.Creds.GetNetworkCredential().username" /password:"$scan.Creds.GetNetworkCredential().password" process call create "cmd /c c:\PSExecShellCode.bat" 2>&1|
+				#Select-String "ProcessId")
+			}
+			else
+			{
+				$Success = (Invoke-WmiMethod -ComputerName $HostIP -Class Win32_Process -Name Create -ArgumentList "cmd /c c:\PSExecShellCode.bat" 2>&1|Select-String "ProcessId")
+				#$Success = (&wmic /node:"$HostIP" process call create "cmd /c c:\PSExecShellCode.bat" 2>&1|Select-String "ProcessId")
+			}
 		}
 	}
-	if($Success){
+	if($Success)
+	{
+		DeleteShare
 		Return $RHost
 	}
 	else
 	{
 		"$((get-date).ToString('yyyy-MMM-dd hh:mm:ss')),$HostName,Remote Execution failed" | Add-Content "$($scan.TEMP_DIR)\ErrorLog.csv"
 		Remove-Item -Path "\\$HostIP\c$\PSExecShellCode.*" -Force -ErrorAction SilentlyContinue
+		DeleteShare
 	} 
 }
 
@@ -2839,9 +3098,35 @@ Function ConvertFileFormat
 #script block to collect data file from remote hosts
 [ScriptBlock] $CollectFiles_SB = {
     param($RHost, $scan)
+	
+	Function DeleteShare
+	{
+		if($scan.Creds)
+		{
+			net use "\\$HostIP\c$" /delete |Out-Null
+		}
+	}
+	
     $HostName = $RHost.split(",")[0]
 	$HostIP = $RHost.split(",")[1]
     $ver=$RHost.split(",")[3]
+	
+	$UserDomain = $scan.Creds.GetNetworkCredential().domain
+	$UserName = $scan.Creds.GetNetworkCredential().username
+	if($userDomain)
+	{
+		$UserLogon = "$UserDomain\$UserName"
+	}
+	else
+	{
+		$UserLogon = ".\$UserName"
+	}
+	
+	if($scan.Creds)
+	{
+		net use \\$HostIP\c$ /user:$UserLogon $($scan.Creds.GetNetworkCredential().password) |Out-Null
+		if(-not $?){Return}
+	}
     
 	if($ver.split(".") -ge 6){$Rcode = "PSExecShellCode.ps1"}
     else {$Rcode = "PSExecShellCode.bat"}
@@ -2857,20 +3142,24 @@ Function ConvertFileFormat
    
     if (Test-Path  "\\$HostIP\c$\$($scan.RemoteDataFile)")
     {   
-        for($j=0; $j -lt $scan.TimeOut; $j++)
+		$ErrorActionPreference_temp = $ErrorActionPreference
+		$ErrorActionPreference = "Stop"
+        for($j=0; $j -lt $scan.TimeOut; $j++) #wait for file to unlock
         {
-            #wait for file to unlock
 			try {
-				$scan.mtx.waitone() |Out-Null
+				
 				if($scan.RemoteDataFile -eq "hashes392125281")
 				{
+					$scan.mtx.waitone() |Out-Null
 					$scan.Data = ($scan.Data + (get-content "\\$HostIP\C$\$($scan.RemoteDataFile)") | sort -Unique) 
+					$scan.mtx.ReleaseMutex()
 				}
 				else
 				{
-					Add-content -Path "$($scan.TEMP_DIR)\output.txt" -Value (get-content "\\$HostIP\C$\$($scan.RemoteDataFile)") -ErrorAction Stop
+					$scan.mtx.waitone() |Out-Null
+					Add-content -Path "$($scan.TEMP_DIR)\output.txt" -Value (get-content "\\$HostIP\C$\$($scan.RemoteDataFile)")
+					$scan.mtx.ReleaseMutex()
 				}
-				$scan.mtx.ReleaseMutex()
 				Remove-Item -Force "\\$HostIP\C$\$($scan.RemoteDataFile)"
 				break
 			} catch {
@@ -2878,10 +3167,18 @@ Function ConvertFileFormat
 				start-sleep -Seconds 1
 			}
         }
+		$ErrorActionPreference = $ErrorActionPreference_temp
     }
-	else {"$((get-date).ToString('yyyy-MMM-dd hh:mm:ss')),$HostName,Absent Data-file"| Add-Content "$($scan.TEMP_DIR)\ErrorLog.csv"}
+	else 
+	{
+		"$((get-date).ToString('yyyy-MMM-dd hh:mm:ss')),$HostName,Absent Data-file"| Add-Content "$($scan.TEMP_DIR)\ErrorLog.csv"
+	}
 	
-	if($j -eq $scan.TimeOut){"$((get-date).ToString('yyyy-MMM-dd hh:mm:ss')),$HostName,Collect Timed-out"| Add-Content "$($scan.TEMP_DIR)\ErrorLog.csv"}
+	if($j -eq $scan.TimeOut)
+	{
+		"$((get-date).ToString('yyyy-MMM-dd hh:mm:ss')),$HostName,Collect Timed-out"| Add-Content "$($scan.TEMP_DIR)\ErrorLog.csv"
+	}
+	DeleteShare
 }
 
 [ScriptBlock] $LoggedOnUsers_SB = {
@@ -2903,8 +3200,7 @@ Function ConvertFileFormat
 [ScriptBlock] $PingSweepSB = {
 	param($RHost, $scan)
 	
-	$ping = ping $RHost -n 1|select-string "TTL="
-	$ping = $ping.tostring().split("=")[3]
+	$ping  = (Test-Connection $RHost -Count 1).ResponseTimeToLive
 	
 	if($ping)
 	{
@@ -2973,21 +3269,6 @@ Function ConvertFileFormat
 	}
 }
 
-#hash table to store variables used in scan and passed to script blocks
-$scan = @{
-	"TEMP_DIR"= $null
-	"OUT_DIR"= $null
-	"RemoteDataFile"= $null
-	"BATCode"= $null
-	"PS1Code"= $null
-	"Throttle"= $null
-	"Timeout" = $null
-	"Creds"= $null
-	"psexec"= $null
-	"mtx"=$null
-	"DomainName" = $null
-	"Data" = $null
-}
 
 ############################################
 #	END Multi-threading script blocks
@@ -3009,7 +3290,7 @@ for /R "c:\documents and settings" %%f in (*.exe) do echo %COMPUTERNAME%,%%~nxf,
 '@
 $UserExeSearchCode_PS1 = @'
 if (Test-Path "C:\UserExeSearch392125281"){Remove-Item -Force "C:\UserExeSearch392125281"}
-gci -Recurse -Force "c:\Users" -ErrorAction SilentlyContinue -Include *.exe -Exclude "Application Data" 2>$null | 
+Get-ChildItem -Recurse -Force "c:\Users" -ErrorAction SilentlyContinue -Include *.exe -Exclude "Application Data" 2>$null | 
 foreach {$env:COMPUTERNAME+","+$_.name+","+$_.Directoryname}|
 Out-file "C:\UserExeSearch392125281"
 Remove-Item -Force "C:\PSExecShellCode.ps1"
@@ -3037,13 +3318,16 @@ for /F "tokens=1-2* delims==" %%A in ('wmic startup get command^,user^,descripti
 (goto) 2>nul & del "%~f0"
 '@
 $StartUpProgramsCode_PS1 = @'
-$ErrorActionPreference = Stop
 if (Test-Path "C:\StartUpPrograms392125281"){Remove-Item -Force "C:\StartUpPrograms392125281"}
 try{
-Get-WmiObject Win32_startupcommand |
-foreach {$env:COMPUTERNAME+","+$_.command+","+$_.description+","+$_.location+","+$_.user}|
-Out-file "C:\StartUpPrograms392125281"
-} catch {continue}
+	Get-WmiObject Win32_startupcommand |
+	foreach {$env:COMPUTERNAME+","+$_.command+","+$_.description+","+$_.location+","+$_.user}|
+	Out-file "C:\StartUpPrograms392125281"
+} catch {
+	Remove-Item -Force "C:\PSExecShellCode.ps1"
+	Remove-Item -Force "C:\StartUpPrograms392125281"
+	exit
+}
 Remove-Item -Force "C:\PSExecShellCode.ps1"
 '@
 $RunningProcsCode_BAT = @'
@@ -3053,13 +3337,16 @@ wmic process get name,executablepath /FORMAT:csv |findstr /v Node >> "C:\Running
 (goto) 2>nul & del "%~f0"
 '@
 $RunningProcsCode_PS1 = @'
-$ErrorActionPreference = Stop
 if (Test-Path "C:\RunningProcs392125281"){Remove-Item -Force "C:\RunningProcs392125281"}
 try{
-Get-WmiObject Win32_process |
-foreach {$env:COMPUTERNAME+","+$_.ExecutablePath+","+$_.Name}|
-Out-file "C:\RunningProcs392125281"
-} catch {continue}
+	Get-WmiObject Win32_process |
+	foreach {$env:COMPUTERNAME+","+$_.ExecutablePath+","+$_.Name}|
+	Out-file "C:\RunningProcs392125281"
+} catch {
+	Remove-Item -Force "C:\PSExecShellCode.ps1"
+	Remove-Item -Force "C:\RunningProcs392125281"
+	exit
+}
 Remove-Item -Force "C:\PSExecShellCode.ps1"
 '@
 $QueryDriversCode_BAT = @'
@@ -3069,13 +3356,16 @@ wmic sysdriver get DisplayName, Name, State, Status, Started, Description /forma
 (goto) 2>nul & del "%~f0"
 '@
 $QueryDriversCode_PS1 = @' 
-$ErrorActionPreference = Stop
 if (Test-Path "C:\Drivers392125281"){Remove-Item -Force "C:\Drivers392125281"}
 try{
-Get-WmiObject Win32_systemdriver | 
-foreach {$env:COMPUTERNAME+","+$_.Description+","+$_.DisplayName+","+$_.Name+","+$_.started+","+$_.state+","+$_.status}|
-Out-file "C:\Drivers392125281"
-} catch {continue}
+	Get-WmiObject Win32_systemdriver | 
+	foreach {$env:COMPUTERNAME+","+$_.Description+","+$_.DisplayName+","+$_.Name+","+$_.started+","+$_.state+","+$_.status}|
+	Out-file "C:\Drivers392125281"
+} catch {
+	Remove-Item -Force "C:\PSExecShellCode.ps1"
+	Remove-Item -Force "C:\Drivers392125281"
+	exit
+}
 Remove-Item -Force "C:\PSExecShellCode.ps1"
 '@
 $QueryServicesCode_BAT = @'
@@ -3085,13 +3375,16 @@ wmic service get Name,StartMode,State,Status /format:csv |findstr /v Node >> "C:
 (goto) 2>nul & del "%~f0"
 '@
 $QueryServicesCode_PS1 = @'
-$ErrorActionPreference = Stop
 if (Test-Path "C:\Services392125281"){Remove-Item -Force "C:\Services392125281"}
 try{
-Get-WmiObject Win32_service |
-foreach {$env:COMPUTERNAME+","+$_.Name+","+$_.StartMode+","+$_.state+","+$_.status}|
-Out-file "C:\Services392125281"
-} catch {continue}
+	Get-WmiObject Win32_service |
+	foreach {$env:COMPUTERNAME+","+$_.Name+","+$_.StartMode+","+$_.state+","+$_.status}|
+	Out-file "C:\Services392125281"
+} catch {
+	Remove-Item -Force "C:\PSExecShellCode.ps1"
+	Remove-Item -Force "C:\Services392125281"
+	exit
+}
 Remove-Item -Force "C:\PSExecShellCode.ps1"
 '@
 $NetstatCode_BAT = @'
@@ -3108,16 +3401,19 @@ for /F "tokens=1-7 delims=: " %%A in ('netstat -ano -p TCP ^|findstr TCP') do (
 (goto) 2>nul & del "%~f0"
 '@
 $NetstatCode_PS1 = @'
-$ErrorActionPreference = Stop
 if (Test-Path "C:\Netstat392125281"){Remove-Item -Force "C:\Netstat392125281"}
 try{
-(netstat -ano | Select-String -Pattern '\s+(TCP)' | 
-ForEach-Object {$env:COMPUTERNAME + ((($_ -replace '\s+', ',') -replace '\[::\]', '') -replace ':', ',')}) | 
-%{ $_.Split(',')[0] +","+ $_.Split(',')[2] +","+ 
-$_.Split(',')[3] +","+ $_.Split(',')[4] +","+ $_.Split(',')[5] +","+
-$_.Split(',')[6] +","+ $(Get-Process -Id $($_.Split(',')[7])).Name +","+ $_.Split(',')[7] }|
-Out-file "C:\Netstat392125281"
-} catch {continue}
+	(netstat -ano -p TCP | Select-String -Pattern '\s+(TCP)' | 
+	ForEach-Object {$env:COMPUTERNAME + ((($_ -replace '\s+', ',') -replace '\[::\]', '') -replace ':', ',')}) | 
+	%{ $_.Split(',')[0] +","+ $_.Split(',')[2] +","+ 
+	$_.Split(',')[3] +","+ $_.Split(',')[4] +","+ $_.Split(',')[5] +","+
+	$_.Split(',')[6] +","+ $(Get-Process -Id $($_.Split(',')[7])).Name +","+ $_.Split(',')[7] }|
+	Out-file "C:\Netstat392125281"
+} catch {
+	Remove-Item -Force "C:\PSExecShellCode.ps1"
+	Remove-Item -Force "C:\Netstat392125281"
+	exit
+}
 Remove-Item -Force "C:\PSExecShellCode.ps1"
 '@
 $InstalledSoftwareCode_BAT = @'
@@ -3145,13 +3441,16 @@ endlocal
 (goto) 2>nul & del "%~f0"
 '@
 $InstalledSoftwareCode_PS1 = @'
-$ErrorActionPreference = Stop
 if (Test-Path "C:\InstalledSoftware392125281"){Remove-Item -Force "C:\InstalledSoftware392125281"}
 try{
-Get-WmiObject win32_product|
-foreach {$env:COMPUTERNAME+","+$_.InstallDate+","+$_.InstallLocation+","+($_.Name -replace ',', '')+","+($_.Vendor -replace ',', '')+","+$_.version}|
-Out-file "C:\InstalledSoftware392125281"
-} catch {continue}
+	Get-WmiObject win32_product|
+	foreach {$env:COMPUTERNAME+","+$_.InstallDate+","+$_.InstallLocation+","+($_.Name -replace ',', '')+","+($_.Vendor -replace ',', '')+","+$_.version}|
+	Out-file "C:\InstalledSoftware392125281"
+} catch {
+	Remove-Item -Force "C:\PSExecShellCode.ps1"
+	Remove-Item -Force "C:\InstalledSoftware392125281"
+	exit
+}
 Remove-Item -Force "C:\PSExecShellCode.ps1"
 '@
 $SharesCode_BAT = @'
@@ -3161,13 +3460,16 @@ wmic share list brief /format:csv |findstr /v Node >> "C:\NetworkShares392125281
 (goto) 2>nul & del "%~f0"
 '@
 $SharesCode_PS1 = @'
-$ErrorActionPreference = Stop
 if (Test-Path "C:\NetworkShares392125281"){Remove-Item -Force "C:\NetworkShares392125281"}
 try{
-Get-WmiObject win32_share |
-foreach {$env:COMPUTERNAME+","+$_.description+","+$_.Name+","+$_.Path}|
-Out-file "C:\NetworkShares392125281"
-} catch {continue}
+	Get-WmiObject win32_share |
+	foreach {$env:COMPUTERNAME+","+$_.description+","+$_.Name+","+$_.Path}|
+	Out-file "C:\NetworkShares392125281"
+} catch {
+	Remove-Item -Force "C:\PSExecShellCode.ps1"
+	Remove-Item -Force "C:\NetworkShares392125281"
+	exit
+}
 Remove-Item -Force "C:\PSExecShellCode.ps1"
 '@
 $HotFixCode_BAT = @'
@@ -3177,13 +3479,16 @@ wmic qfe get Description,HotFixID,InstalledBy,InstalledOn /format:csv |findstr /
 (goto) 2>nul & del "%~f0"
 '@
 $HotFixCode_PS1 = @'
-$ErrorActionPreference = Stop
 if (Test-Path "C:\HotFixData392125281"){Remove-Item -Force "C:\HotFixData392125281"}
 try{
-Get-Hotfix|
-foreach {$env:COMPUTERNAME+","+$_.Description+","+$_.HotFixID+","+$_.InstalledBy+","+$_.InstalledOn}|
-Out-file "C:\HotFixData392125281"
-} catch {continue}
+	Get-Hotfix|
+	foreach {$env:COMPUTERNAME+","+$_.Description+","+$_.HotFixID+","+$_.InstalledBy+","+$_.InstalledOn}|
+	Out-file "C:\HotFixData392125281"
+} catch {
+	Remove-Item -Force "C:\PSExecShellCode.ps1"
+	Remove-Item -Force "C:\HotFixData392125281"
+	exit
+}
 Remove-Item -Force "C:\PSExecShellCode.ps1"
 '@
 $AntivirusStatusCode_BAT = @'
@@ -3193,7 +3498,6 @@ WMIC /Namespace:\\root\SecurityCenter Path AntiVirusProduct get displayName,vers
 (goto) 2>nul & del "%~f0"
 '@
 $AntivirusStatusCode_PS1 = @'
-$ErrorActionPreference = Stop
 if (Test-Path "C:\AntivirusStatus392125281"){Remove-Item -Force "C:\AntivirusStatus392125281"}
 try{
 Get-WmiObject -Namespace root\SecurityCenter2 -Class AntiVirusProduct |%{
@@ -3214,7 +3518,11 @@ Get-WmiObject -Namespace root\SecurityCenter2 -Class AntiVirusProduct |%{
 		else{$defstatus=$false}
 		$_.Split(',')[0]+","+$_.Split(',')[1]+","+$rtstatus+","+$defstatus+","+$_.Split(',')[3]
 	}|Out-file "C:\AntivirusStatus392125281"
-} catch {continue}
+} catch {
+	Remove-Item -Force "C:\PSExecShellCode.ps1"
+	Remove-Item -Force "C:\AntivirusStatus392125281"
+	exit
+}
 Remove-Item -Force "C:\PSExecShellCode.ps1"
 '@
 $AutoRunDisableCode_BAT = @'
@@ -3226,13 +3534,23 @@ for /F "tokens=1-3" %%A in ('reg query HKEY_LOCAL_MACHINE\software\microsoft\win
 (goto) 2>nul & del "%~f0"
 '@
 $AutoRunDisableCode_PS1=@'
-$ErrorActionPreference = Stop
 if (Test-Path "C:\AutoRunDisable392125281"){Remove-Item -Force "C:\AutoRunDisable392125281"}
 try{
-$NoAutoRun = (Get-ItemProperty -Path HKLM:software\microsoft\windows\currentversion\policies\explorer -Name NoAutoRun).NoAutoRun
-if($NoAutoRun){$env:COMPUTERNAME+",TRUE"|Out-file "C:\AutoRunDisable392125281"}
-else{$env:COMPUTERNAME+",FALSE"|Out-file "C:\AutoRunDisable392125281"}
-} catch {continue}
+	$NoAutoRun = (Get-ItemProperty -Path HKLM:software\microsoft\windows\currentversion\policies\explorer -Name NoAutoRun).NoAutoRun
+	if($NoAutoRun)
+	{
+		$env:COMPUTERNAME+",TRUE"|Out-file "C:\AutoRunDisable392125281"
+	}
+	else
+	{
+		$env:COMPUTERNAME+",FALSE"|Out-file "C:\AutoRunDisable392125281"
+	}
+} catch {
+	#Remove-Item -Force "C:\PSExecShellCode.ps1"
+	#Remove-Item -Force "C:\AutoRunDisable392125281"
+	#exit
+	continue
+}
 Remove-Item -Force "C:\PSExecShellCode.ps1"
 '@
 $LocalAccountsCode_BAT = @'
@@ -3253,21 +3571,26 @@ for /F "tokens=*" %%G in ('net users^|findstr /v /c:"User accounts" /c:"command 
 (goto) 2>nul & del "%~f0"
 '@
 $LocalAccountsCode_PS1=@'
-$ErrorActionPreference = Stop
 if (Test-Path "C:\LocalAccounts392125281"){Remove-Item -Force "C:\LocalAccounts392125281"}
-$adsi = [ADSI]"WinNT://$env:COMPUTERNAME"
-$Users = $adsi.Children  | where {$_.SchemaClassName  -eq 'user'}
-$Users|%{
-	$active = Net user $_.name|select-string "Account active"
-	if($active|Select-String "No"){$active="No"}
-	elseif($active|Select-String "Yes"){$active="Yes"}
-	try{
-		$login=","+($_.LastLogin).Value
-	} catch {
-        $login=",Never"
-    }
-	$env:COMPUTERNAME+","+$_.Name+","+$active+$login
-}|Out-file "C:\LocalAccounts392125281"
+try {
+	$adsi = [ADSI]"WinNT://$env:COMPUTERNAME"
+	$Users = $adsi.Children  | where {$_.SchemaClassName  -eq 'user'}
+	$Users|%{
+		$active = Net user $_.name|select-string "Account active"
+		if($active|Select-String "No"){$active="No"}
+		elseif($active|Select-String "Yes"){$active="Yes"}
+		try{
+			$login=","+($_.LastLogin).Value
+		} catch {
+			$login=",Never"
+		}
+		$env:COMPUTERNAME+","+$_.Name+","+$active+$login
+	}|Out-file "C:\LocalAccounts392125281"
+} catch {
+	Remove-Item -Force "C:\PSExecShellCode.ps1"
+	Remove-Item -Force "C:\LocalAccounts392125281"
+	exit
+}
 Remove-Item -Force "C:\PSExecShellCode.ps1"
 '@
 $ScheduledTasksCode_BAT = @'
@@ -3277,13 +3600,16 @@ wmic job list brief /format:csv 2>nul|findstr /v Node >> "C:\ScheduledTasks39212
 (goto) 2>nul & del "%~f0"
 '@
 $ScheduledTasksCode_PS1 = @'
-$ErrorActionPreference = Stop
 if (Test-Path "C:\ScheduledTasks392125281"){Remove-Item -Force "C:\ScheduledTasks392125281"}
 try{
-Get-WmiObject win32_scheduledjob |
-foreach {$env:COMPUTERNAME+","+$_.command+","+$_.JobId+","+$_.Name+","+$_.Owner+","+$_.Priority}|
-Out-file "C:\ScheduledTasks392125281"
-} catch {continue}
+	Get-WmiObject win32_scheduledjob |
+	foreach {$env:COMPUTERNAME+","+$_.command+","+$_.JobId+","+$_.Name+","+$_.Owner+","+$_.Priority}|
+	Out-file "C:\ScheduledTasks392125281"
+} catch {
+	Remove-Item -Force "C:\PSExecShellCode.ps1"
+	Remove-Item -Force "C:\ScheduledTasks392125281"
+	exit
+}
 Remove-Item -Force "C:\PSExecShellCode.ps1"
 '@
 $USB_EnumerationCode_BAT = @'
@@ -3336,7 +3662,6 @@ endlocal
 (goto) 2>nul & del "%~f0"
 '@
 $USB_EnumerationCode_PS1 = @'
-$ErrorActionPreference = Stop
 if (Test-Path "C:\USB_Enumeration392125281"){Remove-Item -Force "C:\USB_Enumeration392125281"}
 $keys=@()
 reg query hklm\system | Select-String "control" | %{
@@ -3371,13 +3696,13 @@ Remove-Item -Force "C:\PSExecShellCode.ps1"
 
 $FileHasher = @'
 function GetHash($file){
-$fs = new-object System.IO.FileStream $file, “Open”, “Read”, “Read”
-$algo = [type]"System.Security.Cryptography.MD5"
-$crypto = $algo::Create()
-$hash = [BitConverter]::ToString($crypto.ComputeHash($fs)).Replace("-", "")
-#$hash = $crypto.ComputeHash($fs)
-$fs.Close()
-$hash
+	$fs = new-object System.IO.FileStream $file, “Open”, “Read”, “Read”
+	$algo = [type]"System.Security.Cryptography.MD5"
+	$crypto = $algo::Create()
+	$hash = [BitConverter]::ToString($crypto.ComputeHash($fs)).Replace("-", "")
+	#$hash = $crypto.ComputeHash($fs)
+	$fs.Close()
+	$hash
 }
 
 Get-ChildItem -path "C:\" -Include "*.exe", "*.dll", "*.sys" -Recurse -Force -ErrorAction SilentlyContinue|
@@ -3793,12 +4118,27 @@ Remove-Item -Force "C:\PSExecShellCode.ps1"
 #END Script Blocks for Deployable payloads
 ############################################
 
-$scan.mtx = New-Object System.Threading.Mutex($false, "MyMutex")
+#hash table to store variables used in scan and passed to script blocks
+$scan = @{
+	"TEMP_DIR"= $null
+	"OUT_DIR"= $null
+	"RemoteDataFile"= $null
+	"BATCode"= $null
+	"PS1Code"= $null
+	"Throttle"= $null
+	"Timeout" = $null
+	"Creds"= $null
+	"psexec"= $null
+	"mtx"= New-Object System.Threading.Mutex($false, "MyMutex")
+	"DomainName" = $null
+	"Data" = $null
+}
 
 $today = (get-date).ToString("ddMMMyy") #used for creation of temp directory
-$FirstRunComps=$true #computer list has not been generated yet
+$FirstRunComps=$true #Active computers have not been generated yet
 $ScanChoiceArray = New-Object System.Collections.ArrayList #array to hold scan choices
 $PSScriptRoot = Split-Path -Parent -Path $MyInvocation.MyCommand.Definition #location of script
+$ConfigSuccess = $False #scan configuration has not been completed
 
 #Store current console colors to reset when script exits
 $BackgroundColor = [console]::BackgroundColor  
@@ -3813,11 +4153,11 @@ $ForegroundColor = [Console]::ForegroundColor
 ####	  Begin Script Execution        ####
 ############################################
 
-CheckDependancies $PSScriptRoot
 [console]::BackgroundColor = "Black"
 [Console]::ForegroundColor = "White"
-Resize
 Clear-Host
+Resize
+CheckDependancies $PSScriptRoot
 AsciiArt
 SetKnownGood
 while($true)
@@ -3828,9 +4168,13 @@ while($true)
 		if (Test-Path $TEMP_DIR -ErrorAction Stop){
 			Remove-Item -Recurse -Force "$TEMP_DIR"
 		}
-	} catch {}
+	} catch {
+		sleep 1
+		Remove-Item -Recurse -Force "$TEMP_DIR"
+	} Finally {Continue}
 }
-$scan.mtx=$null
+$scan.mtx = $null
+$scan.Creds = $null
 Clear-Host
 
 
