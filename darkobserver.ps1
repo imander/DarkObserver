@@ -963,7 +963,14 @@ Function SetScanTypeVars
             $Script:ScanType="user account compliance query"
             $Script:outfile="UserAccounts$((get-date).tostring("HHmmss")).txt"
 			Write-Host $(get-Date)
-			UserAccountScan}
+			if($scan.Domain)
+			{
+				UserAccountScan
+			}
+			else
+			{
+				Write-Host -ForegroundColor Red "No domain available"
+			}}
 		16{
 			$Script:Deploy = $true
             $Script:ScanType="hot-fix enumeration"
@@ -1167,8 +1174,7 @@ Function GetComputers
     #example: [ADSI]“LDAP://OU=CANES Users and Computers,DC=cvn76,DC=navy,DC=mil”
 	
 	param($HostFile)
-	$Search = New-Object DirectoryServices.DirectorySearcher([ADSI]"LDAP://$DistinguishedName")
-	$Search.PageSize = 1000 #page size needed to return more than 1000 entries
+
 	if(-not ($HostFile -eq "ALL")) #host names to scan provided by user
 	{
 		$Hosts = Get-Content $HostFile
@@ -1176,6 +1182,8 @@ Function GetComputers
 	}
 	else #grab all computers
 	{
+		$Search = New-Object DirectoryServices.DirectorySearcher([ADSI]"LDAP://$DistinguishedName")
+		$Search.PageSize = 1000 #page size needed to return more than 1000 entries
 		$Search.filter = "(objectClass=computer)"
 		Foreach($result in $Search.Findall())
 		{
@@ -1198,8 +1206,9 @@ Function GetActiveComputers
 	$scan.Throttle = $scan.Throttle * 5 #lots of network delay for absent hosts so increase thread count for runspace
 	if($scan.Throttle -gt 50){$scan.Throttle = 50}
 	$scan.DomainName = $DistinguishedName
+	get-content $ScanHostsFile|out-file "$OUT_DIR\computers1.txt"
 	[string[]] $Computers = GetComputers $ScanHostsFile
-	#$computers|add-content "$OUT_DIR\computers.txt"
+	$computers|out-file "$OUT_DIR\computers.txt"
 	[string[]] $ActiveComputers = RunScriptBlock $ActiveComputers_SB $Computers $scan
 	$scan.Throttle = $Threads #re-set throttle
 
@@ -1244,8 +1253,16 @@ Function VerifyIP
 	
 	for($i=0; $i -lt 4; $i++)
 	{
-		$num = [convert]::ToInt32($Octets[$i], 10)
-		if(-not (($num -le 255) -and ($num -ge 0))){
+		if($Octets[$i] -match "[0-9]" -and $Octets[$i] -notmatch "[a-zA-Z]")
+		{
+			$num = [convert]::ToInt32($Octets[$i], 10)
+			if(-not (($num -le 255) -and ($num -ge 0)))
+			{
+				Return $false
+			}
+		}
+		else
+		{
 			Return $false
 		}
 	}
@@ -1891,9 +1908,6 @@ Function LoggedOnUsers
 
 Function NetworkSharesPermissions
 {
-	(get-Date).ToString() | Write-Host
-	Write-Host -ForegroundColor Yellow "Enumerating network-share permissions"
-	
 	if(Test-Path $OUT_DIR) #look for network shares data in $OUT_DIR
 	{
 		$NetShareFile = $(Get-ChildItem "$OUT_DIR\NetworkShares*.csv" |sort -Property LastWriteTime|select -first 1)
@@ -1915,6 +1929,9 @@ Function NetworkSharesPermissions
 	}
 	
 	else{Write-Host -ForegroundColor Red "Network-shares file not found"; return}
+	
+	(get-Date).ToString() | Write-Host
+	Write-Host -ForegroundColor Yellow "Enumerating network-share permissions"
 
 	#Create data file
 	"HostName,ShareName,Identity,Permissions,Inherited"|Add-Content "$OUT_DIR\$outfile"
@@ -2131,13 +2148,7 @@ Function Execute
 		
 		if($script:Deploy)
 		{		
-			
-			if(-not $script:AdminPrivs) #admin privs are required for psexec
-			{
-				Write-Host -ForegroundColor Red "Domain Admin privileges required to execute ScanType"
-				#continue
-			}
-			
+					
 			if($script:FirstRunComps) #Test to see if list of active computers exists or not
 			{
 				if(-not (Test-Path $TEMP_DIR)){CreateTempDir}
@@ -2152,27 +2163,39 @@ Function Execute
 					Return
 				}
 			}
-		
-			if(-not (Test-Path $TEMP_DIR)){CreateTempDir}
-		
-			(get-Date).ToString()
-			Write-Host -ForegroundColor Yellow "Performing $ScanType"
 			
-			$script:CleanUp = $true
-			
-			#Create error log.  This could be created dynamically when an error occurs by writing a Function and 
-			#Storing it in the $scan hash-table to be accessible by script blocks but this was easier at the moment.
-			"Time Stamp,Host Name, Error" | Add-Content "$TEMP_DIR\ErrorLog.csv" 
-			
-			ExecutePSexec
-			CollectFiles
-
-			if($scan.RemoteDataFile -eq "hashes392125281")
+			if($ActiveComputers.count -gt 0)
 			{
-				$scan.Data|out-file "$($scan.TEMP_DIR)\output.txt"
-				$scan.Data = $null
+		
+				if(-not (Test-Path $TEMP_DIR)){CreateTempDir}
+			
+				(get-Date).ToString()
+				Write-Host -ForegroundColor Yellow "Performing $ScanType"
+			
+				$script:CleanUp = $true
+				
+				#Create error log.  This could be created dynamically when an error occurs by writing a Function and 
+				#Storing it in the $scan hash-table to be accessible by script blocks but this was easier at the moment.
+				"Time Stamp,Host Name, Error" | Add-Content "$TEMP_DIR\ErrorLog.csv" 
+				
+				ExecutePSexec
+				CollectFiles
+
+				if($scan.RemoteDataFile -eq "hashes392125281")
+				{
+					$scan.Data|out-file "$($scan.TEMP_DIR)\output.txt"
+					$scan.Data = $null
+				}
+				ParseData $script:ScanChoiceArray[$i]
 			}
-			ParseData $script:ScanChoiceArray[$i]
+			else
+			{
+				if (-not $noHosts)
+				{
+					$noHosts = $true
+					Write-Host -ForegroundColor Red "No hosts to scan"
+				}
+			}
 		}
 	}
 	if($script:CleanUp)
@@ -2780,8 +2803,16 @@ Function ConvertFileFormat
 		
 		for($i=0; $i -lt 4; $i++)
 		{
-			$num = [convert]::ToInt32($Octets[$i], 10)
-			if(-not (($num -le 255) -and ($num -ge 0))){
+			if($Octets[$i] -match "[0-9]" -and $Octets[$i] -notmatch "[a-zA-Z]")
+			{
+				$num = [convert]::ToInt32($Octets[$i], 10)
+				if(-not (($num -le 255) -and ($num -ge 0)))
+				{
+					Return $false
+				}
+			}
+			else
+			{
 				Return $false
 			}
 		}
@@ -2790,7 +2821,7 @@ Function ConvertFileFormat
 
 	$Hostname = $RHost.split(",")[0] #in case file is hostname, os,version number csv grab only the hostname
 
-	if(VerifyIP $Hostname -ErrorAction SilentlyContinue) #If true Host name is an IP address
+	if(VerifyIP $Hostname) #If true Host name is an IP address
 	{
 		$HostIP = $Hostname
 		$Hostname = ([System.Net.Dns]::GetHostEntry("$HostIP")).Hostname
@@ -2803,24 +2834,38 @@ Function ConvertFileFormat
 			$Hostname = $Hostname.split(".")[0]
 		}
 	}
-
-	$Search = New-Object DirectoryServices.DirectorySearcher([ADSI]"LDAP://$($scan.DomainName)")
-	$Search.filter = "(&(name=$Hostname)(objectClass=computer))"
-	$HostData = $Search.FindOne()
-	if($HostData)
+	
+	if($Scan.DomainName)
 	{
-		$HostData.GetDirectoryEntry()|%{
-			$name=$_.name
-			$os=$_.OperatingSystem
-			$ver=$_.OperatingSystemVersion
-			Return "$name,$os,$ver" | Select-String "Windows"	
+
+		$Search = New-Object DirectoryServices.DirectorySearcher([ADSI]"LDAP://$($scan.DomainName)")
+		$Search.filter = "(&(name=$Hostname)(objectClass=computer))"
+		$HostData = $Search.FindOne()
+		
+		if($HostData)
+		{
+			$HostData.GetDirectoryEntry()|%{
+				$name=$_.name
+				$os=$_.OperatingSystem
+				$ver=$_.OperatingSystemVersion
+				Return "$name,$os,$ver" | Select-String "Windows"	
+			}
 		}
 	}
-	
-	else #Host not found in Active Directory.  Return IP
+		
+	else #Don't use Active Directory.  Return IP
 	{
-		$HostIP = ([System.Net.Dns]::GetHostEntry("$Hostname")).addresslist|%{$_.IPAddressToString}
-		Return $HostIP
+		$HostIP = @(([System.Net.Dns]::GetHostEntry("$Hostname")).addresslist|%{
+			IF($_.AddressFamily -eq 'InterNetwork')
+			{
+				$_.IPAddressToString
+			}
+			})
+
+		if($HostIP)
+		{
+			Return $HostIP[0]
+		}
 	}
 }
 
@@ -2837,7 +2882,7 @@ Function ConvertFileFormat
 	}
 	else
 	{
-		$UserLogon = ".\$UserName"
+		$UserLogon = "$UserName"
 	}
 	Function DeleteShare
 	{
@@ -2852,7 +2897,6 @@ Function ConvertFileFormat
 	Function MapDrive
 	{
 		param($IPAddress)
-		
 		net use \\$IPAddress\c$ /user:$UserLogon $($scan.Creds.GetNetworkCredential().password) 2>&1|Out-Null
 		if(-not $?)
 		{
@@ -2953,7 +2997,7 @@ Function ConvertFileFormat
 	}
 	else
 	{
-		$UserLogon = ".\$UserName"
+		$UserLogon = "$UserName"
 	}
 	
 	Function DeleteShare
@@ -2986,7 +3030,7 @@ Function ConvertFileFormat
 	
 	if($scan.Creds)
 	{
-		net use \\$HostIP\c$ /user:$UserLogon $($scan.Creds.GetNetworkCredential().password) |Out-Null
+		net use \\$HostIP\c$ /user:$UserLogon $($scan.Creds.GetNetworkCredential().password) 2>&1|Out-Null
 		if(-not $?){Return}
 	}
 	
@@ -3040,29 +3084,23 @@ Function ConvertFileFormat
 			if($scan.Creds)
 			{
 				$Success = (&wmic /node:"$HostIP" /user:$UserLogon /password:$($scan.Creds.GetNetworkCredential().password) process call create "cmd /c $PSexecArgs" 2>&1|
-				#$Success = (Invoke-WmiMethod -ComputerName $HostIP -Class Win32_Process -Name Create -Credential $creds -ArgumentList "cmd /c $PSexecArgs" 2>&1|
 				Select-String "ProcessId")
 			}
 			else
 			{
-				$Success = (Invoke-WmiMethod -ComputerName $HostIP -Class Win32_Process -Name Create -ArgumentList "cmd /c $PSexecArgs" 2>&1|Select-String "ProcessId")
-				#$Success = (&wmic /node:"$HostIP" process call create "cmd /c $PSexecArgs" 2>&1|Select-String "ProcessId")
+				$Success = (&wmic /node:"$HostIP" process call create "cmd /c $PSexecArgs" 2>&1|Select-String "ProcessId")
 			}
 		}
 		else
 		{
 			if($scan.Creds)
 			{
-			
-				$Success = (Invoke-WmiMethod -ComputerName $HostIP -Class Win32_Process -Name Create -Credential $creds -ArgumentList "cmd /c c:\PSExecShellCode.bat" 2>&1|
+				$Success = (&wmic /node:"$HostIP" /user:$UserLogon /password:$($scan.Creds.GetNetworkCredential().password) process call create "cmd /c c:\PSExecShellCode.bat" 2>&1|
 				Select-String "ProcessId")
-				#$Success = (&wmic /node:"$HostIP" /user:"$scan.Creds.GetNetworkCredential().username" /password:"$scan.Creds.GetNetworkCredential().password" process call create "cmd /c c:\PSExecShellCode.bat" 2>&1|
-				#Select-String "ProcessId")
 			}
 			else
 			{
-				$Success = (Invoke-WmiMethod -ComputerName $HostIP -Class Win32_Process -Name Create -ArgumentList "cmd /c c:\PSExecShellCode.bat" 2>&1|Select-String "ProcessId")
-				#$Success = (&wmic /node:"$HostIP" process call create "cmd /c c:\PSExecShellCode.bat" 2>&1|Select-String "ProcessId")
+				$Success = (&wmic /node:"$HostIP" process call create "cmd /c c:\PSExecShellCode.bat" 2>&1|Select-String "ProcessId")
 			}
 		}
 	}
@@ -3119,12 +3157,12 @@ Function ConvertFileFormat
 	}
 	else
 	{
-		$UserLogon = ".\$UserName"
+		$UserLogon = "$UserName"
 	}
 	
 	if($scan.Creds)
 	{
-		net use \\$HostIP\c$ /user:$UserLogon $($scan.Creds.GetNetworkCredential().password) |Out-Null
+		net use \\$HostIP\c$ /user:$UserLogon $($scan.Creds.GetNetworkCredential().password) 2>&1|Out-Null
 		if(-not $?){Return}
 	}
     
