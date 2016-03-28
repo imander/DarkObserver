@@ -673,7 +673,7 @@ Function Config #prompt user for required scan variables
 	if(-not $OutputFormat){$OutputFormat="xlsb"}
 	if(-not $ThreadCount){$ThreadCount = (gwmi win32_computersystem).NumberofLogicalProcessors}
 	if(-not $ScanDomain){
-		$ScanDomain = ([ADSI] "").DistinguishedName.ToString
+		$ScanDomain = $(([ADSI]"").DistinguishedName)
 		if($ScanDomain){
 			$ScanDomain = $ScanDomain.Replace('DC=','').Replace(',','.')
 		}
@@ -695,7 +695,7 @@ Function Config #prompt user for required scan variables
 	{
 		Write-Host "  Domain [$ScanDomain]: " -NoNewLine #set out file
 		$ScanDomain_temp = SetScanDomain $ScanDomain
-		if($ScanDomain_temp -eq $True){Write-Host; Return $False} #Boolena returned.  Return to prompt
+		if($ScanDomain_temp -eq $True){Write-Host; Return $False} #Boolen returned.  Return to prompt
 		if($ScanDomain_temp)
 		{
 			$script:ScanDomain = $ScanDomain_temp
@@ -875,7 +875,7 @@ Function SetScanTypeVars
         1{
 			$Script:Deploy = $true #means this is will copy over a script to be executed with psexec
             $Script:ScanType="user executable search" #used for printing scan status to screen
-            $Script:outfile="UserExeSearch$((get-date).tostring("HHmmss")).csv" #file where data will be parsed into
+            $Script:outfile="UserExeSearch$ScanTime.csv" #file where data will be parsed into
 			$Script:scan.RemoteDataFile = "UserExeSearch392125281" #file where data will output to on remote host
 			$Script:scan.TimeOut = 240 #number of seconds to wait for scan to complete  during collection
 			$Script:scan.PS1Code = $UserExeSearchCode_PS1 #powershell code for windows version 6+
@@ -883,7 +883,7 @@ Function SetScanTypeVars
 		2{
 			$Script:Deploy = $true
             $Script:ScanType="USB enumeration"
-            $Script:outfile="USB_Enumeration$((get-date).tostring("HHmmss")).csv"
+            $Script:outfile="USB_Enumeration$ScanTime.csv"
 			$Script:scan.RemoteDataFile = "USB_Enumeration392125281"
 			$Script:scan.TimeOut = 240
 			$Script:scan.PS1Code = $USB_EnumerationCode_PS1
@@ -891,7 +891,7 @@ Function SetScanTypeVars
 		3{
 			$Script:Deploy = $true
             $Script:ScanType="auto-run disable query"
-            $Script:outfile="AutoRunDisable$((get-date).tostring("HHmmss")).csv"
+            $Script:outfile="AutoRunDisable$ScanTime.csv"
 			$Script:scan.RemoteDataFile = "AutoRunDisable392125281"
 			$Script:scan.TimeOut = 120
 			$Script:scan.PS1Code = $AutoRunDisableCode_PS1
@@ -899,7 +899,7 @@ Function SetScanTypeVars
         4{
 			$Script:Deploy = $true
             $Script:ScanType="Start-up program query"
-            $Script:outfile="StartUpPrograms$((get-date).tostring("HHmmss")).csv"
+            $Script:outfile="StartUpPrograms$ScanTime.csv"
 			$Script:scan.RemoteDataFile = "StartUpPrograms392125281"
 			$Script:scan.TimeOut = 120
 			$Script:scan.PS1Code = $StartUpProgramsCode_PS1
@@ -907,7 +907,7 @@ Function SetScanTypeVars
 		5{
 			$Script:Deploy = $true
             $Script:ScanType="scheduled tasks query"
-            $Script:outfile="ScheduledTasks$((get-date).tostring("HHmmss")).csv"
+            $Script:outfile="ScheduledTasks$ScanTime.csv"
 			$Script:scan.RemoteDataFile = "ScheduledTasks392125281"
 			$Script:scan.TimeOut = 120
 			$Script:scan.PS1Code = $ScheduledTasksCode_PS1
@@ -915,7 +915,7 @@ Function SetScanTypeVars
         6{
 			$Script:Deploy = $true
             $Script:ScanType="running processes query"
-            $Script:outfile="RunningProcs$((get-date).tostring("HHmmss")).csv"
+            $Script:outfile="RunningProcs$ScanTime.csv"
 			$Script:scan.RemoteDataFile = "RunningProcs392125281"
 			$Script:scan.TimeOut = 120
 			$Script:scan.PS1Code = $RunningProcsCode_PS1
@@ -923,7 +923,7 @@ Function SetScanTypeVars
         7{
 			$Script:Deploy = $true
             $Script:ScanType="driver query"
-            $Script:outfile="Drivers$((get-date).tostring("HHmmss")).csv"
+            $Script:outfile="Drivers$ScanTime.csv"
 			$Script:scan.RemoteDataFile = "Drivers392125281"
 			$Script:scan.TimeOut = 120
 			$Script:scan.PS1Code = $QueryDriversCode_PS1
@@ -931,7 +931,7 @@ Function SetScanTypeVars
         8{
 			$Script:Deploy = $true
             $Script:ScanType="service query"
-            $Script:outfile="Services$((get-date).tostring("HHmmss")).csv"
+            $Script:outfile="Services$ScanTime.csv"
 			$Script:scan.RemoteDataFile = "Services392125281"
 			$Script:scan.TimeOut = 120
 			$Script:scan.PS1Code = $QueryServicesCode_PS1
@@ -940,7 +940,7 @@ Function SetScanTypeVars
         9{
 			$Script:Deploy = $true
             $Script:ScanType="network connections query"
-            $Script:outfile="NetStat$((get-date).tostring("HHmmss")).csv"
+            $Script:outfile="NetStat$ScanTime.csv"
 			$Script:scan.RemoteDataFile = "Netstat392125281"
 			$Script:scan.TimeOut = 600
 			$Script:scan.PS1Code = $NetstatCode_PS1
@@ -948,7 +948,7 @@ Function SetScanTypeVars
         10{
 			$Script:Deploy = $true
             $Script:ScanType="installed software query"
-            $Script:outfile="Software$((get-date).tostring("HHmmss")).csv"
+            $Script:outfile="Software$ScanTime.csv"
 			$Script:scan.RemoteDataFile = "InstalledSoftware392125281"
 			$Script:scan.TimeOut = 240
 			$Script:scan.PS1Code = $InstalledSoftwareCode_PS1
@@ -956,20 +956,20 @@ Function SetScanTypeVars
         11{
 			$Script:Deploy = $true
             $Script:ScanType="network shares query"
-            $Script:outfile="NetworkShares$((get-date).tostring("HHmmss")).csv"
+            $Script:outfile="NetworkShares$ScanTime.csv"
 			$Script:scan.RemoteDataFile = "NetworkShares392125281"
 			$Script:scan.TimeOut = 120
 			$Script:scan.PS1Code = $SharesCode_PS1
 			$Script:scan.BATCode = $SharesCode_BAT}
         12{
 			$Script:Deploy = $false
-			$Script:outfile="NetworkSharesPermissions$((get-date).tostring("HHmmss")).csv"
+			$Script:outfile="NetworkSharesPermissions$ScanTime.csv"
 			NetworkSharesPermissions}
         13{
             #!!!!!!!This check does not work on servers.  Check servers manually!!!!!!
 			$Script:Deploy = $true
             $Script:ScanType="antivirus status checks"
-            $Script:outfile="AntivirusStatus$((get-date).tostring("HHmmss")).csv"
+            $Script:outfile="AntivirusStatus$ScanTime.csv"
 			$Script:scan.RemoteDataFile = "AntivirusStatus392125281"
 			$Script:scan.TimeOut = 120
 			$Script:scan.PS1Code = $AntivirusStatusCode_PS1
@@ -977,7 +977,7 @@ Function SetScanTypeVars
 		14{
 			$Script:Deploy = $true
             $Script:ScanType="local account enumeration"
-            $Script:outfile="LocalAccounts$((get-date).tostring("HHmmss")).csv"
+            $Script:outfile="LocalAccounts$ScanTime.csv"
 			$Script:scan.RemoteDataFile = "LocalAccounts392125281"
 			$Script:scan.TimeOut = 900
 			$Script:scan.PS1Code = $LocalAccountsCode_PS1
@@ -985,8 +985,9 @@ Function SetScanTypeVars
         15{
 			$Script:Deploy = $false
             $Script:ScanType="user account compliance query"
-            $Script:outfile="UserAccounts$((get-date).tostring("HHmmss")).txt"
-			if($scan.Domain)
+            $Script:outfile="UserAccounts$ScanTime.txt"
+			$scan.DomainName = $DistinguishedName
+			if($scan.DomainName)
 			{
 				Write-Host $(get-Date)
 				UserAccountScan
@@ -998,7 +999,7 @@ Function SetScanTypeVars
 		16{
 			$Script:Deploy = $true
             $Script:ScanType="hot-fix enumeration"
-            $Script:outfile="HotFixInfo$((get-date).tostring("HHmmss")).csv"
+            $Script:outfile="HotFixInfo$ScanTime.csv"
 			$Script:scan.RemoteDataFile = "HotFixData392125281"
 			$Script:scan.TimeOut = 240
 			$Script:scan.PS1Code = $HotFixCode_PS1
@@ -1007,7 +1008,7 @@ Function SetScanTypeVars
 		101{
 			$Script:Deploy = $true
             $Script:ScanType="image file search"
-            $Script:outfile="ImageFileSearch$((get-date).tostring("HHmmss")).csv"
+            $Script:outfile="ImageFileSearch$ScanTime.csv"
 			$Script:scan.RemoteDataFile = "ImageFileSearch392125281"
 			$Script:scan.TimeOut = 1800
 			$Script:scan.PS1Code = $ImageSearchCode_PS1
@@ -1015,7 +1016,7 @@ Function SetScanTypeVars
 		102{
 			$Script:Deploy = $true
             $Script:ScanType="audio file search"
-            $Script:outfile="AudioFileSearch$((get-date).tostring("HHmmss")).csv"
+            $Script:outfile="AudioFileSearch$ScanTime.csv"
 			$Script:scan.RemoteDataFile = "AudioFileSearch392125281"
 			$Script:scan.TimeOut = 1800
 			$Script:scan.PS1Code = $AudioSearchCode_PS1
@@ -1023,7 +1024,7 @@ Function SetScanTypeVars
 		103{
 			$Script:Deploy = $true
             $Script:ScanType="video file search"
-            $Script:outfile="VideoFileSearch$((get-date).tostring("HHmmss")).csv"
+            $Script:outfile="VideoFileSearch$ScanTime.csv"
 			$Script:scan.RemoteDataFile = "VideoFileSearch392125281"
 			$Script:scan.TimeOut = 1800
 			$Script:scan.PS1Code = $VideoSearchCode_PS1
@@ -1031,7 +1032,7 @@ Function SetScanTypeVars
 		104{
 			$Script:Deploy = $true
             $Script:ScanType="script file search"
-            $Script:outfile="ScriptFileSearch$((get-date).tostring("HHmmss")).csv"
+            $Script:outfile="ScriptFileSearch$ScanTime.csv"
 			$Script:scan.RemoteDataFile = "ScriptFileSearch392125281"
 			$Script:scan.TimeOut = 1800
 			$Script:scan.PS1Code = $ScriptSearchCode_PS1
@@ -1039,7 +1040,7 @@ Function SetScanTypeVars
 		105{
 			$Script:Deploy = $true
             $Script:ScanType="executable file search"
-            $Script:outfile="ExecutableFileSearch$((get-date).tostring("HHmmss")).csv"
+            $Script:outfile="ExecutableFileSearch$ScanTime.csv"
 			$Script:scan.RemoteDataFile = "ExecutableFileSearch392125281"
 			$Script:scan.TimeOut = 1800
 			$Script:scan.PS1Code = $ExecutableSearchCode_PS1
@@ -1047,7 +1048,7 @@ Function SetScanTypeVars
 		106{
 			$Script:Deploy = $true
             $Script:ScanType="Outlook data file search"
-            $Script:outfile="DataFileSearch$((get-date).tostring("HHmmss")).csv"
+            $Script:outfile="DataFileSearch$ScanTime.csv"
 			$Script:scan.RemoteDataFile = "DataFileSearch392125281"
 			$Script:scan.TimeOut = 1800
 			$Script:scan.PS1Code = $DataFileSearchCode_PS1
@@ -1055,7 +1056,7 @@ Function SetScanTypeVars
 		107{
 			$Script:Deploy = $true
             $Script:ScanType="password file search"
-            $Script:outfile="PasswordFileSearch$((get-date).tostring("HHmmss")).csv"
+            $Script:outfile="PasswordFileSearch$ScanTime.csv"
 			$Script:scan.RemoteDataFile = "PasswordFileSearch392125281"
 			$Script:scan.TimeOut = 1800
 			$Script:scan.PS1Code = $PasswordSearchCode_PS1
@@ -1063,14 +1064,14 @@ Function SetScanTypeVars
 		110{
 			$Script:Deploy = $true
             $Script:ScanType="password hash dump"
-            $Script:outfile="HashDump$((get-date).tostring("HHmmss")).csv"
+            $Script:outfile="HashDump$ScanTime.csv"
 			$Script:scan.RemoteDataFile = "HashDump392125281"
 			$Script:scan.TimeOut = 180
 			$Script:scan.PS1Code = $PowerDump}
 		111{
 			$Script:Deploy = $true
             $Script:ScanType="file hasher"
-            $Script:outfile="FileHashes$((get-date).tostring("HHmmss")).csv"
+            $Script:outfile="FileHashes$ScanTime.csv"
 			$Script:scan.RemoteDataFile = "hashes392125281"
 			$Script:scan.TimeOut = 2700
 			$Script:scan.PS1Code = $FileHasher}
@@ -1182,7 +1183,7 @@ Accounts not accessed in 45 days
 
 Function UserAccountScan
 {
-	net group "Domain Admins" /domain |Out-File "$OUT_DIR\DomainAdmins$((get-date).tostring("HHmmss")).txt" #get list of domain admins
+	net group "Domain Admins" /domain |Out-File "$OUT_DIR\DomainAdmins$ScanTime.txt" #get list of domain admins
 	Write-Host -ForegroundColor Yellow "Collecting active directory user account data."
 	StaleAccounts |Out-File "$OUT_DIR\$outfile"
 	Write-Host -ForegroundColor Green "Data located at $OUT_DIR\$outfile
@@ -1225,12 +1226,13 @@ Function GetActiveComputers
 {
 	(get-Date).ToString() | Write-Host
 	Write-Host -ForegroundColor Yellow "Generating list of active computers"
-	$ScannedHosts = "Scanned_Hosts$((get-date).tostring("HHmmss")).csv"
+	$ScannedHosts = "Scanned_Hosts$ScanTime.csv"
 	$Threads = $scan.Throttle #store number of threads
 	$scan.Throttle = $scan.Throttle * 5 #lots of network delay for absent hosts so increase thread count for runspace
 	if($scan.Throttle -gt 50){$scan.Throttle = 50}
 	$scan.DomainName = $DistinguishedName
 	[string[]] $Computers = GetComputers $ScanHostsFile
+	$Computers|add-content c:\users\imander\comps.txt
 	[string[]] $ActiveComputers = RunScriptBlock $ActiveComputers_SB $Computers $scan
 	$scan.Throttle = $Threads #re-set throttle
 
@@ -1567,7 +1569,7 @@ Function ExecutePingSweep
 	Write-Host
 	
 	$Script:Deploy = $false
-	$Script:outfile="PingSweep$((get-date).tostring("HHmmss")).csv"
+	$Script:outfile="PingSweep$ScanTime.csv"
 	
 	Write-Host $(get-Date)
 	Write-Host -ForegroundColor Yellow "Executing ping sweep"
@@ -1851,7 +1853,7 @@ Use format: \\servername\sharename"
 		switch ($FileTypesArray[$i])
 		{
 			1{  #image files
-				$script:outfile = "ImageFiles_Share$((get-date).tostring("HHmmss")).csv"
+				$script:outfile = "ImageFiles_Share$ScanTime.csv"
 				Write-Host -ForegroundColor Yellow "Searching for image files."
 				"File,Directory" | Add-Content "$TEMP_DIR\$outfile"
 				$include = "*.jpg", "*.jpeg", "*.tif", "*.gif", "*.bmp"
@@ -1859,7 +1861,7 @@ Use format: \\servername\sharename"
 				ConvertFileFormat "$TEMP_DIR\$outfile"
 			}
 			2{  #Audio Files
-				$script:outfile = "AudioFiles_Share$((get-date).tostring("HHmmss")).csv"
+				$script:outfile = "AudioFiles_Share$ScanTime.csv"
 				Write-Host -ForegroundColor Yellow "Searching for audio files."
 				"File,Directory" | Add-Content "$TEMP_DIR\$outfile"
 				$include = "*.m4a", "*.m4p", "*.mp3", "*.wma"
@@ -1867,7 +1869,7 @@ Use format: \\servername\sharename"
 				ConvertFileFormat "$TEMP_DIR\$outfile"
 			}
 			3{  #Video Files
-				$script:outfile = "VideoFiles_Share$((get-date).tostring("HHmmss")).csv"				
+				$script:outfile = "VideoFiles_Share$ScanTime.csv"				
 				Write-Host -ForegroundColor Yellow "Searching for video files."
 				"File,Directory" | Add-Content "$TEMP_DIR\$outfile"
 				$include = "*.asf", "*.avi", "*.m4v", "*.mov", "*.mp4", "*.mpeg", "*.mpg", "*.wmv"
@@ -1875,7 +1877,7 @@ Use format: \\servername\sharename"
 				ConvertFileFormat "$TEMP_DIR\$outfile"
 			}
 			4{  #Script Files
-				$script:outfile = "ScriptFiles_Share$((get-date).tostring("HHmmss")).csv"				
+				$script:outfile = "ScriptFiles_Share$ScanTime.csv"				
 				Write-Host -ForegroundColor Yellow "Searching for windows script files."
 				"File,Directory" | Add-Content "$TEMP_DIR\$outfile"
 				$include = "*.ps1", "*.psm1", "*.vb", "*.vbs", "*.bat", "*.cmd"
@@ -1883,7 +1885,7 @@ Use format: \\servername\sharename"
 				ConvertFileFormat "$TEMP_DIR\$outfile"
 			}
 			5{ #Executable Files
-				$script:outfile = "ExecutableFiles_Share$((get-date).tostring("HHmmss")).csv"				
+				$script:outfile = "ExecutableFiles_Share$ScanTime.csv"				
 				Write-Host -ForegroundColor Yellow "Searching for executable files."
 				"File,Directory" | Add-Content "$TEMP_DIR\$outfile" 
 				$include = "*.exe", "*.dll", "*.sys"
@@ -1891,7 +1893,7 @@ Use format: \\servername\sharename"
 				ConvertFileFormat "$TEMP_DIR\$outfile"
 			}
 			6{  #Outlook data files
-				$script:outfile = "OutlookDataFiles_Share$((get-date).tostring("HHmmss")).csv"				
+				$script:outfile = "OutlookDataFiles_Share$ScanTime.csv"				
 				Write-Host -ForegroundColor Yellow "Searching for Outlook data files."
 				"File,Directory" | Add-Content "$TEMP_DIR\$outfile" 
 				$include = "*.pst"
@@ -1899,7 +1901,7 @@ Use format: \\servername\sharename"
 				ConvertFileFormat "$TEMP_DIR\$outfile"
 			}
 			7{  #password files
-				$script:outfile = "PasswordFiles_Share$((get-date).tostring("HHmmss")).csv"				
+				$script:outfile = "PasswordFiles_Share$ScanTime.csv"				
 				Write-Host -ForegroundColor Yellow "Searching for password files."
 				"File,Directory" | Add-Content "$TEMP_DIR\$outfile"
 				$include = "*passw*", "*pwd*"
@@ -1919,7 +1921,7 @@ Function LoggedOnUsers
 	}
 	
 	$Script:Deploy = $false
-	$Script:outfile="LoggedOnUsers$((get-date).tostring("HHmmss")).csv"
+	$Script:outfile="LoggedOnUsers$ScanTime.csv"
 	
 	Write-Host $(get-Date)
 	Write-Host -ForegroundColor Yellow "Enumerating logged on users"
@@ -1928,6 +1930,31 @@ Function LoggedOnUsers
 	ParseData 108
 }
 
+Function MapDrive
+{
+	param($IPAddress, $ShareName)
+	
+	$UserDomain = $scan.Creds.GetNetworkCredential().domain
+	$UserName = $scan.Creds.GetNetworkCredential().username
+	if($userDomain)
+	{
+		$UserLogon = "$UserDomain\$UserName"
+	}
+	else
+	{
+		$UserLogon = "$UserName"
+	}
+			
+	net use \\$IPAddress\$ShareName /user:$UserLogon $($scan.Creds.GetNetworkCredential().password) 2>&1|Out-Null
+	if(-not $?)
+	{
+		"$((get-date).ToString('yyyy-MMM-dd hh:mm:ss')),$HostIP,Can't Map Drive" | 
+		Add-Content "$($scan.TEMP_DIR)\ErrorLog.csv"
+		Return $FALSE
+	}
+	Return $TRUE
+}
+			
 Function NetworkSharesPermissions
 {
 	if(Test-Path $OUT_DIR) #look for network shares data in $OUT_DIR
@@ -1961,15 +1988,26 @@ Function NetworkSharesPermissions
 	foreach($Share in $Shares){
 		$HostName = $Share.ToString().split(",")[0]
 		$ShareName = $Share.ToString().split(",")[2]
+		if($scan.creds)
+		{		
+			If(-not (MapDrive $HostName $ShareName)){Continue}
+		}
 		if(Test-Path "\\$HostName\$ShareName" -ErrorAction SilentlyContinue)
 		{
 			(Get-Acl "\\$HostName\$ShareName").Access|%{
-				"$HostName,"+
-				"\\$HostName\$ShareName,"+
-				$_.IdentityReference.tostring()+","+
-				$($_.FileSystemRights.tostring() -replace ',', ';')+","+
-				$_.IsInherited.tostring()|Add-Content "$OUT_DIR\$outfile"
+				if($_.FileSystemRights -match '[a-zA-Z]')
+				{
+					"$HostName,"+
+					"\\$HostName\$ShareName,"+
+					$_.IdentityReference.tostring()+","+
+					$($_.FileSystemRights.tostring() -replace ',', ';')+","+
+					$_.IsInherited.tostring()|Add-Content "$OUT_DIR\$outfile"
+				}
 			}
+		}
+		if($scan.creds)
+		{
+			net use \\$HostName\$ShareName /delete |Out-Null
 		}
 	}
 	ConvertFileFormat "$OUT_DIR\$outfile"
@@ -2089,7 +2127,7 @@ Virus Total Hash Analysis
 	
 	Write-Host
 	Write-Host -ForegroundColor Yellow "Executing Virus-Total hash analysis"
-	$script:outfile = "VT_HashAnalysis$((get-date).tostring("HHmmss")).csv"
+	$script:outfile = "VT_HashAnalysis$ScanTime.csv"
 	"File Hash,Hits,# of AVs,Analysis Date,URL" | Add-Content "$TEMP_DIR\$outfile"
 	
 	$progParam=@{
@@ -2136,7 +2174,6 @@ Virus Total Hash Analysis
 Function Execute 
 {
 	if (-not $script:ConfigSuccess){$script:ConfigSuccess = config} #scan vars have not been configured enter configuration mode
-	#else{$ConfigSuccess = $true}
 	if(-not $script:ConfigSuccess){Return}
 	
 	if($script:CompsDate){
@@ -2162,6 +2199,7 @@ Function Execute
 	
 	CreateTempDir
 	DisplayMenu 
+	$ScanTime = $((get-date).tostring("HHmmss"))
 	
 	#continue looping until all scans completed
 	for($i=0; $i -lt $script:ScanChoiceArray.count; $i++)
@@ -2902,16 +2940,6 @@ Function ConvertFileFormat
 
     param($RHost, $scan)
 
-	$UserDomain = $scan.Creds.GetNetworkCredential().domain
-	$UserName = $scan.Creds.GetNetworkCredential().username
-	if($userDomain)
-	{
-		$UserLogon = "$UserDomain\$UserName"
-	}
-	else
-	{
-		$UserLogon = "$UserName"
-	}
 	Function DeleteShare
 	{
 		param($IPAddress)
@@ -2930,9 +2958,23 @@ Function ConvertFileFormat
 		{
 			"$((get-date).ToString('yyyy-MMM-dd hh:mm:ss')),$HostIP,Can't Map Drive" | 
 			Add-Content "$($scan.TEMP_DIR)\ErrorLog.csv"
-			Return $FALSE
+			Return
 		}
 		Return $TRUE
+	}
+	
+	If($scan.creds)
+	{
+		$UserDomain = $scan.Creds.GetNetworkCredential().domain
+		$UserName = $scan.Creds.GetNetworkCredential().username
+		if($userDomain)
+		{
+			$UserLogon = "$UserDomain\$UserName"
+		}
+		else
+		{
+			$UserLogon = "$UserName"
+		}
 	}
 	
     $RHost | % {
@@ -2990,7 +3032,7 @@ Function ConvertFileFormat
 		}
 		if($scan.Creds)
 		{
-			MapDrive $IPaddr
+			MapDrive $IPaddr|Out-Null
 		}
         if (Test-Path  "\\$IPaddr\c$\")
         {
@@ -3016,18 +3058,7 @@ Function ConvertFileFormat
     $HostName=$RHost.split(",")[0]
 	$HostIP=$RHost.split(",")[1]
     $ver=$RHost.split(",")[3]
-	
-	$UserDomain = $scan.Creds.GetNetworkCredential().domain
-	$UserName = $scan.Creds.GetNetworkCredential().username
-	if($userDomain)
-	{
-		$UserLogon = "$UserDomain\$UserName"
-	}
-	else
-	{
-		$UserLogon = "$UserName"
-	}
-	
+		
 	Function DeleteShare
 	{
 		if($scan.Creds)
@@ -3058,6 +3089,17 @@ Function ConvertFileFormat
 	
 	if($scan.Creds)
 	{
+		$UserDomain = $scan.Creds.GetNetworkCredential().domain
+		$UserName = $scan.Creds.GetNetworkCredential().username
+		if($userDomain)
+		{
+			$UserLogon = "$UserDomain\$UserName"
+		}
+		else
+		{
+			$UserLogon = "$UserName"
+		}
+	
 		net use \\$HostIP\c$ /user:$UserLogon $($scan.Creds.GetNetworkCredential().password) 2>&1|Out-Null
 		if(-not $?){Return}
 	}
@@ -3173,19 +3215,19 @@ Function ConvertFileFormat
 	$HostIP = $RHost.split(",")[1]
     $ver=$RHost.split(",")[3]
 	
-	$UserDomain = $scan.Creds.GetNetworkCredential().domain
-	$UserName = $scan.Creds.GetNetworkCredential().username
-	if($userDomain)
-	{
-		$UserLogon = "$UserDomain\$UserName"
-	}
-	else
-	{
-		$UserLogon = "$UserName"
-	}
-	
 	if($scan.Creds)
 	{
+		$UserDomain = $scan.Creds.GetNetworkCredential().domain
+		$UserName = $scan.Creds.GetNetworkCredential().username
+		if($userDomain)
+		{
+			$UserLogon = "$UserDomain\$UserName"
+		}
+		else
+		{
+			$UserLogon = "$UserName"
+		}
+	
 		net use \\$HostIP\c$ /user:$UserLogon $($scan.Creds.GetNetworkCredential().password) 2>&1|Out-Null
 		if(-not $?){Return}
 	}
@@ -3304,6 +3346,23 @@ Function ConvertFileFormat
 	"PasswordFileSearch",
 	"hashes",
 	"HashDump"
+	
+	if($scan.Creds)
+	{
+		$UserDomain = $scan.Creds.GetNetworkCredential().domain
+		$UserName = $scan.Creds.GetNetworkCredential().username
+		if($userDomain)
+		{
+			$UserLogon = "$UserDomain\$UserName"
+		}
+		else
+		{
+			$UserLogon = "$UserName"
+		}
+	
+		net use \\$HostIP\c$ /user:$UserLogon $($scan.Creds.GetNetworkCredential().password) 2>&1|Out-Null
+		if(-not $?){Return}
+	}
 
 	foreach($DataFile in $DataFiles){
 		if(Test-Path "\\$HostIP\c$\${DataFile}392125281")
@@ -3328,6 +3387,11 @@ Function ConvertFileFormat
 				$scan.mtx.ReleaseMutex()
 			}
 		}
+	}
+	
+	if($scan.creds)
+	{
+		net use \\$HostIP\c$ /delete 2>&1 | Out-Null
 	}
 }
 
