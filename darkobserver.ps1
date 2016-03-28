@@ -177,7 +177,7 @@ Function CheckDependancies
 		}
 		else
 		{
-			Write-Warning "Unable to find psexec.exe in your PATH.  Payloads will default to WMI for remote execution"
+			Write-Warning "Unable to find psexec.exe in your PATH.  Payloads will only attempt WMI for remote execution"
 			Return
 		}	
     }
@@ -248,9 +248,12 @@ Choice: " -NoNewLine
 				$ScanChoice = "11,12"
 			}
 		}
+		$null {Return}
 	}
 	ParseMenuChoice $ScanChoice 15 | %{
-		$Script:ScanChoiceArray.add($_)|Out-Null
+		if($_){
+			$Script:ScanChoiceArray.add($_)|Out-Null
+		}
 	}
 }
 
@@ -350,26 +353,47 @@ Function ParseMenuChoice
 				{
 					$IntRange[$j] = [convert]::ToInt32($IntRange[$j], 10)
 				}
+				else
+				{
+					$invalid = $true
+					break
+				}
 			}
-			#fill in the numeric values between the range
-			$IntRange=($IntRange[0] .. $IntRange[1])
-			for($j=0; $j -lt $IntRange.count; $j++)
+			if(-not $invalid)
 			{
-				#add each item in the integer range to the temp array
-				$TempChoiceArray.Add($IntRange[$j])|out-null
+				#fill in the numeric values between the range
+				$IntRange=($IntRange[0] .. $IntRange[1])
+				for($j=0; $j -lt $IntRange.count; $j++)
+				{
+					#add each item in the integer range to the temp array
+					$TempChoiceArray.Add($IntRange[$j])|out-null
+				}
+				#remove the item that represents the range from the temp array
+				$TempChoiceArray.Remove($TempChoiceArray[$i])|out-null
+				
+				#restart the loop until all choice ranges have been expanded
+				$i = -1
 			}
-			#remove the item that represents the range from the temp array
-			$TempChoiceArray.Remove($TempChoiceArray[$i])|out-null
-			
-			#restart the loop until all choice ranges have been expanded
-			$i = -1
+			else
+			{
+				continue
+			}
 		}
 	}
 	
 	for($i=0; $i -lt $TempChoiceArray.count; $i++)
 	{
-		#convert to base 10 integer
-		$TempChoiceArray[$i] = [convert]::ToInt32($TempChoiceArray[$i], 10) 
+		if($TempChoiceArray[$i] -match "[0-9]" -and $TempChoiceArray[$i] -notmatch "[a-zA-Z]")
+		{
+			#convert to base 10 integer
+			$TempChoiceArray[$i] = [convert]::ToInt32($TempChoiceArray[$i], 10) 		
+		}
+		else
+		{
+			#value is not a number.  remove it
+			Write-Host -ForegroundColor Red "Invalid Choice: $($TempChoiceArray[$i])"
+			$TempChoiceArray.Remove($TempChoiceArray[$i])
+		}
 	}
 	
 	#return sorted array
@@ -962,9 +986,9 @@ Function SetScanTypeVars
 			$Script:Deploy = $false
             $Script:ScanType="user account compliance query"
             $Script:outfile="UserAccounts$((get-date).tostring("HHmmss")).txt"
-			Write-Host $(get-Date)
 			if($scan.Domain)
 			{
+				Write-Host $(get-Date)
 				UserAccountScan
 			}
 			else
@@ -1108,7 +1132,7 @@ Function staleAccounts
     #Create a new object to search Active directory
     #[ADSI]“" searches begining in the the root of your current domain 
     #you can change where your search starts by specifying the AD location
-    #example: [ADSI]“LDAP://OU=CANES Users and Computers,DC=cvn76,DC=navy,DC=mil”
+    #example: [ADSI]“LDAP://OU=Users and Computers,DC=foo,DC=bar,DC=com”
     $Search = New-Object DirectoryServices.DirectorySearcher([ADSI]“”)
     $Search.PageSize = 1000
 
@@ -1171,7 +1195,7 @@ Function GetComputers
     #Create a new object to search Active directory
     #[ADSI]“" searches beginning in the the root of your current domain 
     #you can change where your search starts by specifying the AD location
-    #example: [ADSI]“LDAP://OU=CANES Users and Computers,DC=cvn76,DC=navy,DC=mil”
+    #example: [ADSI]“LDAP://OU=Users and Computers,DC=foo,DC=bar,DC=com”
 	
 	param($HostFile)
 
@@ -1206,9 +1230,7 @@ Function GetActiveComputers
 	$scan.Throttle = $scan.Throttle * 5 #lots of network delay for absent hosts so increase thread count for runspace
 	if($scan.Throttle -gt 50){$scan.Throttle = 50}
 	$scan.DomainName = $DistinguishedName
-	get-content $ScanHostsFile|out-file "$OUT_DIR\computers1.txt"
 	[string[]] $Computers = GetComputers $ScanHostsFile
-	$computers|out-file "$OUT_DIR\computers.txt"
 	[string[]] $ActiveComputers = RunScriptBlock $ActiveComputers_SB $Computers $scan
 	$scan.Throttle = $Threads #re-set throttle
 
@@ -2155,12 +2177,17 @@ Function Execute
 				if($script:ScanDomain -or (-not ($ScanHostsFile -eq "ALL")))
 				{
 					"Time Stamp,Host Name, Error" | Add-Content "$TEMP_DIR\ErrorLog.csv"
-					$script:ActiveComputers = GetActiveComputers 
+					$script:ActiveComputers = @(GetActiveComputers)
 				}
 				else
 				{
-					Write-Host -ForegroundColor Red "Host-File required for deployable scans when domain is null"
-					Return
+					if (-not $noHostsFile)
+					{
+						$noHostsFile = $true
+						Write-Host -ForegroundColor Red "Host-File required for deployable scans when domain is null
+						"
+					}
+					Continue
 				}
 			}
 			
@@ -2174,8 +2201,7 @@ Function Execute
 			
 				$script:CleanUp = $true
 				
-				#Create error log.  This could be created dynamically when an error occurs by writing a Function and 
-				#Storing it in the $scan hash-table to be accessible by script blocks but this was easier at the moment.
+				#Create error log.  
 				"Time Stamp,Host Name, Error" | Add-Content "$TEMP_DIR\ErrorLog.csv" 
 				
 				ExecutePSexec
@@ -2188,6 +2214,7 @@ Function Execute
 				}
 				ParseData $script:ScanChoiceArray[$i]
 			}
+			
 			else
 			{
 				if (-not $noHosts)
@@ -2205,6 +2232,7 @@ Function Execute
 		$script:CleanUp = $false
 	}
 
+	$script:ScanChoiceArray.Clear()
 	Write-Host
 }
 
@@ -3046,7 +3074,33 @@ Function ConvertFileFormat
 		DeleteShare
         Return
     } 
-	if ($scan.psexec)
+	
+	if($ps)
+	{	
+		if($scan.Creds)
+		{
+			$Success = (&wmic /node:"$HostIP" /user:$UserLogon /password:$($scan.Creds.GetNetworkCredential().password) process call create "cmd /c $PSexecArgs" 2>&1|
+			Select-String "ProcessId")
+		}
+		else
+		{
+			$Success = (&wmic /node:"$HostIP" process call create "cmd /c $PSexecArgs" 2>&1|Select-String "ProcessId")
+		}
+	}
+	else
+	{
+		if($scan.Creds)
+		{
+			$Success = (&wmic /node:"$HostIP" /user:$UserLogon /password:$($scan.Creds.GetNetworkCredential().password) process call create "cmd /c c:\PSExecShellCode.bat" 2>&1|
+			Select-String "ProcessId")
+		}
+		else
+		{
+			$Success = (&wmic /node:"$HostIP" process call create "cmd /c c:\PSExecShellCode.bat" 2>&1|Select-String "ProcessId")
+		}
+	}
+		
+	if ((-not $success) -and $scan.psexec)
 	{
 		if($ps)
 		{	
@@ -3072,38 +3126,8 @@ Function ConvertFileFormat
 				$Success = (&$scan.psexec -accepteula -s -d "\\$HostIP" "c:\PSExecShellCode.bat" 2>&1|Select-String "started on $HostIP")
 			}			
 		}
-		if($Success){
-			DeleteShare
-			Return $RHost
-		}
 	}
-	if (-not $Success)
-	{
-		if($ps)
-		{	
-			if($scan.Creds)
-			{
-				$Success = (&wmic /node:"$HostIP" /user:$UserLogon /password:$($scan.Creds.GetNetworkCredential().password) process call create "cmd /c $PSexecArgs" 2>&1|
-				Select-String "ProcessId")
-			}
-			else
-			{
-				$Success = (&wmic /node:"$HostIP" process call create "cmd /c $PSexecArgs" 2>&1|Select-String "ProcessId")
-			}
-		}
-		else
-		{
-			if($scan.Creds)
-			{
-				$Success = (&wmic /node:"$HostIP" /user:$UserLogon /password:$($scan.Creds.GetNetworkCredential().password) process call create "cmd /c c:\PSExecShellCode.bat" 2>&1|
-				Select-String "ProcessId")
-			}
-			else
-			{
-				$Success = (&wmic /node:"$HostIP" process call create "cmd /c c:\PSExecShellCode.bat" 2>&1|Select-String "ProcessId")
-			}
-		}
-	}
+
 	if($Success)
 	{
 		DeleteShare
