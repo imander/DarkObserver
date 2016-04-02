@@ -1217,7 +1217,7 @@ Function GetComputers
 
 	if(-not ($HostFile -eq "ALL")) #host names to scan provided by user
 	{
-		$Hosts = Get-Content $HostFile
+		$Hosts = Get-Content $HostFile -ReadCount 0
 		RunScriptBlock $GetComputersSB $Hosts $scan | sort -Unique
 	}
 	else #grab all computers
@@ -1260,9 +1260,9 @@ Function GetActiveComputers
 	"Host Name,IP Address,Operating System,Version"|Add-Content "$TEMP_DIR\$ScannedHosts"
 	$ActiveComputers |Add-Content "$TEMP_DIR\$ScannedHosts"
 	$ConvertFiles = "$TEMP_DIR\ErrorLog.csv", "$TEMP_DIR\$ScannedHosts"
+	$Script:outfile = $ScannedHosts
 	If($menuScan)
 	{
-		$Script:outfile = $ScannedHosts
 		ConvertFileFormat $ConvertFiles
 	}
 	Else
@@ -1516,7 +1516,7 @@ Function Get-IPFile
 	) 
 	
 	[Array]$IParray = $null
-	$content = Get-Content $File
+	$content = Get-Content $File -ReadCount 0
 	
 	foreach($IP in $content)
 	{
@@ -2004,12 +2004,12 @@ Function NetworkSharesPermissions
 	if($NetShareFile) #data found in $OUT_DIR
 	{
 		#Get list of shares but skip column names and $ shares
-		$Shares = (Get-Content $NetShareFile|Select -skip 1|Select-String -SimpleMatch '$' -NotMatch)
+		$Shares = (Get-Content $NetShareFile -ReadCount 0|Select -skip 1|Select-String -SimpleMatch '$' -NotMatch)
 	}
 	
 	elseif($NetShareFile1) #data found in $OUT_DIR\CSV
 	{
-		$Shares = (Get-Content $NetShareFile1|Select -skip 1|Select-String -SimpleMatch '$' -NotMatch)
+		$Shares = (Get-Content $NetShareFile1 -ReadCount 0|Select -skip 1|Select-String -SimpleMatch '$' -NotMatch)
 	}
 	
 	else{Write-Host -ForegroundColor Red "Network-shares file not found"; return}
@@ -2250,8 +2250,10 @@ Function Execute
 				if(-not (Test-Path $TEMP_DIR)){CreateTempDir}
 				if($script:ScanDomain -or (-not ($ScanHostsFile -eq "ALL")))
 				{
+					$tempOutfile = $Script:outfile
 					"Time Stamp,Host Name, Error" | Add-Content "$TEMP_DIR\ErrorLog.csv"
 					$script:ActiveComputers = @(GetActiveComputers)
+					$Script:outfile = $tempOutfile
 				}
 				else
 				{
@@ -2418,7 +2420,7 @@ Function ParseData #Build compile results into a single csv file
 		{
 			try {
 				#only add lines that contain data to $Results
-				Get-Content "$TEMP_DIR\$file" -ErrorAction Stop| where {$_} | Add-Content "$Results" -ErrorAction Stop
+				Get-Content "$TEMP_DIR\$file" -ErrorAction Stop -ReadCount 0| where {$_} | Add-Content "$Results" -ErrorAction Stop
 				break
 			} catch {
 				start-sleep -Seconds 3
@@ -2443,11 +2445,11 @@ Function FilterData
 {
 	param($ScanChoice)
 	
-	$Content = Get-Content "$TEMP_DIR\$OutFile"
+	$Content = Get-Content "$TEMP_DIR\$OutFile" -ReadCount 0
 	switch($ScanChoice)
 	{
 		1{	
-			$filter = Get-Content $KnownGood.UserExe | Where{$_}
+			$filter = Get-Content $KnownGood.UserExe -ReadCount 0| Where{$_}
 			
 			#Unique results
 			"Count,Executable"|Add-Content $ResultsUnique
@@ -2461,7 +2463,7 @@ Function FilterData
 				($Content|select -skip 1)|Select-String -NotMatch -SimpleMatch -Pattern $filter |Add-Content $ResultsFiltered
 				
 				#Unique filtered results
-				$data = (Get-Content $ResultsFiltered|select -skip 1)|%{$_.split(",")[1]}
+				$data = (Get-Content $ResultsFiltered -ReadCount 0|select -skip 1)|%{$_.split(",")[1]}
 				if($data)
 				{
 					"Count,Executable"|Add-Content $ResultsUniqFilt
@@ -2470,7 +2472,7 @@ Function FilterData
 			}
 		}
 		2{
-			$filter = Get-Content $KnownGood.USB | Where{$_} 
+			$filter = Get-Content $KnownGood.USB -ReadCount 0| Where{$_} 
 			
 			#Unique results
 			"Count,Registry Key"|Add-Content $ResultsUnique
@@ -2484,7 +2486,7 @@ Function FilterData
 				($Content|select -skip 1)|Select-String -NotMatch -SimpleMatch -Pattern $filter |Add-Content $ResultsFiltered
 				
 				#Unique filtered results
-				$data = (Get-Content $ResultsFiltered|select -skip 1)|%{$_.split(",")[3]}
+				$data = (Get-Content $ResultsFiltered -ReadCount 0|select -skip 1)|%{$_.split(",")[3]}
 				if($data)
 				{
 					"Count,Executable"|Add-Content $ResultsUniqFilt
@@ -2493,7 +2495,7 @@ Function FilterData
 			}	
 		}			
         4{
-			$filter = Get-Content $KnownGood.StartUpProg | Where{$_}
+			$filter = Get-Content $KnownGood.StartUpProg -ReadCount 0| Where{$_}
 			
 			#Unique results
 			"Count,Command"|Add-Content $ResultsUnique
@@ -2507,7 +2509,7 @@ Function FilterData
 				($Content|select -skip 1)|Select-String -NotMatch -SimpleMatch -Pattern $filter |Add-Content $ResultsFiltered
 				
 				#Unique filtered results
-				$data = (Get-Content $ResultsFiltered|select -skip 1)|%{$_.split(",")[1]}
+				$data = (Get-Content $ResultsFiltered -ReadCount 0|select -skip 1)|%{$_.split(",")[1]}
 				if($data)
 				{
 					"Count,Command"|Add-Content $ResultsUniqFilt
@@ -2517,7 +2519,7 @@ Function FilterData
 		}
 			
         5{
-			$filter = Get-Content $KnownGood.SchedTasks | Where{$_}
+			$filter = Get-Content $KnownGood.SchedTasks -ReadCount 0| Where{$_}
 			
 			#Unique results
 			"Count,Command"|Add-Content $ResultsUnique
@@ -2531,7 +2533,7 @@ Function FilterData
 				($Content|select -skip 1)|Select-String -NotMatch -SimpleMatch -Pattern $filter |Add-Content $ResultsFiltered
 				
 				#Unique filtered results
-				$data = (Get-Content $ResultsFiltered|select -skip 1)|%{$_.split(",")[1]}
+				$data = (Get-Content $ResultsFiltered -ReadCount 0|select -skip 1)|%{$_.split(",")[1]}
 				if($data)
 				{
 					"Count,Command"|Add-Content $ResultsUniqFilt
@@ -2540,7 +2542,7 @@ Function FilterData
 			}	
 		}	
 		6{
-			$filter = Get-Content $KnownGood.RunningProcs | Where{$_}
+			$filter = Get-Content $KnownGood.RunningProcs -ReadCount 0| Where{$_}
 			
 			#Unique results
 			"Count,Executable,Path"|Add-Content $ResultsUnique
@@ -2554,7 +2556,7 @@ Function FilterData
 				($Content|select -skip 1)|Select-String -NotMatch -SimpleMatch -Pattern $filter |Add-Content $ResultsFiltered
 				
 				#Unique filtered results
-				$data = (Get-Content $ResultsFiltered|select -skip 1)|%{"$($_.split(",")[2]),$($_.split(",")[1])"}
+				$data = (Get-Content $ResultsFiltered -ReadCount 0|select -skip 1)|%{"$($_.split(",")[2]),$($_.split(",")[1])"}
 				if($data)
 				{
 					"Count,Executable,Path"|Add-Content $ResultsUniqFilt
@@ -2563,7 +2565,7 @@ Function FilterData
 			}
 		}		
         7{
-			$filter = Get-Content $KnownGood.Drivers | Where{$_}
+			$filter = Get-Content $KnownGood.Drivers -ReadCount 0| Where{$_}
 			
 			#Unique results
 			"Count,Driver Name"|Add-Content $ResultsUnique
@@ -2577,7 +2579,7 @@ Function FilterData
 				($Content|select -skip 1)|Select-String -NotMatch -SimpleMatch -Pattern $filter |Add-Content $ResultsFiltered
 				
 				#Unique filtered results
-				$data = (Get-Content $ResultsFiltered|select -skip 1)|%{$_.split(",")[3]}
+				$data = (Get-Content $ResultsFiltered -ReadCount 0|select -skip 1)|%{$_.split(",")[3]}
 				if($data)
 				{
 					"Count,Driver Name"|Add-Content $ResultsUniqFilt
@@ -2586,7 +2588,7 @@ Function FilterData
 			}
 		}
         8{
-			$filter = Get-Content $KnownGood.Services | Where{$_}
+			$filter = Get-Content $KnownGood.Services -ReadCount 0| Where{$_}
 			
 			#Unique results
 			"Count,Service Name"|Add-Content $ResultsUnique
@@ -2609,7 +2611,7 @@ Function FilterData
 			}
 		}
 		10{
-			$filter = Get-Content $KnownGood.Software | Where{$_}
+			$filter = Get-Content $KnownGood.Software -ReadCount 0| Where{$_}
 			
 			#Unique results
 			"Count,Software Name"|Add-Content $ResultsUnique
@@ -2623,7 +2625,7 @@ Function FilterData
 				($Content|select -skip 1)|Select-String -NotMatch -SimpleMatch -Pattern $filter |Add-Content $ResultsFiltered
 				
 				#Unique filtered results
-				$data = (Get-Content $ResultsFiltered|select -skip 1)|%{$_.split(",")[3]}
+				$data = (Get-Content $ResultsFiltered -ReadCount 0|select -skip 1)|%{$_.split(",")[3]}
 				if($data)
 				{
 					"Count,Software Name"|Add-Content $ResultsUniqFilt
@@ -2632,7 +2634,7 @@ Function FilterData
 			}
 		}
 		13{
-			$filter = Get-Content $KnownGood.HotFix | Where{$_}
+			$filter = Get-Content $KnownGood.HotFix -ReadCount 0| Where{$_}
 			
 			"Count,HotFixID"|Add-Content $ResultsUnique
 			$data = ($Content|select -skip 1)|%{$_.split(",")[2]}
@@ -2690,7 +2692,7 @@ Function FilterData
 			UniqueFilter | Add-Content $ResultsUnique
 		}
 		104{
-			$data = (Get-Content "$TEMP_DIR\$OutFile"|select -skip 1) |%{$_.split(",")[1]}
+			$data = (Get-Content "$TEMP_DIR\$OutFile" -ReadCount 0|select -skip 1) |%{$_.split(",")[1]}
 			if($data)
 			{
 				"Count,File Name"|Add-Content $ResultsUnique
@@ -2698,7 +2700,7 @@ Function FilterData
 			}
 		}
 		105{
-			$data = (Get-Content "$TEMP_DIR\$OutFile"|select -skip 1) |%{$_.split(",")[1]}
+			$data = (Get-Content "$TEMP_DIR\$OutFile" -ReadCount 0|select -skip 1) |%{$_.split(",")[1]}
 			if($data)
 			{
 				"Count,File Name"|Add-Content $ResultsUnique
@@ -2715,7 +2717,10 @@ Function Release-Ref
 {
 	param($ref)
 	
-	([System.Runtime.InteropServices.Marshal]::ReleaseComObject([System.__ComObject]$ref) -gt 0)
+	if($ref)
+	{
+		([System.Runtime.InteropServices.Marshal]::ReleaseComObject([System.__ComObject]$ref) -gt 0)
+	}
 	[System.GC]::Collect()
 	[System.GC]::WaitForPendingFinalizers()
 }
@@ -2850,7 +2855,7 @@ Function ConvertFileFormat
 			$workbook.SaveAs("$OUT_DIR\${outputFile}.xlsb",50)
 			$out = "$OUT_DIR\${outputFile}.xlsb"
 		}
-		"xlsx"{
+		"xlsx"{		
 			$workbook.SaveAs("$OUT_DIR\${outputFile}.xlsx",51)
 			$out = "$OUT_DIR\${outputFile}.xlsx"
 		}
@@ -3272,13 +3277,13 @@ Function ConvertFileFormat
 				if($scan.RemoteDataFile -eq "hashes392125281")
 				{
 					$scan.mtx.waitone() |Out-Null
-					$scan.Data = ($scan.Data + (get-content "\\$HostIP\C$\$($scan.RemoteDataFile)") | sort -Unique) 
+					$scan.Data = ($scan.Data + (get-content "\\$HostIP\C$\$($scan.RemoteDataFile)" -ReadCount 0) | sort -Unique) 
 					$scan.mtx.ReleaseMutex()
 				}
 				else
 				{
 					$scan.mtx.waitone() |Out-Null
-					Add-content -Path "$($scan.TEMP_DIR)\output.txt" -Value (get-content "\\$HostIP\C$\$($scan.RemoteDataFile)")
+					Add-content -Path "$($scan.TEMP_DIR)\output.txt" -Value (get-content "\\$HostIP\C$\$($scan.RemoteDataFile)" -ReadCount 0)
 					$scan.mtx.ReleaseMutex()
 				}
 				Remove-Item -Force "\\$HostIP\C$\$($scan.RemoteDataFile)"
@@ -4306,6 +4311,7 @@ SetKnownGood
 while($true)
 {
 	DarkObserver
+	Release-Ref
 	$ScanChoiceArray.Clear()
 	try {
 		if ($TEMP_DIR -and (Test-Path $TEMP_DIR -ErrorAction Stop)){
