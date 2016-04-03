@@ -853,6 +853,9 @@ Function DarkObserver #darkobserver command prompt
 
 Function ExitFunction
 {
+	$scan.mtx = $null
+	$scan.Creds = $null
+
 	#Reset colors, clear screen and exit
 	[Console]::BackgroundColor = $BackgroundColor
 	[Console]::ForegroundColor = $ForegroundColor
@@ -2004,18 +2007,24 @@ Function NetworkSharesPermissions
 	if($NetShareFile) #data found in $OUT_DIR
 	{
 		#Get list of shares but skip column names and $ shares
-		$Shares = (Get-Content $NetShareFile -ReadCount 0|Select -skip 1|Select-String -SimpleMatch '$' -NotMatch)
+		$Shares = (Get-Content $NetShareFile |Select -skip 1|Select-String -SimpleMatch '$' -NotMatch)
 	}
 	
 	elseif($NetShareFile1) #data found in $OUT_DIR\CSV
 	{
-		$Shares = (Get-Content $NetShareFile1 -ReadCount 0|Select -skip 1|Select-String -SimpleMatch '$' -NotMatch)
+		$Shares = (Get-Content $NetShareFile1 |Select -skip 1|Select-String -SimpleMatch '$' -NotMatch)
 	}
 	
 	else{Write-Host -ForegroundColor Red "Network-shares file not found"; return}
 	
 	(get-Date).ToString() | Write-Host
 	Write-Host -ForegroundColor Yellow "Enumerating network-share permissions"
+	
+	if(-not $Shares)
+	{
+		Write-Host -ForegroundColor Red "No network-shares found"
+		Return
+	}
 
 	#Create data file
 	"HostName,ShareName,Identity,Permissions,Inherited"|Add-Content "$OUT_DIR\$outfile"
@@ -2370,7 +2379,7 @@ Function CollectFiles #Collect results from remote hosts
 	RunScriptBlock $CollectFiles_SB $CollectComputers $scan
 }
 
-Function ParseData #Build compile results into a single csv file
+Function ParseData 
 {
 	param($ScanChoice)
 	Write-Host -ForegroundColor Yellow "Parsing collected data"
@@ -2420,7 +2429,7 @@ Function ParseData #Build compile results into a single csv file
 		{
 			try {
 				#only add lines that contain data to $Results
-				Get-Content "$TEMP_DIR\$file" -ErrorAction Stop -ReadCount 0| where {$_} | Add-Content "$Results" -ErrorAction Stop
+				Get-Content "$TEMP_DIR\$file" -ErrorAction Stop | where {$_} | Add-Content "$Results" -ErrorAction Stop
 				break
 			} catch {
 				start-sleep -Seconds 3
@@ -2445,7 +2454,7 @@ Function FilterData
 {
 	param($ScanChoice)
 	
-	$Content = Get-Content "$TEMP_DIR\$OutFile" -ReadCount 0
+	$Content = Get-Content $Results -ReadCount 0
 	switch($ScanChoice)
 	{
 		1{	
@@ -2489,7 +2498,7 @@ Function FilterData
 				$data = (Get-Content $ResultsFiltered -ReadCount 0|select -skip 1)|%{$_.split(",")[3]}
 				if($data)
 				{
-					"Count,Executable"|Add-Content $ResultsUniqFilt
+					"Count,Device"|Add-Content $ResultsUniqFilt
 					UniqueFilter | Add-Content $ResultsUniqFilt	
 				}
 			}	
@@ -2633,7 +2642,7 @@ Function FilterData
 				}
 			}
 		}
-		13{
+		16{
 			$filter = Get-Content $KnownGood.HotFix -ReadCount 0| Where{$_}
 			
 			"Count,HotFixID"|Add-Content $ResultsUnique
@@ -2685,14 +2694,32 @@ Function FilterData
 				}
 			}
 		}
-		15{
-			#Unique results
-			"Count,Account Name"|Add-Content $ResultsUnique
-			$data = ($Content|select -skip 1)|%{$_.split(",")[1]}
-			UniqueFilter | Add-Content $ResultsUnique
+		101{
+			$data = ($Content|select -skip 1) |%{$_.split(",")[1]}
+			if($data)
+			{
+				"Count,File Name"|Add-Content $ResultsUnique
+				UniqueFilter | Add-Content $ResultsUnique	
+			}
+		}
+		102{
+			$data = ($Content|select -skip 1) |%{$_.split(",")[1]}
+			if($data)
+			{
+				"Count,File Name"|Add-Content $ResultsUnique
+				UniqueFilter | Add-Content $ResultsUnique	
+			}
+		}
+		103{
+			$data = ($Content|select -skip 1) |%{$_.split(",")[1]}
+			if($data)
+			{
+				"Count,File Name"|Add-Content $ResultsUnique
+				UniqueFilter | Add-Content $ResultsUnique	
+			}
 		}
 		104{
-			$data = (Get-Content "$TEMP_DIR\$OutFile" -ReadCount 0|select -skip 1) |%{$_.split(",")[1]}
+			$data = ($Content|select -skip 1) |%{$_.split(",")[1]}
 			if($data)
 			{
 				"Count,File Name"|Add-Content $ResultsUnique
@@ -2700,10 +2727,10 @@ Function FilterData
 			}
 		}
 		105{
-			$data = (Get-Content "$TEMP_DIR\$OutFile" -ReadCount 0|select -skip 1) |%{$_.split(",")[1]}
+			$data = ($Content|select -skip 1)|%{"$($_.split(",")[1]),$($_.split(",")[2])"}
 			if($data)
 			{
-				"Count,File Name"|Add-Content $ResultsUnique
+				"Count,File Name,Path"|Add-Content $ResultsUnique
 				UniqueFilter | Add-Content $ResultsUnique	
 			}
 		}
@@ -4322,9 +4349,4 @@ while($true)
 		Remove-Item -Recurse -Force "$TEMP_DIR" 2>$null
 	}
 }
-$scan.mtx = $null
-$scan.Creds = $null
-Clear-Host
-
-
 
