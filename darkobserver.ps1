@@ -3669,20 +3669,21 @@ Remove-Item -Force "C:\PSExecShellCode.ps1"
 $AntivirusStatusCode_BAT = @'
 @echo off
 IF EXIST "C:\AntivirusStatus392125281" DEL "C:\AntivirusStatus392125281"
-WMIC /Namespace:\\root\SecurityCenter Path AntiVirusProduct get displayName,versionNumber,onAccessScanningEnabled,productUptoDate /format:csv |findstr /v Node >> "C:\AntivirusStatus392125281"
+WMIC /Namespace:\\root\SecurityCenter Path AntiVirusProduct get displayName,versionNumber,onAccessScanningEnabled,productUptoDate /format:csv |findstr /v Node > "C:\AntivirusStatus392125281"
+for /F %%F in ("C:\AntivirusStatus392125281") do if %%~zF lss 4 echo %COMPUTERNAME%,AV Not Found > "C:\AntivirusStatus392125281"
 (goto) 2>nul & del "%~f0"
 '@
 $AntivirusStatusCode_PS1 = @'
 if (Test-Path "C:\AntivirusStatus392125281"){Remove-Item -Force "C:\AntivirusStatus392125281"}
 try{
 Get-WmiObject -Namespace root\SecurityCenter2 -Class AntiVirusProduct |%{
-	if(-not $_.versionNumber){
-		$version = (Get-Command $_.pathToSignedProductExe.tostring()).FileVersionInfo.ProductVersion
-		if(-not $version){
-		$version = (Get-Command $_.pathToSignedReportingExe.tostring()).FileVersionInfo.ProductVersion
-		}
-	} else {$version = $_.versionNumber}
-	$env:COMPUTERNAME+","+$_.displayName+","+$_.productstate+","+$version
+		if(-not $_.versionNumber){
+			$version = (Get-Command $_.pathToSignedProductExe.tostring()).FileVersionInfo.ProductVersion
+			if(-not $version){
+			$version = (Get-Command $_.pathToSignedReportingExe.tostring()).FileVersionInfo.ProductVersion
+			}
+		} else {$version = $_.versionNumber}
+		$env:COMPUTERNAME+","+$_.displayName+","+$_.productstate+","+$version
 	} | %{
 		$ProductCode=$_.Split(',')[2]
 		$rtstatus = ([convert]::toInt32("$ProductCode").tostring("X6")).substring(2, 2)
@@ -3697,6 +3698,10 @@ Get-WmiObject -Namespace root\SecurityCenter2 -Class AntiVirusProduct |%{
 	Remove-Item -Force "C:\PSExecShellCode.ps1"
 	Remove-Item -Force "C:\AntivirusStatus392125281"
 	exit
+}
+If(-Not (Get-Content C:\AntivirusStatus392125281|Where{$_}))
+{
+	"$env:COMPUTERNAME,AV Not Found"|Out-File "C:\AntivirusStatus392125281"
 }
 Remove-Item -Force "C:\PSExecShellCode.ps1"
 '@
@@ -4350,3 +4355,4 @@ while($true)
 	}
 }
 
+	
