@@ -312,10 +312,10 @@ Function ParseMenuChoice
 
 	#Create a temporary array to store the different comma separated scan choices
 	$TempChoiceArray = New-Object System.Collections.ArrayList
-	$Choice = $Choice.split(",") | %{$_.trim()}
+	$Choice = @($Choice.split(",") | %{$_.trim()})
 
 	#if the array only has 1 item do this
-	if(-not $Choice.count -or $Choice.count -eq 1)
+	if($Choice.count -eq 1)
 	{
 		$TempChoiceArray.Add($Choice)|out-null
 
@@ -674,11 +674,11 @@ Function Config #prompt user for required scan variables
 	Write-Host
 
 	#Set default values if variables are not already set
-	if(-not $ScanHostsFile){$ScanHostsFile="ALL"}
-	if(-not $OUT_DIR_root){$OUT_DIR_root=$(Get-Location).path}
-	if(-not $OutputFormat){$OutputFormat="xlsb"}
-	if(-not $ThreadCount){$ThreadCount = (gwmi win32_computersystem).NumberofLogicalProcessors}
-	if(-not $ScanDomain){
+	if(-not (Test-Path variable:\ScanHostsFile)){$ScanHostsFile="ALL"}
+	if(-not (Test-Path variable:\OUT_DIR_root)){$OUT_DIR_root=$(Get-Location).path}
+	if(-not (Test-Path variable:\OutputFormat)){$OutputFormat="xlsb"}
+	if(-not (Test-Path variable:\ThreadCount)){$ThreadCount = (gwmi win32_computersystem).NumberofLogicalProcessors}
+	if(-not (Test-Path variable:\ScanDomain)){
 		$ScanDomain = $(([ADSI]"").DistinguishedName)
 		if($ScanDomain){
 			$ScanDomain = $ScanDomain.Replace('DC=','').Replace(',','.')
@@ -701,7 +701,7 @@ Function Config #prompt user for required scan variables
 	{
 		Write-Host "  Domain [$ScanDomain]: " -NoNewLine #set out file
 		$ScanDomain_temp = SetScanDomain $ScanDomain
-		if($ScanDomain_temp -eq $True){Write-Host; Return $False} #Boolen returned.  Return to prompt
+		if($ScanDomain_temp -eq $True){Write-Host; Return $False} #User wants to return to prompt
 		if($ScanDomain_temp)
 		{
 			$script:ScanDomain = $ScanDomain_temp
@@ -795,7 +795,27 @@ Function Set-Creds #Get different credential than logged on user.  This Function
 
 Function CurrentConfig #display currently set scan variables
 {
-	if(-not $scan.creds)
+	if(-not (Test-Path variable:\ScanDomain))
+	{
+		$ScanDomain = $null
+	}
+	if(-not (Test-Path variable:\OUT_DIR_root))
+	{
+		$OUT_DIR_root = $null
+	}
+	if(-not (Test-Path variable:\ScanHostsFile))
+	{
+		$ScanHostsFile = $null
+	}
+	if(-not (Test-Path variable:\OutputFormat))
+	{
+		$OutputFormat = $null
+	}
+	if(-not (Test-Path variable:\ThreadCount))
+	{
+		$ThreadCount = $null
+	}
+	if(-not (Test-Path variable:\scan.creds))
 	{
 		if($env:USERDOMAIN -eq $env:COMPUTERNAME)
 		{
@@ -812,7 +832,7 @@ Function CurrentConfig #display currently set scan variables
 		$dname = $scan.creds.GetNetworkCredential().domain
 		$uname = $scan.creds.GetNetworkCredential().username
 	}
-	if(-not $script:ScanDomain) {$script:ScanDomain=$env:USERDNSDOMAIN}
+	
 	Write-Host
 	Write-Host "            Domain: $ScanDomain"
 	Write-Host "    Data directory: $OUT_DIR_root"
@@ -1185,8 +1205,8 @@ Function DomainAccounts
 
     #Accounts with no password expiration and no CLO enforced
     $Search.filter = "(&(objectCategory=person)(objectClass=user)(userAccountControl:1.2.840.113556.1.4.803:=65536)(!(userAccountControl:1.2.840.113556.1.4.803:=262144)))"
-	"Account Name,Status,Last Logon,Group Membership"|Add-content "$TEMP_DIR\NoCLO.csv"
-    GetResults $Search.Findall() | sort | Add-content "$TEMP_DIR\NoCLO.csv"
+	"Account Name,Status,Last Logon,Group Membership"|Add-content "$TEMP_DIR\NoPassExpOrCLO.csv"
+    GetResults $Search.Findall() | sort | Add-content "$TEMP_DIR\NoPassExpOrCLO.csv"
 
     #Active accounts that haven't been accessed in 30 days
     $Value = ConvertDate($30Days)
@@ -1204,7 +1224,7 @@ Function DomainAccounts
 	"Account Name,Status,Last Logon,Group Membership"|Add-content "$TEMP_DIR\45DaysStale.csv"
 	GetResults $Search.Findall() | sort | Add-content "$TEMP_DIR\45DaysStale.csv"
 
-	$Convert = "$TEMP_DIR\NoCLO.csv", "$TEMP_DIR\45DaysStale.csv", "$TEMP_DIR\30DaysStale.csv"
+	$Convert = "$TEMP_DIR\NoPassExpOrCLO.csv", "$TEMP_DIR\45DaysStale.csv", "$TEMP_DIR\30DaysStale.csv"
 	ConvertFileFormat $Convert
 }
 
@@ -1420,11 +1440,13 @@ Function Get-IPSubnet
 Function Get-IPRange
 {
 
-        Param(
-        [Parameter(Mandatory = $true)]
-        [Array] $Ranges
-        )
-
+    Param(
+		[Parameter(Mandatory = $true)]
+		[Array] $Ranges
+    )
+		
+	$invalid=$false
+	
 	foreach($Range in $Ranges){
 
 		#Split IP and subnet
@@ -1506,7 +1528,6 @@ Function Get-IPRange
 			}
 			$StartOct2=0
 		}
-		$IPs
 	}
 }
 
@@ -2185,7 +2206,7 @@ Virus Total Hash Analysis
 
 	$regex = '\b[0-9a-fA-F]{32}\b'
 	$hashes = select-string -Path $HashFile -Pattern $regex -AllMatches | % { $_.Matches } | % { $_.Value.tostring() }
-	$hashes = ($hashes|Sort-Object -Unique)
+	$hashes = @($hashes|Sort-Object -Unique)
 	$hashBlock = ""
 	for($c=0; $c -le $hashes.count; $c+= 25)
 	{
@@ -2220,7 +2241,7 @@ Function Execute
 	if (-not $script:ConfigSuccess){$script:ConfigSuccess = config} #scan vars have not been configured enter configuration mode
 	if(-not $script:ConfigSuccess){Return}
 
-	if($script:CompsDate){
+	if(Test-Path variable:\script:CompsDate){
 		#refresh list of active computers after 3 hours
 		if($script:CompsDate -lt (Get-Date).AddHours(-3)){$script:FirstRunComps=$true}
 	}
@@ -4324,6 +4345,7 @@ $FirstRunComps = $true #Active computers have not been generated yet
 $ScanChoiceArray = New-Object System.Collections.ArrayList #array to hold scan choices
 $PSScriptRoot = Split-Path -Parent -Path $MyInvocation.MyCommand.Definition #location of script
 $ConfigSuccess = $False #scan configuration has not been completed
+$CleanUp = $False #set to true after deploy to delete any files left behind
 
 #Store current console colors to reset when script exits
 $BackgroundColor = [console]::BackgroundColor
@@ -4351,11 +4373,11 @@ while($true)
 	Release-Ref
 	$ScanChoiceArray.Clear()
 	try {
-		if ($TEMP_DIR -and (Test-Path $TEMP_DIR -ErrorAction Stop)){
+		if ((Test-Path variable:\TEMP_DIR) -and (Test-Path $TEMP_DIR -ErrorAction Stop)){
 			Remove-Item -Recurse -Force "$TEMP_DIR"
 		}
 	} catch {
-		sleep 1
+		sleep 3
 		Remove-Item -Recurse -Force "$TEMP_DIR" 2>$null
 	}
 }
