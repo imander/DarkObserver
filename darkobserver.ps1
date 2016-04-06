@@ -1627,7 +1627,8 @@ Function ExecutePingSweep
 	$scan.Throttle = $scan.Throttle * 5
 	RunScriptBlock $PingSweepSB $IPList $scan
 	$scan.Throttle = $TempThrottle
-	ParseData 109
+	ParseData 109 $TEMP_DIR
+	FilterData 109
 }
 
 Function ChooseFileTypes
@@ -1986,7 +1987,8 @@ Function LoggedOnUsers
 	Write-Host -ForegroundColor Yellow "Enumerating logged on users"
 	CreateTempDir
 	RunScriptBlock $LoggedOnUsers_SB $ActiveComputers $scan
-	ParseData 108
+	ParseData 108 $TEMP_DIR
+	FilterData 108
 }
 
 Function MapDrive
@@ -2318,7 +2320,26 @@ Function Execute
 					$scan.Data|out-file "$($scan.TEMP_DIR)\output.txt"
 					$scan.Data = $null
 				}
-				ParseData $script:ScanChoiceArray[$i]
+				
+				if((Get-Content $TEMP_DIR\output.txt).count -lt 1000000)
+				{
+					ParseData $script:ScanChoiceArray[$i] $TEMP_DIR
+					FilterData $script:ScanChoiceArray[$i]
+				}
+				else
+				{
+					Write-Host -ForegroundColor Yellow "Chunking data"
+					ChunkFiles	
+					$Chunks = @(Get-ChildItem $TEMP_DIR | ?{$_.PSIsContainer} | %{[int] $_.Name}| sort)
+					$of = $outfile
+					foreach($chunk in $chunks)
+					{
+						$outfile = "$($of.split('.')[0])_$($chunk).$($of.split('.')[1])"
+						Write-Host -ForegroundColor Yellow "File chunk $($chunk)/$($Chunks.count)"
+						ParseData $script:ScanChoiceArray[$i] $TEMP_DIR\$chunk
+						FilterData $script:ScanChoiceArray[$i]
+					}
+				}
 			}
 
 			else
@@ -2402,15 +2423,15 @@ Function CollectFiles #Collect results from remote hosts
 
 Function ParseData
 {
-	param($ScanChoice)
+	param($ScanChoice, $DataDirectory)
 	Write-Host -ForegroundColor Yellow "Parsing collected data"
 
 	#set variables for different generated files
-	$Results = "$TEMP_DIR\$OutFile"
-	$ResultsUnique = "$TEMP_DIR\Unique.csv"
-	$ResultsFiltered = "$TEMP_DIR\Filtered.csv"
-	$ResultsUniqFilt = "$TEMP_DIR\Filtered_Unique.csv"
-	$Errors = "$TEMP_DIR\ErrorLog.csv"
+	$script:Results = "$DataDirectory\$OutFile"
+	$script:ResultsUnique = "$DataDirectory\Unique.csv"
+	$script:ResultsFiltered = "$DataDirectory\Filtered.csv"
+	$script:ResultsUniqFilt = "$DataDirectory\Filtered_Unique.csv"
+	$script:Errors = "$DataDirectory\ErrorLog.csv"
 
 	#Add column headers to files
     switch ($ScanChoice)
@@ -2443,24 +2464,20 @@ Function ParseData
 	}
 
 	#Append each data file to $results.
-    foreach ($file in (Get-ChildItem "$TEMP_DIR\" -Exclude "$OutFile", "ErrorLog.csv", "Scanned_Hosts*.csv" -Name))
+    foreach ($file in (Get-ChildItem "$DataDirectory\" -Exclude "$OutFile", "ErrorLog.csv", "Scanned_Hosts*.csv" -Name))
     {
 		#wait for file to unlock
 		for($i=0; $i -lt 10; $i++)
 		{
 			try {
 				#only add lines that contain data to $Results
-				Get-Content "$TEMP_DIR\$file" -ErrorAction Stop | where {$_} | Add-Content "$Results" -ErrorAction Stop
+				Get-Content "$DataDirectory\$file" -ErrorAction Stop | where {$_} | Add-Content "$Results" -ErrorAction Stop
 				break
 			} catch {
 				start-sleep -Seconds 3
 			}
 		}
     }
-
-	FilterData $ScanChoice
-
-    return
 }
 
 #Create a count of unique data
@@ -2931,12 +2948,12 @@ Function ConvertFileFormat
 	$a = Release-Ref($workbook)
 
 	#remove temp directory files. keep looping until all processes unlock files
-	while($true){
-		try{
-			Remove-Item -Recurse -Force "$TEMP_DIR/*" -ErrorAction Stop
-			break
-		} catch {sleep 3}
-	}
+	#while($true){
+	#	try{
+	#		Remove-Item -Recurse -Force "$TEMP_DIR/*" -ErrorAction Stop
+	#		break
+	#	} catch {sleep 3}
+	#}
 
 	if(-not $ScannedHosts)
 	{
@@ -2945,6 +2962,22 @@ Function ConvertFileFormat
 	}
 }
 
+Function ChunkFiles
+{
+	$end = (Get-Content $TEMP_DIR\output.txt).count
+	$inc = 10000000
+	$c = 1
+	for($i=0; $i -le $end; $i+=$inc)
+	{
+		mkdir $TEMP_DIR\$c | Out-Null
+		if(Test-Path "$TEMP_DIR\errorlog.csv")
+		{
+			Move-Item "$TEMP_DIR\errorlog.csv" "$TEMP_DIR\$c\errorlog.csv"
+		}
+		(Get-Content $TEMP_DIR\output.txt -ReadCount 0)[$i..($inc * $c)]|Out-File "$TEMP_DIR\$c\output.txt"
+		$c++
+	}
+}
 
 ############################################
 #	END Functions for Deploy/Multi-threading
@@ -3331,7 +3364,7 @@ Function ConvertFileFormat
 				else
 				{
 					$scan.mtx.waitone() |Out-Null
-					Add-content -Path "$($scan.TEMP_DIR)\output.txt" -Value (get-content "\\$HostIP\C$\$($scan.RemoteDataFile)" -ReadCount 0)
+					Add-content -Path "$($scan.TEMP_DIR)\output.txt" -Value (get-content "\\$HostIP\C$\$($scan.RemoteDataFile)" |where{$_})
 					$scan.mtx.ReleaseMutex()
 				}
 				Remove-Item -Force "\\$HostIP\C$\$($scan.RemoteDataFile)"
