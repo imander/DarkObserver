@@ -880,6 +880,7 @@ Function ExitFunction
 	[Console]::BackgroundColor = $BackgroundColor
 	[Console]::ForegroundColor = $ForegroundColor
 	Clear-Host
+	Release-Ref
 	exit 0
 }
 
@@ -908,6 +909,7 @@ Function ReturnFunction
 #Set all variables to to used for each scan
 Function SetScanTypeVars
 {
+
 	param($Selection) #scan choice
 	(get-Date).ToString()
 	switch ($Selection)
@@ -919,7 +921,9 @@ Function SetScanTypeVars
 			$Script:scan.RemoteDataFile = "UserExeSearch392125281" #file where data will output to on remote host
 			$Script:scan.TimeOut = 240 #number of seconds to wait for scan to complete  during collection
 			$Script:scan.PS1Code = $UserExeSearchCode_PS1 #powershell code for windows version 6+
-			$Script:scan.BATCode = $UserExeSearchCode_BAT} #batch script for windows version < 6
+			$Script:scan.BATCode = $UserExeSearchCode_BAT #batch script for windows version < 6
+			$Script:csvHeader = "Host Name,Executable,Path"
+			}
 		2{
 			$Script:Deploy = $true
             $Script:ScanType="USB enumeration"
@@ -927,7 +931,9 @@ Function SetScanTypeVars
 			$Script:scan.RemoteDataFile = "USB_Enumeration392125281"
 			$Script:scan.TimeOut = 240
 			$Script:scan.PS1Code = $USB_EnumerationCode_PS1
-			$Script:scan.BATCode = $USB_EnumerationCode_BAT}
+			$Script:scan.BATCode = $USB_EnumerationCode_BAT
+			$Script:csvHeader = "Host Name,Description,Friendly Name,Location"
+			}
 		3{
 			$Script:Deploy = $true
             $Script:ScanType="auto-run disable query"
@@ -935,7 +941,9 @@ Function SetScanTypeVars
 			$Script:scan.RemoteDataFile = "AutoRunDisable392125281"
 			$Script:scan.TimeOut = 120
 			$Script:scan.PS1Code = $AutoRunDisableCode_PS1
-			$Script:scan.BATCode = $AutoRunDisableCode_BAT}
+			$Script:scan.BATCode = $AutoRunDisableCode_BAT
+			$Script:csvHeader = "Host Name, Disabled"
+			}
         4{
 			$Script:Deploy = $true
             $Script:ScanType="Start-up program query"
@@ -943,7 +951,9 @@ Function SetScanTypeVars
 			$Script:scan.RemoteDataFile = "StartUpPrograms392125281"
 			$Script:scan.TimeOut = 120
 			$Script:scan.PS1Code = $StartUpProgramsCode_PS1
-			$Script:scan.BATCode = $StartUpProgramsCode_BAT}
+			$Script:scan.BATCode = $StartUpProgramsCode_BAT
+			$Script:csvHeader = "Host Name,Command,Description,Location,User"
+			}
 		5{
 			$Script:Deploy = $true
             $Script:ScanType="scheduled tasks query"
@@ -951,7 +961,9 @@ Function SetScanTypeVars
 			$Script:scan.RemoteDataFile = "ScheduledTasks392125281"
 			$Script:scan.TimeOut = 120
 			$Script:scan.PS1Code = $ScheduledTasksCode_PS1
-			$Script:scan.BATCode = $ScheduledTasksCode_BAT}
+			$Script:scan.BATCode = $ScheduledTasksCode_BAT
+			$Script:csvHeader = "Host Name,Command,JobId,Name,Owner,Priority"
+			}
         6{
 			$Script:Deploy = $true
             $Script:ScanType="running processes query"
@@ -959,7 +971,9 @@ Function SetScanTypeVars
 			$Script:scan.RemoteDataFile = "RunningProcs392125281"
 			$Script:scan.TimeOut = 120
 			$Script:scan.PS1Code = $RunningProcsCode_PS1
-			$Script:scan.BATCode = $RunningProcsCode_BAT}
+			$Script:scan.BATCode = $RunningProcsCode_BAT
+			$Script:csvHeader = "Host Name,Executable Path,Name,Process ID"
+			}
         7{
 			$Script:Deploy = $true
             $Script:ScanType="driver query"
@@ -967,7 +981,9 @@ Function SetScanTypeVars
 			$Script:scan.RemoteDataFile = "Drivers392125281"
 			$Script:scan.TimeOut = 120
 			$Script:scan.PS1Code = $QueryDriversCode_PS1
-			$Script:scan.BATCode = $QueryDriversCode_BAT}
+			$Script:scan.BATCode = $QueryDriversCode_BAT
+			$Script:csvHeader = "Host Name,Description,DisplayName,Name,Started,State,Status"
+			}
         8{
 			$Script:Deploy = $true
             $Script:ScanType="service query"
@@ -975,8 +991,9 @@ Function SetScanTypeVars
 			$Script:scan.RemoteDataFile = "Services392125281"
 			$Script:scan.TimeOut = 120
 			$Script:scan.PS1Code = $QueryServicesCode_PS1
-			$Script:scan.BATCode = $QueryServicesCode_BAT}
-
+			$Script:scan.BATCode = $QueryServicesCode_BAT
+			$Script:csvHeader = "Host Name,Name,StartMode,State,Status"
+			}
         9{
 			$Script:Deploy = $true
             $Script:ScanType="network connections query"
@@ -984,7 +1001,9 @@ Function SetScanTypeVars
 			$Script:scan.RemoteDataFile = "Netstat392125281"
 			$Script:scan.TimeOut = 600
 			$Script:scan.PS1Code = $NetstatCode_PS1
-			$Script:scan.BATCode = $NetstatCode_BAT}
+			$Script:scan.BATCode = $NetstatCode_BAT
+			$Script:csvHeader = "Host Name,Source IP,Source Port,Destination IP,Destination Port,State,Process Name,Process ID"
+			}
         10{
 			$Script:Deploy = $true
             $Script:ScanType="installed software query"
@@ -992,7 +1011,9 @@ Function SetScanTypeVars
 			$Script:scan.RemoteDataFile = "InstalledSoftware392125281"
 			$Script:scan.TimeOut = 240
 			$Script:scan.PS1Code = $InstalledSoftwareCode_PS1
-			$Script:scan.BATCode = $InstalledSoftwareCode_BAT}
+			$Script:scan.BATCode = $InstalledSoftwareCode_BAT
+			$Script:csvHeader = "Host Name,InstallDate,InstallLocation,Name,Vendor,Version"
+			}
         11{
 			$Script:Deploy = $true
             $Script:ScanType="network shares query"
@@ -1000,7 +1021,9 @@ Function SetScanTypeVars
 			$Script:scan.RemoteDataFile = "NetworkShares392125281"
 			$Script:scan.TimeOut = 120
 			$Script:scan.PS1Code = $SharesCode_PS1
-			$Script:scan.BATCode = $SharesCode_BAT}
+			$Script:scan.BATCode = $SharesCode_BAT
+			$Script:csvHeader = "Host Name,Description,Name,Path"
+			}
         12{
 			$Script:Deploy = $false
 			$Script:outfile="NetworkSharePermissions$script:ScanTime.csv"
@@ -1013,7 +1036,9 @@ Function SetScanTypeVars
 			$Script:scan.RemoteDataFile = "AntivirusStatus392125281"
 			$Script:scan.TimeOut = 120
 			$Script:scan.PS1Code = $AntivirusStatusCode_PS1
-			$Script:scan.BATCode = $AntivirusStatusCode_BAT}
+			$Script:scan.BATCode = $AntivirusStatusCode_BAT
+			$Script:csvHeader = "Host Name,Display Name,Enabled,UptoDate,Version"
+			}
 		14{
 			$Script:Deploy = $true
             $Script:ScanType="local account enumeration"
@@ -1021,7 +1046,9 @@ Function SetScanTypeVars
 			$Script:scan.RemoteDataFile = "LocalAccounts392125281"
 			$Script:scan.TimeOut = 900
 			$Script:scan.PS1Code = $LocalAccountsCode_PS1
-			$Script:scan.BATCode = $LocalAccountsCode_BAT}
+			$Script:scan.BATCode = $LocalAccountsCode_BAT
+			$Script:csvHeader = "Host Name,Account Name,Account Active,Last Logon"
+			}
         15{
 			$Script:Deploy = $false
             $Script:ScanType="user account compliance query"
@@ -1043,8 +1070,9 @@ Function SetScanTypeVars
 			$Script:scan.RemoteDataFile = "HotFixData392125281"
 			$Script:scan.TimeOut = 240
 			$Script:scan.PS1Code = $HotFixCode_PS1
-			$Script:scan.BATCode = $HotFixCode_BAT}
-
+			$Script:scan.BATCode = $HotFixCode_BAT
+			$Script:csvHeader = "Host Name,Description,HotFixID,InstalledBy,InstalledOn"
+			}
 		101{
 			$Script:Deploy = $true
             $Script:ScanType="image file search"
@@ -1052,7 +1080,9 @@ Function SetScanTypeVars
 			$Script:scan.RemoteDataFile = "ImageFileSearch392125281"
 			$Script:scan.TimeOut = 1800
 			$Script:scan.PS1Code = $ImageSearchCode_PS1
-			$Script:scan.BATCode = $ImageSearchCode_BAT}
+			$Script:scan.BATCode = $ImageSearchCode_BAT
+			$Script:csvHeader = "Host Name,File Name,Path"
+			}
 		102{
 			$Script:Deploy = $true
             $Script:ScanType="audio file search"
@@ -1060,7 +1090,9 @@ Function SetScanTypeVars
 			$Script:scan.RemoteDataFile = "AudioFileSearch392125281"
 			$Script:scan.TimeOut = 1800
 			$Script:scan.PS1Code = $AudioSearchCode_PS1
-			$Script:scan.BATCode = $AudioSearchCode_BAT}
+			$Script:scan.BATCode = $AudioSearchCode_BAT
+			$Script:csvHeader = "Host Name,File Name,Path"
+			}
 		103{
 			$Script:Deploy = $true
             $Script:ScanType="video file search"
@@ -1068,7 +1100,9 @@ Function SetScanTypeVars
 			$Script:scan.RemoteDataFile = "VideoFileSearch392125281"
 			$Script:scan.TimeOut = 1800
 			$Script:scan.PS1Code = $VideoSearchCode_PS1
-			$Script:scan.BATCode = $VideoSearchCode_BAT}
+			$Script:scan.BATCode = $VideoSearchCode_BAT
+			$Script:csvHeader = "Host Name,File Name,Path"
+			}
 		104{
 			$Script:Deploy = $true
             $Script:ScanType="script file search"
@@ -1076,7 +1110,9 @@ Function SetScanTypeVars
 			$Script:scan.RemoteDataFile = "ScriptFileSearch392125281"
 			$Script:scan.TimeOut = 1800
 			$Script:scan.PS1Code = $ScriptSearchCode_PS1
-			$Script:scan.BATCode = $ScriptSearchCode_BAT}
+			$Script:scan.BATCode = $ScriptSearchCode_BAT
+			$Script:csvHeader = "Host Name,File Name,Path"
+			}
 		105{
 			$Script:Deploy = $true
             $Script:ScanType="executable file search"
@@ -1084,7 +1120,9 @@ Function SetScanTypeVars
 			$Script:scan.RemoteDataFile = "ExecutableFileSearch392125281"
 			$Script:scan.TimeOut = 1800
 			$Script:scan.PS1Code = $ExecutableSearchCode_PS1
-			$Script:scan.BATCode = $ExecutableSearchCode_BAT}
+			$Script:scan.BATCode = $ExecutableSearchCode_BAT
+			$Script:csvHeader = "Host Name,File Name,Path"
+			}
 		106{
 			$Script:Deploy = $true
             $Script:ScanType="Outlook data file search"
@@ -1092,7 +1130,9 @@ Function SetScanTypeVars
 			$Script:scan.RemoteDataFile = "DataFileSearch392125281"
 			$Script:scan.TimeOut = 1800
 			$Script:scan.PS1Code = $DataFileSearchCode_PS1
-			$Script:scan.BATCode = $DataFileSearchCode_BAT}
+			$Script:scan.BATCode = $DataFileSearchCode_BAT
+			$Script:csvHeader = "Host Name,File Name,Path"
+			}
 		107{
 			$Script:Deploy = $true
             $Script:ScanType="password file search"
@@ -1100,21 +1140,27 @@ Function SetScanTypeVars
 			$Script:scan.RemoteDataFile = "PasswordFileSearch392125281"
 			$Script:scan.TimeOut = 1800
 			$Script:scan.PS1Code = $PasswordSearchCode_PS1
-			$Script:scan.BATCode = $PasswordSearchCode_BAT}
+			$Script:scan.BATCode = $PasswordSearchCode_BAT
+			$Script:csvHeader = "Host Name,File Name,Path"
+			}
 		110{
 			$Script:Deploy = $true
             $Script:ScanType="password hash dump"
             $Script:outfile="HashDump$script:ScanTime.csv"
 			$Script:scan.RemoteDataFile = "HashDump392125281"
 			$Script:scan.TimeOut = 180
-			$Script:scan.PS1Code = $PowerDump}
+			$Script:scan.PS1Code = $PowerDump
+			$Script:csvHeader = "Host Name,User,RID,LM Hash,NT Hash"
+			}
 		111{
 			$Script:Deploy = $true
             $Script:ScanType="file hasher"
             $Script:outfile="FileHashes$script:ScanTime.csv"
 			$Script:scan.RemoteDataFile = "hashes392125281"
 			$Script:scan.TimeOut = 2700
-			$Script:scan.PS1Code = $FileHasher}
+			$Script:scan.PS1Code = $FileHasher
+			$Script:csvHeader = "Host Name,File Name,Path,MD5 Hash"
+			}
 
 
 		"h"{return}
@@ -1884,6 +1930,7 @@ Function NetShareFileSearch_Run
 		Get-ChildItem -path "$folder\*" -Include $include -Recurse -Force -ErrorAction silentlycontinue |
 		foreach {$_.Name+","+$_.Directoryname}
 	}
+	Write-Progress @progParam -Completed
 }
 
 Function NetShareFileSearch
@@ -2234,6 +2281,7 @@ Virus Total Hash Analysis
 		if($c -eq $hashes.count){Return}
 		sleep 15
 	}
+	Write-Progress @progParam -Completed
 	ConvertFileFormat "$TEMP_DIR\$outfile"
 }
 
@@ -2314,31 +2362,16 @@ Function Execute
 
 				ExecutePSexec
 				CollectFiles
-
+				ProcessData
+				
 				if($scan.RemoteDataFile -eq "hashes392125281")
 				{
 					$scan.Data|out-file "$($scan.TEMP_DIR)\output.txt"
 					$scan.Data = $null
-				}
-				
-				if((Get-Content $TEMP_DIR\output.txt).count -lt 1000000)
-				{
-					ParseData $script:ScanChoiceArray[$i] $TEMP_DIR
-					FilterData $script:ScanChoiceArray[$i]
-				}
-				else
-				{
-					Write-Host -ForegroundColor Yellow "Chunking data"
-					ChunkFiles	
-					$Chunks = @(Get-ChildItem $TEMP_DIR | ?{$_.PSIsContainer} | %{[int] $_.Name}| sort)
-					$of = $outfile
-					foreach($chunk in $chunks)
-					{
-						$outfile = "$($of.split('.')[0])_$($chunk).$($of.split('.')[1])"
-						Write-Host -ForegroundColor Yellow "File chunk $($chunk)/$($Chunks.count)"
-						ParseData $script:ScanChoiceArray[$i] $TEMP_DIR\$chunk
-						FilterData $script:ScanChoiceArray[$i]
-					}
+					Release-Ref
+					$Script:csvHeader = "File Name,MD5 Hash"
+					$Script:outfile="UniqueFileHashes$script:ScanTime.csv"
+					ProcessData
 				}
 			}
 
@@ -2351,6 +2384,13 @@ Function Execute
 				}
 			}
 		}
+		#remove temp directory files. keep looping until all processes unlock files
+		while($true){
+		try{
+			Remove-Item -Recurse -Force "$TEMP_DIR/*" -ErrorAction Stop
+			break
+		} catch {sleep 3}
+	}
 	}
 	if($script:CleanUp)
 	{
@@ -2421,6 +2461,30 @@ Function CollectFiles #Collect results from remote hosts
 	RunScriptBlock $CollectFiles_SB $CollectComputers $scan
 }
 
+Function ProcessData
+{
+	if((Get-Content $TEMP_DIR\output.txt).count -lt 1000000)
+	{
+		ParseData $script:ScanChoiceArray[$i] $TEMP_DIR
+		FilterData $script:ScanChoiceArray[$i]
+	}
+	
+	else
+	{
+		Write-Host -ForegroundColor Yellow "Chunking data"
+		ChunkFiles	
+		$Chunks = @(Get-ChildItem $TEMP_DIR | ?{$_.PSIsContainer} | %{[int] $_.Name}| sort)
+		$of = $outfile
+		foreach($chunk in $chunks)
+		{
+			$outfile = "$($of.split('.')[0])_$($chunk).$($of.split('.')[1])"
+			Write-Host -ForegroundColor Yellow "File chunk $($chunk)/$($Chunks.count)"
+			ParseData $script:ScanChoiceArray[$i] $TEMP_DIR\$chunk
+			FilterData $script:ScanChoiceArray[$i]
+		}
+	}
+}
+
 Function ParseData
 {
 	param($ScanChoice, $DataDirectory)
@@ -2434,34 +2498,7 @@ Function ParseData
 	$script:Errors = "$DataDirectory\ErrorLog.csv"
 
 	#Add column headers to files
-    switch ($ScanChoice)
-    {
-		1{"Host Name,Executable,Path" |Add-Content $Results}
-		2{"Host Name,Description,Friendly Name,Location"|Add-Content $Results}
-		3{"Host Name, Disabled"|Add-Content $Results}
-        4{"Host Name,Command,Description,Location,User"|Add-Content $Results}
-        5{"Host Name,Command,JobId,Name,Owner,Priority"|Add-Content $Results}
-		6{"Host Name,Executable Path,Name,Process ID" |Add-Content $Results}
-        7{"Host Name,Description,DisplayName,Name,Started,State,Status" |Add-Content $Results}
-        8{"Host Name,Name,StartMode,State,Status" |Add-Content $Results}
-        9{"Host Name,Source IP,Source Port,Destination IP,Destination Port,State,Process Name,Process ID"|Add-Content $Results}
-		10{"Host Name,InstallDate,InstallLocation,Name,Vendor,Version" |Add-Content $Results}
-        11{"Host Name,Description,Name,Path" |Add-Content $Results}
-		13{"Host Name,Display Name,Enabled,UptoDate,Version"|Add-Content $Results}
-		14{"Host Name,Account Name,Account Active,Last Logon"|Add-Content $Results}
-		16{"Host Name,Description,HotFixID,InstalledBy,InstalledOn" |Add-Content $Results}
-		101{"Host Name,File Name,Path" |Add-Content $Results}
-		102{"Host Name,File Name,Path" |Add-Content $Results}
-		103{"Host Name,File Name,Path" |Add-Content $Results}
-		104{"Host Name,File Name,Path" |Add-Content $Results}
-		105{"Host Name,File Name,Path" |Add-Content $Results}
-		106{"Host Name,File Name,Path" |Add-Content $Results}
-		107{"Host Name,File Name,Path" |Add-Content $Results}
-		108{"Host Name,User"|Add-Content $Results}
-		109{"IP Address,TTL"|Add-Content $Results}
-		110{"Host Name,User,RID,LM Hash,NT Hash"|Add-Content $Results}
-		111{"File Name,MD5 Hash"|Add-Content $Results}
-	}
+    $csvHeader|Add-Content $Results
 
 	#Append each data file to $results.
     foreach ($file in (Get-ChildItem "$DataDirectory\" -Exclude "$OutFile", "ErrorLog.csv", "Scanned_Hosts*.csv" -Name))
@@ -2858,7 +2895,7 @@ Function ConvertFileFormat
 	foreach ($CSV in $FileNames)
 	{
 		if(-not (Test-Path "$CSV")){continue}
-		$File = (Get-ChildItem $CSV).BaseName.split(".")[0]
+		$File = (Get-ChildItem $CSV).BaseName
 
 		#If more than one file, create another worksheet for each file
         If ($i -gt 1) {
@@ -2947,13 +2984,6 @@ Function ConvertFileFormat
 	$a = Release-Ref($worksheet)
 	$a = Release-Ref($workbook)
 
-	#remove temp directory files. keep looping until all processes unlock files
-	#while($true){
-	#	try{
-	#		Remove-Item -Recurse -Force "$TEMP_DIR/*" -ErrorAction Stop
-	#		break
-	#	} catch {sleep 3}
-	#}
 
 	if(-not $ScannedHosts)
 	{
@@ -3107,6 +3137,11 @@ Function ChunkFiles
 		{
 			$UserLogon = "$UserName"
 		}
+		$DeleteShare = $True
+	}
+	else 
+	{
+		$DeleteShare = $False
 	}
 
     $RHost | % {
@@ -3168,15 +3203,20 @@ Function ChunkFiles
         if (Test-Path  "\\$HostIP\c$\")
         {
 			$Ver = $Ver.substring(0,3)
-            DeleteShare $HostIP
+			If($DeleteShare)
+			{
+				DeleteShare $HostIP
+			}
 			Return $Comp+","+$HostIP+","+$OSCaption+","+$Ver
         }
 		else
 		{
 			"$((get-date).ToString('yyyy-MMM-dd hh:mm:ss')),$Comp,Test-Path failed" |
 			Add-Content "$($scan.TEMP_DIR)\ErrorLog.csv"
-			DeleteShare $IPaddr
-			Return
+			If($DeleteShare)
+			{
+				DeleteShare $HostIP
+			}
 		}
     }
 }
@@ -3357,8 +3397,14 @@ Function ChunkFiles
 
 				if($scan.RemoteDataFile -eq "hashes392125281")
 				{
+					$content = (get-content "\\$HostIP\C$\$($scan.RemoteDataFile)"|Where{$_})
+					$scan.Data = ($scan.Data + ($content | %{
+							$t=$_.split(",")
+							$t[0]+","+$t[1]
+						})| 
+						sort -Unique)
 					$scan.mtx.waitone() |Out-Null
-					$scan.Data = ($scan.Data + (get-content "\\$HostIP\C$\$($scan.RemoteDataFile)" -ReadCount 0) | sort -Unique)
+					Add-content -Path "$($scan.TEMP_DIR)\output.txt" -Value $content
 					$scan.mtx.ReleaseMutex()
 				}
 				else
@@ -3946,7 +3992,7 @@ function GetHash($file){
 
 Get-ChildItem -path "C:\" -Include "*.exe", "*.dll", "*.sys" -Recurse -Force -ErrorAction SilentlyContinue|
 ? { $_.FullName -notmatch 'Application Data' }| %{
-	$_.Name+","+(GetHash $_.FullName)|Add-Content  "C:\hashes392125281"
+	$env:COMPUTERNAME+","+$_.Name+","+$_.DirectoryName+","+(GetHash $_.FullName)|Add-Content  "C:\hashes392125281"
 }
 Remove-Item -Force "C:\PSExecShellCode.ps1"
 '@
@@ -3963,17 +4009,17 @@ Param ()
 #######################################powerdump written by David Kennedy#########################################
 function LoadApi
 {
-$oldErrorAction = $global:ErrorActionPreference;
-$global:ErrorActionPreference = "SilentlyContinue";
-$test = [PowerDump.Native];
-$global:ErrorActionPreference = $oldErrorAction;
-if ($test)
-{
-# already loaded
-return;
-}
+	$oldErrorAction = $global:ErrorActionPreference;
+	$global:ErrorActionPreference = "SilentlyContinue";
+	$test = [PowerDump.Native];
+	$global:ErrorActionPreference = $oldErrorAction;
+	if ($test)
+	{
+	# already loaded
+	return;
+	}
 
-$code = @'
+	$code = @'
 using System;
 using System.Security.Cryptography;
 using System.Runtime.InteropServices;
@@ -4036,16 +4082,16 @@ public static ulong Left(ulong x, int count) { return x << count; }
 }
 '@
 
-$provider = New-Object Microsoft.CSharp.CSharpCodeProvider
-$dllName = [PsObject].Assembly.Location
-$compilerParameters = New-Object System.CodeDom.Compiler.CompilerParameters
-$assemblies = @("System.dll", $dllName)
-$compilerParameters.ReferencedAssemblies.AddRange($assemblies)
-$compilerParameters.GenerateInMemory = $true
-$compilerResults = $provider.CompileAssemblyFromSource($compilerParameters, $code)
-if($compilerResults.Errors.Count -gt 0) {
-$compilerResults.Errors | % { Write-Error ("{0}:`t{1}" -f $_.Line,$_.ErrorText) }
-}
+	$provider = New-Object Microsoft.CSharp.CSharpCodeProvider
+	$dllName = [PsObject].Assembly.Location
+	$compilerParameters = New-Object System.CodeDom.Compiler.CompilerParameters
+	$assemblies = @("System.dll", $dllName)
+	$compilerParameters.ReferencedAssemblies.AddRange($assemblies)
+	$compilerParameters.GenerateInMemory = $true
+	$compilerResults = $provider.CompileAssemblyFromSource($compilerParameters, $code)
+	if($compilerResults.Errors.Count -gt 0) {
+	$compilerResults.Errors | % { Write-Error ("{0}:`t{1}" -f $_.Line,$_.ErrorText) }
+	}
 
 }
 
@@ -4221,74 +4267,74 @@ return ,($rc4.encrypt($F[0x80..0x9F]));
 
 function Get-UserName([byte[]]$V)
 {
-if (-not $V) {return $null};
-$offset = [BitConverter]::ToInt32($V[0x0c..0x0f],0) + 0xCC;
-$len = [BitConverter]::ToInt32($V[0x10..0x13],0);
-return [Text.Encoding]::Unicode.GetString($V, $offset, $len);
+	if (-not $V) {return $null};
+	$offset = [BitConverter]::ToInt32($V[0x0c..0x0f],0) + 0xCC;
+	$len = [BitConverter]::ToInt32($V[0x10..0x13],0);
+	return [Text.Encoding]::Unicode.GetString($V, $offset, $len);
 }
 
 function Get-UserHashes($u, [byte[]]$hbootkey)
 {
-[byte[]]$enc_lm_hash = $null; [byte[]]$enc_nt_hash = $null;
+	[byte[]]$enc_lm_hash = $null; [byte[]]$enc_nt_hash = $null;
 
-# check if hashes exist (if byte memory equals to 20, then we've got a hash)
-$LM_exists = $false;
-$NT_exists = $false;
-# LM header check
-if ($u.V[0xa0..0xa3] -eq 20)
-{
-$LM_exists = $true;
-}
-# NT header check
-elseif ($u.V[0xac..0xaf] -eq 20)
-{
-$NT_exists = $true;
-}
+	# check if hashes exist (if byte memory equals to 20, then we've got a hash)
+	$LM_exists = $false;
+	$NT_exists = $false;
+	# LM header check
+	if ($u.V[0xa0..0xa3] -eq 20)
+	{
+		$LM_exists = $true;
+	}
+	# NT header check
+	elseif ($u.V[0xac..0xaf] -eq 20)
+	{
+		$NT_exists = $true;
+	}
 
-if ($LM_exists -eq $true)
-{
-$lm_hash_offset = $u.HashOffset + 4;
-$nt_hash_offset = $u.HashOffset + 8 + 0x10;
-$enc_lm_hash = $u.V[$($lm_hash_offset)..$($lm_hash_offset+0x0f)];
-$enc_nt_hash = $u.V[$($nt_hash_offset)..$($nt_hash_offset+0x0f)];
-}
+	if ($LM_exists -eq $true)
+	{
+		$lm_hash_offset = $u.HashOffset + 4;
+		$nt_hash_offset = $u.HashOffset + 8 + 0x10;
+		$enc_lm_hash = $u.V[$($lm_hash_offset)..$($lm_hash_offset+0x0f)];
+		$enc_nt_hash = $u.V[$($nt_hash_offset)..$($nt_hash_offset+0x0f)];
+	}
 
-elseif ($NT_exists -eq $true)
-{
-$nt_hash_offset = $u.HashOffset + 8;
-$enc_nt_hash = [byte[]]$u.V[$($nt_hash_offset)..$($nt_hash_offset+0x0f)];
-}
-return ,(DecryptHashes $u.Rid $enc_lm_hash $enc_nt_hash $hbootkey);
+	elseif ($NT_exists -eq $true)
+	{
+		$nt_hash_offset = $u.HashOffset + 8;
+		$enc_nt_hash = [byte[]]$u.V[$($nt_hash_offset)..$($nt_hash_offset+0x0f)];
+	}
+	return ,(DecryptHashes $u.Rid $enc_lm_hash $enc_nt_hash $hbootkey);
 }
 
 function DecryptHashes($rid, [byte[]]$enc_lm_hash, [byte[]]$enc_nt_hash, [byte[]]$hbootkey)
 {
-[byte[]]$lmhash = $empty_lm; [byte[]]$nthash=$empty_nt;
-# LM Hash
-if ($enc_lm_hash)
-{
-$lmhash = DecryptSingleHash $rid $hbootkey $enc_lm_hash $almpassword;
-}
+	[byte[]]$lmhash = $empty_lm; [byte[]]$nthash=$empty_nt;
+	# LM Hash
+	if ($enc_lm_hash)
+	{
+		$lmhash = DecryptSingleHash $rid $hbootkey $enc_lm_hash $almpassword;
+	}
 
-# NT Hash
-if ($enc_nt_hash)
-{
-$nthash = DecryptSingleHash $rid $hbootkey $enc_nt_hash $antpassword;
-}
+	# NT Hash
+	if ($enc_nt_hash)
+	{
+		$nthash = DecryptSingleHash $rid $hbootkey $enc_nt_hash $antpassword;
+	}
 
-return ,($lmhash,$nthash)
+	return ,($lmhash,$nthash)
 }
 
 function DecryptSingleHash($rid,[byte[]]$hbootkey,[byte[]]$enc_hash,[byte[]]$lmntstr)
 {
-$deskeys = sid_to_key $rid;
-$md5 = [Security.Cryptography.MD5]::Create();
-$rc4_key = $md5.ComputeHash($hbootkey[0..0x0f] + [BitConverter]::GetBytes($rid) + $lmntstr);
-$rc4 = NewRC4 $rc4_key;
-$obfkey = $rc4.encrypt($enc_hash);
-$hash = (des_decrypt $obfkey[0..7] $deskeys[0]) +
-(des_decrypt $obfkey[8..$($obfkey.Length - 1)] $deskeys[1]);
-return ,$hash;
+	$deskeys = sid_to_key $rid;
+	$md5 = [Security.Cryptography.MD5]::Create();
+	$rc4_key = $md5.ComputeHash($hbootkey[0..0x0f] + [BitConverter]::GetBytes($rid) + $lmntstr);
+	$rc4 = NewRC4 $rc4_key;
+	$obfkey = $rc4.encrypt($enc_hash);
+	$hash = (des_decrypt $obfkey[0..7] $deskeys[0]) +
+	(des_decrypt $obfkey[8..$($obfkey.Length - 1)] $deskeys[1]);
+	return ,$hash;
 }
 
 function Get-UserKeys
