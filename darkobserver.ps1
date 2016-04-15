@@ -2463,6 +2463,7 @@ Function CollectFiles #Collect results from remote hosts
 
 Function ProcessData
 {
+	if(-not (Test-Path "$TEMP_DIR\output.txt")){Return}
 	if((Get-Content $TEMP_DIR\output.txt).count -lt 1000000)
 	{
 		ParseData $script:ScanChoiceArray[$i] $TEMP_DIR
@@ -3238,11 +3239,12 @@ Function ChunkFiles
 		}
 	}
 
-    if($ver.split(".")[0] -ge 6) #powershell for vista+
+    if($ver.split(".")[0] -ge 6) #powershell for vista+ (even though a lot of this probably won't work on vista)
 	{
 		$Rcode = "PSExecShellCode.ps1"
 		$PSCode = $scan.PS1Code
-		$PSexecArgs = 'echo . | powershell -ExecutionPolicy Bypass c:\PSExecShellCode.ps1'
+		$PSexecArgs = 'cmd /c echo . | powershell -ExecutionPolicy Bypass c:\PSExecShellCode.ps1'
+		$WMIArgs = 'powershell -ExecutionPolicy Bypass c:\PSExecShellCode.ps1'
 		$ps=$true
 	}
     else
@@ -3250,7 +3252,8 @@ Function ChunkFiles
 		$Rcode = "PSExecShellCode.bat"
 		$PSCode = $scan.BATCode
 		$ps=$false
-		$PSexecArgs = 'c:\PSExecShellCode.bat'
+		$PSexecArgs = 'cmd /c c:\PSExecShellCode.bat'
+		$WMIArgs = 'c:\PSExecShellCode.bat'
 		switch($scan.RemoteDataFile)
 		{
 			#Scans only available on win7+
@@ -3291,25 +3294,24 @@ Function ChunkFiles
 
 
 	if($scan.Creds)
-	{
-		$Success = (&wmic /node:"$HostIP" /user:$UserLogon /password:$($scan.Creds.GetNetworkCredential().password) process call create "cmd /c $PSexecArgs" 2>&1|
-		Select-String "ProcessId")
+	{	
+		$Success = (Invoke-WmiMethod -ComputerName $HostIP -credential $scan.creds -path win32_process -name create -argumentlist $WMIArgs).ProcessID
 	}
 	else
 	{
-		$Success = (&wmic /node:"$HostIP" process call create "cmd /c $PSexecArgs" 2>&1|Select-String "ProcessId")
+		$Success = (Invoke-WmiMethod -ComputerName $HostIP -path win32_process -name create -argumentlist $WMIArgs).ProcessID
 	}
 
 	if ((-not $success) -and $scan.psexec)
 	{
 		if($scan.Creds)
 		{
-			$Success = (&$scan.psexec -accepteula -s -d "\\$HostIP" -u $UserLogon -p $($scan.Creds.GetNetworkCredential().password) cmd /c $PSexecArgs 2>&1|
+			$Success = (&$scan.psexec -accepteula -s -d "\\$HostIP" -u $UserLogon -p $($scan.Creds.GetNetworkCredential().password) $PSexecArgs 2>&1|
 			Select-String "started on $HostIP")
 		}
 		else
 		{
-			$Success = (&$scan.psexec -accepteula -s -d "\\$HostIP" cmd /c $PSexecArgs 2>&1|Select-String "started on $HostIP")
+			$Success = (&$scan.psexec -accepteula -s -d "\\$HostIP" $PSexecArgs 2>&1|Select-String "started on $HostIP")
 		}
 	}
 
@@ -3321,7 +3323,7 @@ Function ChunkFiles
 	else
 	{
 		"$((get-date).ToString('yyyy-MMM-dd hh:mm:ss')),$HostName,Remote Execution failed" | Add-Content "$($scan.TEMP_DIR)\ErrorLog.csv"
-		Remove-Item -Path "\\$HostIP\c$\PSExecShellCode.*" -Force -ErrorAction SilentlyContinue
+		#Remove-Item -Path "\\$HostIP\c$\PSExecShellCode.*" -Force -ErrorAction SilentlyContinue
 		DeleteShare
 	}
 }
