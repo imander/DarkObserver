@@ -1246,17 +1246,17 @@ Function DomainAccounts
     #[ADSI]"" searches begining in the the root of your current domain
     #you can change where your search starts by specifying the AD location
     #example: [ADSI]"LDAP://OU=Users and Computers,DC=foo,DC=bar,DC=com"
-    $Search = New-Object DirectoryServices.DirectorySearcher([ADSI]"")
+    $Search = New-Object DirectoryServices.DirectorySearcher([ADSI]"LDAP://$DistinguishedName")
     $Search.PageSize = 1000
 
     #Accounts with no password expiration and no CLO enforced
-    $Search.filter = "(&(objectCategory=person)(objectClass=user)(userAccountControl:1.2.840.113556.1.4.803:=65536)(!(userAccountControl:1.2.840.113556.1.4.803:=262144)))"
+    $Search.filter = "(&(objectCategory=person)(userAccountControl:1.2.840.113556.1.4.803:=65536)(!(userAccountControl:1.2.840.113556.1.4.803:=262144)))"
 	"Account Name,Status,Last Logon,Group Membership"|Add-content "$TEMP_DIR\NoPassExpOrCLO.csv"
     GetResults $Search.Findall() | sort | Add-content "$TEMP_DIR\NoPassExpOrCLO.csv"
 
     #Active accounts that haven't been accessed in 30 days
     $Value = ConvertDate($30Days)
-    $Search.filter = "(&(objectCategory=person)(objectClass=user)(lastLogon<=$Value)(!(lastLogon=0))(!(userAccountControl:1.2.840.113556.1.4.803:=2))(!(lockoutTime>=1)))"
+    $Search.filter = "(&(objectCategory=person)(lastLogon<=$Value)(!(lastLogon=0))(!(userAccountControl:1.2.840.113556.1.4.803:=2))(!(lockoutTime>=1)))"
     "Account Name,Status,Last Logon,Group Membership"|Add-content "$TEMP_DIR\30DaysStale.csv"
 	GetResults $Search.Findall() | sort | Add-content "$TEMP_DIR\30DaysStale.csv"
 
@@ -1266,7 +1266,7 @@ Function DomainAccounts
     #UTC date for whencreated comparison
     $Value2 = $45Days.ToString("yyhhmmss.0Z")
 
-    $Search.filter = "(|(&(objectCategory=person)(objectClass=user)(lastLogon<=$Value)(!(lastLogon=0)))(&(objectCategory=person)(objectClass=user)(whenCreated<=$Value2)(|(!(lastLogon=*))(lastLogon=0))))"
+    $Search.filter = "(|(&(objectCategory=person)(lastLogon<=$Value)(!(lastLogon=0)))(&(objectCategory=person)(whenCreated<=$Value2)(|(!(lastLogon=*))(lastLogon=0))))"
 	"Account Name,Status,Last Logon,Group Membership"|Add-content "$TEMP_DIR\45DaysStale.csv"
 	GetResults $Search.Findall() | sort | Add-content "$TEMP_DIR\45DaysStale.csv"
 
@@ -1293,7 +1293,7 @@ Function GetComputers
 	{
 		$Search = New-Object DirectoryServices.DirectorySearcher([ADSI]"LDAP://$DistinguishedName")
 		$Search.PageSize = 1000 #page size needed to return more than 1000 entries
-		$Search.filter = "(objectClass=computer)"
+		$Search.filter = "(objectCategory=computer)"
 		Foreach($result in $Search.Findall())
 		{
 			$result.GetDirectoryEntry()|%{
@@ -3068,7 +3068,7 @@ Function ChunkFiles
 	{
 
 		$Search = New-Object DirectoryServices.DirectorySearcher([ADSI]"LDAP://$($scan.DomainName)")
-		$Search.filter = "(&(name=$Hostname)(objectClass=computer))"
+		$Search.filter = "(&(name=$Hostname)(objectCategory=computer))"
 		$HostData = $Search.FindOne()
 
 		if($HostData)
@@ -3238,7 +3238,7 @@ Function ChunkFiles
 			net use \\$HostIP\c$ /delete |Out-Null
 		}
 	}
-
+	
     if($ver.split(".")[0] -ge 6) #powershell for vista+ (even though a lot of this probably won't work on vista)
 	{
 		$Rcode = "PSExecShellCode.ps1"
@@ -3258,7 +3258,7 @@ Function ChunkFiles
 		{
 			#Scans only available on win7+
 			"HashDump392125281" {Return}
-			"FileHashes223711" {Return}
+			"hashes392125281" {Return}
 		}
 	}
 
@@ -3402,9 +3402,8 @@ Function ChunkFiles
 					$content = (get-content "\\$HostIP\C$\$($scan.RemoteDataFile)"|Where{$_})
 					$scan.Data = ($scan.Data + ($content | %{
 							$t=$_.split(",")
-							$t[0]+","+$t[1]
-						})| 
-						sort -Unique)
+							$t[1]+","+$t[3]
+						})| sort -Unique)
 					$scan.mtx.waitone() |Out-Null
 					Add-content -Path "$($scan.TEMP_DIR)\output.txt" -Value $content
 					$scan.mtx.ReleaseMutex()
