@@ -2256,6 +2256,15 @@ Virus Total Hash Analysis
 	$regex = '\b[0-9a-fA-F]{32}\b'
 	$hashes = select-string -Path $HashFile -Pattern $regex -AllMatches | % { $_.Matches } | % { $_.Value.tostring() }
 	$hashes = @($hashes|Sort-Object -Unique)
+	if($hashes.count -gt 5760) #VT public API key only allows 5760 submissionss/day
+	{
+		$hashes[5760..$hashes.count]|out-file "$OUT_DIR\TODO_hashes.txt"
+		Write-Warning "$($hashes.count) hashes found.
+Virus Total only allows 5760 submissions per day.
+Submitting first 5760 hashes in $HashFile.
+Remaining hashes saved in $OUT_DIR\TODO_hashes.txt"
+		$hashes = $hashes[0..5759]
+	}
 	$hashBlock = ""
 	for($c=0; $c -le $hashes.count; $c+= 25)
 	{
@@ -2279,7 +2288,7 @@ Virus Total Hash Analysis
 		Write-Progress @progParam
 
 		if($c -eq $hashes.count){Return}
-		sleep 15
+		sleep 15 #public VT API only allows 4 requests/minute
 	}
 	Write-Progress @progParam -Completed
 	ConvertFileFormat "$TEMP_DIR\$outfile"
@@ -2331,7 +2340,6 @@ Function Execute
 				if($script:ScanDomain -or (-not ($ScanHostsFile -eq "ALL")))
 				{
 					$tempOutfile = $Script:outfile
-					"Time Stamp,Host Name, Error" | Add-Content "$TEMP_DIR\ErrorLog.csv"
 					$script:ActiveComputers = @(GetActiveComputers)
 					$Script:outfile = $tempOutfile
 				}
@@ -4447,18 +4455,19 @@ Resize
 CheckDependancies $PSScriptRoot
 AsciiArt
 SetKnownGood
+
 while($true)
 {
 	DarkObserver
 	Release-Ref
 	$ScanChoiceArray.Clear()
-	try {
-		if ((Test-Path variable:\TEMP_DIR) -and (Test-Path $TEMP_DIR -ErrorAction Stop)){
-			Remove-Item -Recurse -Force "$TEMP_DIR"
+	if ((Test-Path variable:\TEMP_DIR) -and (Test-Path $TEMP_DIR -ErrorAction SilentlyContinue)){
+		try {			
+			Remove-Item -Recurse -Force "$TEMP_DIR" -ErrorAction Stop
+		} catch {
+			sleep 3 #wait and try once more to delete temp_dir
+			Remove-Item -Recurse -Force "$TEMP_DIR" 2>$null
 		}
-	} catch {
-		sleep 3
-		Remove-Item -Recurse -Force "$TEMP_DIR" 2>$null
 	}
 }
 
