@@ -468,6 +468,14 @@ Function SetKnownGood
 		$null|Add-Content "$PSScriptRoot\KnownGood\Services.txt"
 		$null|Add-Content "$PSScriptRoot\KnownGood\InstalledSoftware.txt"
 		$null|Add-Content "$PSScriptRoot\KnownGood\RequiredHotFix.txt"
+		$null|Add-Content "$PSScriptRoot\KnownGood\FileHashes.txt"
+		$null|Add-Content "$PSScriptRoot\KnownGood\ImageFiles.txt"
+		$null|Add-Content "$PSScriptRoot\KnownGood\AudioFiles.txt"
+		$null|Add-Content "$PSScriptRoot\KnownGood\VideoFiles.txt"
+		$null|Add-Content "$PSScriptRoot\KnownGood\WindowsScriptFiles.txt"
+		$null|Add-Content "$PSScriptRoot\KnownGood\OutlookDataFiles.txt"
+		$null|Add-Content "$PSScriptRoot\KnownGood\PasswordFiles.txt"
+		$null|Add-Content "$PSScriptRoot\KnownGood\ExecutableFiles.txt"
 	}
 
 	#Directory is present.  Make sure each data parsing file exists
@@ -498,7 +506,31 @@ Function SetKnownGood
 	if (-not (Test-Path "$PSScriptRoot\KnownGood\RequiredHotFix.txt")){
 		$null|Add-Content "$PSScriptRoot\KnownGood\RequiredHotFix.txt"
 	}
-
+	if (-not (Test-Path "$PSScriptRoot\KnownGood\FileHashes.txt")){
+		$null|Add-Content "$PSScriptRoot\KnownGood\FileHashes.txt"
+	}
+	if (-not (Test-Path "$PSScriptRoot\KnownGood\ImageFiles.txt")){
+		$null|Add-Content "$PSScriptRoot\KnownGood\ImageFiles.txt"
+	}
+	if (-not (Test-Path "$PSScriptRoot\KnownGood\AudioFiles.txt")){
+		$null|Add-Content "$PSScriptRoot\KnownGood\AudioFiles.txt"
+	}
+	if (-not (Test-Path "$PSScriptRoot\KnownGood\VideoFiles.txt")){
+		$null|Add-Content "$PSScriptRoot\KnownGood\VideoFiles.txt"
+	}	
+	if (-not (Test-Path "$PSScriptRoot\KnownGood\WindowsScriptFiles.txt")){
+		$null|Add-Content "$PSScriptRoot\KnownGood\WindowsScriptFiles.txt"
+	}
+	if (-not (Test-Path "$PSScriptRoot\KnownGood\OutlookDataFiles.txt")){
+		$null|Add-Content "$PSScriptRoot\KnownGood\OutlookDataFiles.txt"
+	}
+	if (-not (Test-Path "$PSScriptRoot\KnownGood\PasswordFiles.txt")){
+		$null|Add-Content "$PSScriptRoot\KnownGood\PasswordFiles.txt"
+	}
+	if (-not (Test-Path "$PSScriptRoot\KnownGood\ExecutableFiles.txt")){
+		$null|Add-Content "$PSScriptRoot\KnownGood\ExecutableFiles.txt"
+	}
+	
 	#Fill known good hash table with paths to data files
 	$script:KnownGood = @{
 		UserExe = "$PSScriptRoot\KnownGood\UserExeSearch.txt"
@@ -509,7 +541,16 @@ Function SetKnownGood
 		Drivers = "$PSScriptRoot\KnownGood\Drivers.txt"
 		Services = "$PSScriptRoot\KnownGood\Services.txt"
 		Software = "$PSScriptRoot\KnownGood\InstalledSoftware.txt"
-		HotFix = "$PSScriptRoot\KnownGood\RequiredHotFix.txt"}
+		HotFix = "$PSScriptRoot\KnownGood\RequiredHotFix.txt"
+		Hashes = "$PSScriptRoot\KnownGood\FileHashes.txt"
+		ImageFiles = "$PSScriptRoot\KnownGood\ImageFiles.txt"
+		AudioFiles = "$PSScriptRoot\KnownGood\AudioFiles.txt"
+		VideoFiles = "$PSScriptRoot\KnownGood\VideoFiles.txt"
+		WindowsScriptFiles = "$PSScriptRoot\KnownGood\WindowsScriptFiles.txt"
+		OutlookDataFiles = "$PSScriptRoot\KnownGood\OutlookDataFiles.txt"
+		PasswordFiles = "$PSScriptRoot\KnownGood\PasswordFiles.txt"
+		ExecutableFiles = "$PSScriptRoot\KnownGood\ExecutableFiles.txt"
+	}
 }
 
 Function help
@@ -865,8 +906,10 @@ Function DarkObserver #darkobserver command prompt
 			$script:ActiveComputers = @(GetActiveComputers $TRUE)
 		}
 		"cls"{Clear-Host}
-		"exit"{Write-Host ""; ExitFunction}
-		"x"{Write-Host ""; ExitFunction}
+		"exit"{ExitFunction}
+		"x"{ExitFunction}
+		"home"{} #Already at the prompt.  Don't do anything
+		"h"{}
 		default{Help}
 	}
 }
@@ -1952,6 +1995,12 @@ Use format: \\servername\sharename"
 
 	$FileTypesArray.add($(ChooseFileTypes)) #fill array with file types to search
 	$Script:Deploy = $false #Search is not executed using psexec
+	
+	#set variables for filtering data 
+	$script:ResultsUnique = "$TEMP_DIR\Unique.csv"
+	$script:ResultsFiltered = "$TEMP_DIR\Filtered.csv"
+	$script:ResultsUniqFilt = "$TEMP_DIR\Filtered_Unique.csv"
+	$script:Errors = "$TEMP_DIR\ErrorLog.csv"
 
 	#iterate through file choices and find files
 	for($i=0; $i -lt $FileTypesArray.count; $i++)
@@ -1961,59 +2010,80 @@ Use format: \\servername\sharename"
 		{
 			1{  #image files
 				$script:outfile = "ImageFiles_Share$script:ScanTime.csv"
+				$script:Results = "$TEMP_DIR\$OutFile"
 				Write-Host -ForegroundColor Yellow "Searching for image files."
-				"File,Directory" | Add-Content "$TEMP_DIR\$outfile"
+				$script:csvHeader = "File Name,Path"
+				$script:csvHeader | Add-Content "$TEMP_DIR\$outfile"
 				$include = "*.jpg", "*.jpeg", "*.tif", "*.gif", "*.bmp"
 				NetShareFileSearch_Run $SearchNetworkShare $include "Image Search:" |Add-Content "$TEMP_DIR\$outfile"
-				ConvertFileFormat "$TEMP_DIR\$outfile"
+				Write-Host -ForegroundColor Yellow "Parsing Data"
+				FilterData 101 $True
 			}
 			2{  #Audio Files
 				$script:outfile = "AudioFiles_Share$script:ScanTime.csv"
+				$script:Results = "$TEMP_DIR\$OutFile"
 				Write-Host -ForegroundColor Yellow "Searching for audio files."
-				"File,Directory" | Add-Content "$TEMP_DIR\$outfile"
+				$script:csvHeader = "File Name,Path"
+				$script:csvHeader| Add-Content "$TEMP_DIR\$outfile"
 				$include = "*.m4a", "*.m4p", "*.mp3", "*.wma"
 				NetShareFileSearch_Run $SearchNetworkShare $include "Audio Search:" |Add-Content "$TEMP_DIR\$outfile"
-				ConvertFileFormat "$TEMP_DIR\$outfile"
+				Write-Host -ForegroundColor Yellow "Parsing Data"
+				FilterData 102 $True
 			}
 			3{  #Video Files
 				$script:outfile = "VideoFiles_Share$script:ScanTime.csv"
+				$script:Results = "$TEMP_DIR\$OutFile"
 				Write-Host -ForegroundColor Yellow "Searching for video files."
-				"File,Directory" | Add-Content "$TEMP_DIR\$outfile"
+				$script:csvHeader = "File Name,Path"
+				$script:csvHeader | Add-Content "$TEMP_DIR\$outfile"
 				$include = "*.asf", "*.avi", "*.m4v", "*.mov", "*.mp4", "*.mpeg", "*.mpg", "*.wmv"
 				NetShareFileSearch_Run $SearchNetworkShare $include "Video Search:" |Add-Content "$TEMP_DIR\$outfile"
-				ConvertFileFormat "$TEMP_DIR\$outfile"
+				Write-Host -ForegroundColor Yellow "Parsing Data"
+				FilterData 103 $True
 			}
 			4{  #Script Files
 				$script:outfile = "ScriptFiles_Share$script:ScanTime.csv"
+				$script:Results = "$TEMP_DIR\$OutFile"
 				Write-Host -ForegroundColor Yellow "Searching for windows script files."
-				"File,Directory" | Add-Content "$TEMP_DIR\$outfile"
+				$script:csvHeader = "File Name,Path"
+				$script:csvHeader | Add-Content "$TEMP_DIR\$outfile"
 				$include = "*.ps1", "*.psm1", "*.vb", "*.vbs", "*.bat", "*.cmd"
 				NetShareFileSearch_Run $SearchNetworkShare $include "Script Search:" |Add-Content "$TEMP_DIR\$outfile"
-				ConvertFileFormat "$TEMP_DIR\$outfile"
+				Write-Host -ForegroundColor Yellow "Parsing Data"
+				FilterData 104 $True
 			}
 			5{ #Executable Files
 				$script:outfile = "ExecutableFiles_Share$script:ScanTime.csv"
+				$script:Results = "$TEMP_DIR\$OutFile"
 				Write-Host -ForegroundColor Yellow "Searching for executable files."
-				"File,Directory" | Add-Content "$TEMP_DIR\$outfile"
+				$script:csvHeader = "File Name,Path"
+				$script:csvHeader | Add-Content "$TEMP_DIR\$outfile"
 				$include = "*.exe", "*.dll", "*.sys"
 				NetShareFileSearch_Run $SearchNetworkShare $include "Executable Search:" |Add-Content "$TEMP_DIR\$outfile"
-				ConvertFileFormat "$TEMP_DIR\$outfile"
+				Write-Host -ForegroundColor Yellow "Parsing Data"
+				FilterData 105 $True
 			}
 			6{  #Outlook data files
 				$script:outfile = "OutlookDataFiles_Share$script:ScanTime.csv"
+				$script:Results = "$TEMP_DIR\$OutFile"
 				Write-Host -ForegroundColor Yellow "Searching for Outlook data files."
-				"File,Directory" | Add-Content "$TEMP_DIR\$outfile"
+				$script:csvHeader = "File Name,Path"
+				$script:csvHeader | Add-Content "$TEMP_DIR\$outfile"
 				$include = "*.pst"
 				NetShareFileSearch_Run $SearchNetworkShare $include "Outlook Data-file Search:"  |Add-Content "$TEMP_DIR\$outfile"
-				ConvertFileFormat "$TEMP_DIR\$outfile"
+				Write-Host -ForegroundColor Yellow "Parsing Data"
+				FilterData 106 $True
 			}
 			7{  #password files
 				$script:outfile = "PasswordFiles_Share$script:ScanTime.csv"
+				$script:Results = "$TEMP_DIR\$OutFile"
 				Write-Host -ForegroundColor Yellow "Searching for password files."
-				"File,Directory" | Add-Content "$TEMP_DIR\$outfile"
+				$script:csvHeader = "File Name,Path"
+				$script:csvHeader | Add-Content "$TEMP_DIR\$outfile"
 				$include = "*passw*", "*pwd*"
 				NetShareFileSearch_Run $SearchNetworkShare $include "Password Search:" |Add-Content "$TEMP_DIR\$outfile"
-				ConvertFileFormat "$TEMP_DIR\$outfile"
+				Write-Host -ForegroundColor Yellow "Parsing Data"
+				FilterData 107 $True
 			}
 		}
 	}
@@ -2259,10 +2329,12 @@ Virus Total Hash Analysis
 	if($hashes.count -gt 5760) #VT public API key only allows 5760 submissionss/day
 	{
 		$hashes[5760..$hashes.count]|out-file "$OUT_DIR\TODO_hashes.txt"
-		Write-Warning "$($hashes.count) hashes found.
+		Write-Warning "
+$($hashes.count) hashes found.
 Virus Total only allows 5760 submissions per day.
 Submitting first 5760 hashes in $HashFile.
-Remaining hashes saved in $OUT_DIR\TODO_hashes.txt"
+Remaining hashes saved in $OUT_DIR\TODO_hashes.txt
+"
 		$hashes = $hashes[0..5759]
 	}
 	$hashBlock = ""
@@ -2534,9 +2606,15 @@ Function UniqueFilter
 		"$($_.count),$($_.Name)" }
 }
 
+Function FilterKnownGood
+{
+	$csvHeader |Add-Content $ResultsFiltered
+	($Content|select -skip 1)|Select-String -NotMatch -SimpleMatch -Pattern $filter |Add-Content $ResultsFiltered
+}
+
 Function FilterData
 {
-	param($ScanChoice)
+	param($ScanChoice,$NotDeploy)
 
 	$Content = Get-Content $Results -ReadCount 0
 	switch($ScanChoice)
@@ -2552,9 +2630,8 @@ Function FilterData
 			#Filtered Results
 			if($filter)
 			{
-				"Host Name,Executable,Path" |Add-Content $ResultsFiltered
-				($Content|select -skip 1)|Select-String -NotMatch -SimpleMatch -Pattern $filter |Add-Content $ResultsFiltered
-
+				FilterKnownGood
+				
 				#Unique filtered results
 				$data = (Get-Content $ResultsFiltered |select -skip 1)|%{$_.split(",")[1]}
 				if($data)
@@ -2575,9 +2652,8 @@ Function FilterData
 			#Filtered Results
 			if($filter)
 			{
-				"Host Name,Description,Friendly Name,Location"|Add-Content $ResultsFiltered
-				($Content|select -skip 1)|Select-String -NotMatch -SimpleMatch -Pattern $filter |Add-Content $ResultsFiltered
-
+				FilterKnownGood
+				
 				#Unique filtered results
 				$data = (Get-Content $ResultsFiltered |select -skip 1)|%{$_.split(",")[3]}
 				if($data)
@@ -2598,9 +2674,7 @@ Function FilterData
 			#Filtered Results
 			if($filter)
 			{
-				"Host Name,Command,Description,Location,User"|Add-Content $ResultsFiltered
-				($Content|select -skip 1)|Select-String -NotMatch -SimpleMatch -Pattern $filter |Add-Content $ResultsFiltered
-
+				FilterKnownGood
 				#Unique filtered results
 				$data = (Get-Content $ResultsFiltered |select -skip 1)|%{$_.split(",")[1]}
 				if($data)
@@ -2622,9 +2696,7 @@ Function FilterData
 			#Filtered Results
 			if($filter)
 			{
-				"Host Name,Command,JobId,Name,Owner,Priority"|Add-Content $ResultsFiltered
-				($Content|select -skip 1)|Select-String -NotMatch -SimpleMatch -Pattern $filter |Add-Content $ResultsFiltered
-
+				FilterKnownGood
 				#Unique filtered results
 				$data = (Get-Content $ResultsFiltered |select -skip 1)|%{$_.split(",")[1]}
 				if($data)
@@ -2645,9 +2717,7 @@ Function FilterData
 			#Filtered Results
 			if($filter)
 			{
-				"Host Name,Executable Path,Name"|Add-Content $ResultsFiltered
-				($Content|select -skip 1)|Select-String -NotMatch -SimpleMatch -Pattern $filter |Add-Content $ResultsFiltered
-
+				FilterKnownGood
 				#Unique filtered results
 				$data = (Get-Content $ResultsFiltered |select -skip 1)|%{"$($_.split(",")[2]),$($_.split(",")[1])"}
 				if($data)
@@ -2668,9 +2738,7 @@ Function FilterData
 			#Filtered Results
 			if($filter)
 			{
-				"Host Name,Description,DisplayName,Name,Started,State,Status"|Add-Content $ResultsFiltered
-				($Content|select -skip 1)|Select-String -NotMatch -SimpleMatch -Pattern $filter |Add-Content $ResultsFiltered
-
+				FilterKnownGood
 				#Unique filtered results
 				$data = (Get-Content $ResultsFiltered |select -skip 1)|%{$_.split(",")[3]}
 				if($data)
@@ -2691,9 +2759,7 @@ Function FilterData
 			#Filtered Results
 			if($filter)
 			{
-				"Host Name,Name,StartMode,State,Status"|Add-Content $ResultsFiltered
-				($Content|select -skip 1)|Select-String -NotMatch -SimpleMatch -Pattern $filter |Add-Content $ResultsFiltered
-
+				FilterKnownGood
 				#Unique filtered results
 				$data = (Get-Content $ResultsFiltered|select -skip 1)|%{$_.split(",")[1]}
 				if($data)
@@ -2714,9 +2780,7 @@ Function FilterData
 			#Filtered Results
 			if($filter)
 			{
-				"Host Name,InstallDate,InstallLocation,Name,Vendor,Version"|Add-Content $ResultsFiltered
-				($Content|select -skip 1)|Select-String -NotMatch -SimpleMatch -Pattern $filter |Add-Content $ResultsFiltered
-
+				FilterKnownGood
 				#Unique filtered results
 				$data = (Get-Content $ResultsFiltered |select -skip 1)|%{$_.split(",")[3]}
 				if($data)
@@ -2779,43 +2843,211 @@ Function FilterData
 			}
 		}
 		101{
-			$data = ($Content|select -skip 1) |%{$_.split(",")[1]}
+			$filter = Get-Content $KnownGood.ImageFiles | Where{$_}
+		
+			if($NotDeploy){$i=0}
+			else{$i=1}
+			$data = ($Content|select -skip 1) |%{$_.split(",")[$i]}
+			
 			if($data)
 			{
 				"Count,File Name"|Add-Content $ResultsUnique
 				UniqueFilter | Add-Content $ResultsUnique
+			}
+			
+			#Filtered Results
+			if($filter)
+			{
+				FilterKnownGood
+				#Unique filtered results
+				$data = (Get-Content $ResultsFiltered|select -skip 1)|%{$_.split(",")[$i]}
+				if($data)
+				{
+					"Count,File Name"|Add-Content $ResultsUniqFilt
+					UniqueFilter | Add-Content $ResultsUniqFilt
+				}
 			}
 		}
 		102{
-			$data = ($Content|select -skip 1) |%{$_.split(",")[1]}
+			$filter = Get-Content $KnownGood.AudioFiles | Where{$_}
+			
+			if($NotDeploy){$i=0}
+			else{$i=1}
+			$data = ($Content|select -skip 1) |%{$_.split(",")[$i]}
+			
 			if($data)
 			{
 				"Count,File Name"|Add-Content $ResultsUnique
 				UniqueFilter | Add-Content $ResultsUnique
+			}
+			
+			#Filtered Results
+			if($filter)
+			{
+				FilterKnownGood
+				#Unique filtered results
+				$data = (Get-Content $ResultsFiltered|select -skip 1)|%{$_.split(",")[$i]}
+				if($data)
+				{
+					"Count,File Name"|Add-Content $ResultsUniqFilt
+					UniqueFilter | Add-Content $ResultsUniqFilt
+				}
 			}
 		}
 		103{
-			$data = ($Content|select -skip 1) |%{$_.split(",")[1]}
+			$filter = Get-Content $KnownGood.VideoFiles | Where{$_}
+			
+			if($NotDeploy){$i=0}
+			else{$i=1}
+			$data = ($Content|select -skip 1) |%{$_.split(",")[$i]}
+			
 			if($data)
 			{
 				"Count,File Name"|Add-Content $ResultsUnique
 				UniqueFilter | Add-Content $ResultsUnique
+			}
+			
+			#Filtered Results
+			if($filter)
+			{
+				FilterKnownGood
+				#Unique filtered results
+				$data = (Get-Content $ResultsFiltered|select -skip 1)|%{$_.split(",")[$i]}
+				if($data)
+				{
+					"Count,File Name"|Add-Content $ResultsUniqFilt
+					UniqueFilter | Add-Content $ResultsUniqFilt
+				}
 			}
 		}
 		104{
-			$data = ($Content|select -skip 1) |%{$_.split(",")[1]}
+			$filter = Get-Content $KnownGood.WindowsScriptFiles | Where{$_}
+			
+			if($NotDeploy){$i=0}
+			else{$i=1}
+			$data = ($Content|select -skip 1) |%{$_.split(",")[$i]}
+			
 			if($data)
 			{
 				"Count,File Name"|Add-Content $ResultsUnique
 				UniqueFilter | Add-Content $ResultsUnique
 			}
+			
+			#Filtered Results
+			if($filter)
+			{
+				FilterKnownGood
+				#Unique filtered results
+				$data = (Get-Content $ResultsFiltered|select -skip 1)|%{$_.split(",")[$i]}
+				if($data)
+				{
+					"Count,File Name"|Add-Content $ResultsUniqFilt
+					UniqueFilter | Add-Content $ResultsUniqFilt
+				}
+			}
 		}
 		105{
-			$data = ($Content|select -skip 1)|%{"$($_.split(",")[1]),$($_.split(",")[2])"}
+			$filter = Get-Content $KnownGood.ExecutableFiles | Where{$_}
+			
+			if($NotDeploy){$i=0;$j=1}
+			else{$i=1;$j=2}
+			$data = ($Content|select -skip 1)|%{"$($_.split(",")[$i]),$($_.split(",")[$j])"}
+			
 			if($data)
 			{
 				"Count,File Name,Path"|Add-Content $ResultsUnique
 				UniqueFilter | Add-Content $ResultsUnique
+			}
+			
+			#Filtered Results
+			if($filter)
+			{
+				FilterKnownGood
+				#Unique filtered results
+				$data = (Get-Content $ResultsFiltered|select -skip 1)|%{"$($_.split(",")[$i]),$($_.split(",")[$j])"}
+				if($data)
+				{
+					"Count,File Name,Path"|Add-Content $ResultsUniqFilt
+					UniqueFilter | Add-Content $ResultsUniqFilt
+				}
+			}
+		}
+		106{
+			$filter = Get-Content $KnownGood.OutlookDataFiles | Where{$_}
+			
+			if($NotDeploy){$i=0}
+			else{$i=1}
+			$data = ($Content|select -skip 1) |%{$_.split(",")[$i]}
+			
+			if($data)
+			{
+				"Count,File Name"|Add-Content $ResultsUnique
+				UniqueFilter | Add-Content $ResultsUnique
+			}
+			
+			#Filtered Results
+			if($filter)
+			{
+				FilterKnownGood
+				#Unique filtered results
+				$data = (Get-Content $ResultsFiltered|select -skip 1)|%{$_.split(",")[1]}
+				if($data)
+				{
+					"Count,File Name"|Add-Content $ResultsUniqFilt
+					UniqueFilter | Add-Content $ResultsUniqFilt
+				}
+			}
+		}
+		107{
+			$filter = Get-Content $KnownGood.PasswordFiles | Where{$_}
+			
+			if($NotDeploy){
+				$data = ($Content|select -skip 1) |%{$_.split(",")[0]}
+			}
+			else{
+				$data = ($Content|select -skip 1) |%{$_.split(",")[1]}
+			}
+			
+			if($data)
+			{
+				"Count,File Name"|Add-Content $ResultsUnique
+				UniqueFilter | Add-Content $ResultsUnique
+			}
+			
+			#Filtered Results
+			if($filter)
+			{
+				FilterKnownGood
+				#Unique filtered results
+				$data = (Get-Content $ResultsFiltered|select -skip 1)|%{$_.split(",")[1]}
+				if($data)
+				{
+					"Count,File Name"|Add-Content $ResultsUniqFilt
+					UniqueFilter | Add-Content $ResultsUniqFilt
+				}
+			}
+		}
+		111{
+			$filter = Get-Content $KnownGood.FileHashes | Where{$_}
+			
+			$data = ($Content|select -skip 1) |%{"$($_.split(",")[1]),$($_.split(",")[3])"}
+			if($data)
+			{
+				"Count,File Name,MD5 Hash"|Add-Content $ResultsUnique
+				UniqueFilter | Add-Content $ResultsUnique
+			}
+			
+			#Filtered Results
+			if($filter)
+			{
+				FilterKnownGood
+				#Unique filtered results
+				$data = (Get-Content $ResultsFiltered|select -skip 1)|%{"$($_.split(",")[1]),$($_.split(",")[3])"}
+				if($data)
+				{
+					"Count,File Name,MD5 Hash"|Add-Content $ResultsUniqFilt
+					UniqueFilter | Add-Content $ResultsUniqFilt
+				}
 			}
 		}
 	}
@@ -2946,6 +3178,9 @@ Function ConvertFileFormat
 
 		#Apply autofilter
 		$worksheet.usedrange.autofilter(1, [Type]::Missing) | Out-Null
+		
+		#Bold column Headers
+		$worksheet.cells.item(1,1).EntireRow.Font.Bold = $true
 
         $i++
 	}
