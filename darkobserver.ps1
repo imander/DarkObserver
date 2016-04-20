@@ -793,7 +793,7 @@ Function Config #prompt user for required scan variables
 	{
 		Write-Host "  Thread count [$ThreadCount]: " -NoNewLine
 		$ThreadCount_temp = ThreadCount $ThreadCount
-		if($ThreadCount_temp -eq $True){Write-Host; Return $False}
+		if(($ThreadCount_temp -eq $True) -and (-not ($ThreadCount_temp -eq 1))){Write-Host; Return $False}
 		if($ThreadCount_temp)
 		{
 			$script:ThreadCount = $ThreadCount_temp
@@ -1095,7 +1095,7 @@ Function SetScanTypeVars
         15{
 			$Script:Deploy = $false
             $Script:ScanType="user account compliance query"
-            $Script:outfile="DomainAccounts$script:ScanTime.txt"
+            $Script:outfile="DomainAccounts$script:ScanTime.csv"
 			$scan.DomainName = $DistinguishedName
 			if($scan.DomainName)
 			{
@@ -1280,7 +1280,11 @@ Function ConvertDate
 Function DomainAccounts
 {
 	Write-Host -ForegroundColor Yellow "Collecting active directory user account data."
-
+	
+	$NoCLOFile = "$TEMP_DIR\NoPassExpOrCLO$script:ScanTime.csv"
+	$Stale45File = "$TEMP_DIR\45DaysStale$script:ScanTime.csv"
+	$Stale30File = "$TEMP_DIR\30DaysStale$script:ScanTime.csv"
+	
     #Variables to hold dates (30 & 45 days ago)
     $30Days = (get-date).adddays(-30)
     $45Days = (get-date).adddays(-45)
@@ -1294,14 +1298,14 @@ Function DomainAccounts
 
     #Accounts with no password expiration and no CLO enforced
     $Search.filter = "(&(objectCategory=person)(userAccountControl:1.2.840.113556.1.4.803:=65536)(!(userAccountControl:1.2.840.113556.1.4.803:=262144)))"
-	"Account Name,Status,Last Logon,Group Membership"|Add-content "$TEMP_DIR\NoPassExpOrCLO.csv"
-    GetResults $Search.Findall() | sort | Add-content "$TEMP_DIR\NoPassExpOrCLO.csv"
+	"Account Name,Status,Last Logon,Group Membership"|Add-content $NoCLOFile
+    GetResults $Search.Findall() | sort | Add-content $NoCLOFile
 
     #Active accounts that haven't been accessed in 30 days
     $Value = ConvertDate($30Days)
     $Search.filter = "(&(objectCategory=person)(lastLogon<=$Value)(!(lastLogon=0))(!(userAccountControl:1.2.840.113556.1.4.803:=2))(!(lockoutTime>=1)))"
-    "Account Name,Status,Last Logon,Group Membership"|Add-content "$TEMP_DIR\30DaysStale.csv"
-	GetResults $Search.Findall() | sort | Add-content "$TEMP_DIR\30DaysStale.csv"
+    "Account Name,Status,Last Logon,Group Membership"|Add-content $Stale30File
+	GetResults $Search.Findall() | sort | Add-content $Stale30File
 
     #Accounts not accessed in 45 days
     $Value = ConvertDate($45Days)
@@ -1310,10 +1314,10 @@ Function DomainAccounts
     $Value2 = $45Days.ToString("yyhhmmss.0Z")
 
     $Search.filter = "(|(&(objectCategory=person)(lastLogon<=$Value)(!(lastLogon=0)))(&(objectCategory=person)(whenCreated<=$Value2)(|(!(lastLogon=*))(lastLogon=0))))"
-	"Account Name,Status,Last Logon,Group Membership"|Add-content "$TEMP_DIR\45DaysStale.csv"
-	GetResults $Search.Findall() | sort | Add-content "$TEMP_DIR\45DaysStale.csv"
+	"Account Name,Status,Last Logon,Group Membership"|Add-content $Stale45File
+	GetResults $Search.Findall() | sort | Add-content $Stale45File
 
-	$Convert = "$TEMP_DIR\NoPassExpOrCLO.csv", "$TEMP_DIR\45DaysStale.csv", "$TEMP_DIR\30DaysStale.csv"
+	$Convert = $NoCLOFile, $Stale45File, $Stale30File
 	ConvertFileFormat $Convert
 }
 
@@ -1373,6 +1377,10 @@ Function GetActiveComputers
 	$ActiveComputers |Add-Content "$TEMP_DIR\$ScannedHosts"
 	$ConvertFiles = "$TEMP_DIR\ErrorLog.csv", "$TEMP_DIR\$ScannedHosts"
 	$Script:outfile = $ScannedHosts
+	if(@(get-content "$TEMP_DIR\ErrorLog.csv").count -eq 1)
+	{
+		Remove-Item "$TEMP_DIR\ErrorLog.csv"
+	}
 	If($menuScan)
 	{
 		ConvertFileFormat $ConvertFiles
@@ -1716,6 +1724,7 @@ Function ExecutePingSweep
 	$scan.Throttle = $scan.Throttle * 5
 	RunScriptBlock $PingSweepSB $IPList $scan
 	$scan.Throttle = $TempThrottle
+	$Script:csvHeader = "IP Address,TTL"
 	ParseData 109 $TEMP_DIR
 	FilterData 109
 }
@@ -2104,6 +2113,7 @@ Function LoggedOnUsers
 	Write-Host -ForegroundColor Yellow "Enumerating logged on users"
 	CreateTempDir
 	RunScriptBlock $LoggedOnUsers_SB $ActiveComputers $scan
+	$Script:csvHeader = "Host Name,User"
 	ParseData 108 $TEMP_DIR
 	FilterData 108
 }
@@ -2137,10 +2147,10 @@ Function NetworkSharePermissions
 {
 	if(Test-Path $OUT_DIR) #look for network shares data in $OUT_DIR
 	{
-		$NetShareFile = $(Get-ChildItem "$OUT_DIR\NetworkShares*.csv" |sort -Property LastWriteTime|select -first 1)
+		$NetShareFile = $(Get-ChildItem "$OUT_DIR\NetworkShares*.csv" -Exclude "*errors*"|sort -Property LastWriteTime|select -first 1)
 		if(Test-Path "$OUT_DIR\CSV")
 		{
-			$NetShareFile1 = $(Get-ChildItem "$OUT_DIR\CSV\NetworkShares*.csv" |sort -Property LastWriteTime|select -first 1)
+			$NetShareFile1 = $(Get-ChildItem "$OUT_DIR\CSV\NetworkShares*.csv" -Exclude "*errors*"|sort -Property LastWriteTime|select -first 1)
 		}
 	}
 
@@ -2547,7 +2557,14 @@ Function ProcessData
 	if((Get-Content $TEMP_DIR\output.txt).count -lt 1000000)
 	{
 		ParseData $script:ScanChoiceArray[$i] $TEMP_DIR
-		FilterData $script:ScanChoiceArray[$i]
+		if(-not ($OutputFormat -eq "csv")) #No filtering with CSV's
+		{	
+			FilterData $script:ScanChoiceArray[$i]
+		}
+		else
+		{
+			ConvertFileFormat
+		}
 	}
 	
 	else
@@ -2561,7 +2578,15 @@ Function ProcessData
 			$outfile = "$($of.split('.')[0])_$($chunk).$($of.split('.')[1])"
 			Write-Host -ForegroundColor Yellow "File chunk $($chunk)/$($Chunks.count)"
 			ParseData $script:ScanChoiceArray[$i] $TEMP_DIR\$chunk
-			FilterData $script:ScanChoiceArray[$i]
+			if(-not ($OutputFormat -eq "csv"))
+			{
+				FilterData $script:ScanChoiceArray[$i]
+				ConvertFileFormat
+			}
+			else
+			{
+				ConvertFileFormat
+			}
 		}
 	}
 }
@@ -2578,6 +2603,11 @@ Function ParseData
 	$script:ResultsUniqFilt = "$DataDirectory\Filtered_Unique.csv"
 	$script:Errors = "$DataDirectory\ErrorLog.csv"
 
+	if((Test-Path $script:Errors) -and @(Get-Content $script:Errors).count -eq 1)
+	{
+		Remove-Item $script:Errors
+	}
+	
 	#Add column headers to files
     $csvHeader|Add-Content $Results
 
@@ -3077,26 +3107,29 @@ Function ConvertFileFormat
 	{
 		if($ScannedHosts)
 		{
-			Move-Item "$TEMP_DIR\Scanned_Hosts*csv" "$OUT_DIR\"
+			Move-Item -Path "$TEMP_DIR\Scanned_Hosts*csv" -Destination "$OUT_DIR\"
 		}
 		else
 		{
-			Move-Item "$TEMP_DIR\$outfile" "$OUT_DIR\"
+			if(Test-Path "$TEMP_DIR\*csv")
+			{
+				if(Test-Path "$TEMP_DIR\ErrorLog.csv")
+				{
+					$ErrorFile = $outfile.split('.')[0]
+					Move-Item -Path "$TEMP_DIR\ErrorLog.csv" -Destination "$OUT_DIR\${ErrorFile}_errors.csv"	
+				}
+				Move-Item -Path "$TEMP_DIR\*csv" -Destination "$OUT_DIR\" 
+			}
+			if($outfile -match 'DomainAccounts'){$outfile = $null}
 			Write-Host -ForegroundColor Green "Data located at $OUT_DIR\$outfile
-		"
+			"
 		}
-
 		Return
 	}
 
 	if(-not $ScannedHosts) #don't write converting file format when scanned hosts file is created
 	{
 		Write-Host -ForegroundColor Yellow "Converting file format"
-	}
-
-	if (-not (Test-Path "$OUT_DIR\CSV")) #verify/create directory for converted CSV files
-	{
-		mkdir "$OUT_DIR\CSV" |Out-Null
 	}
 
 	#Create a microsoft excel object and default to CSV on failure
@@ -3108,14 +3141,22 @@ Function ConvertFileFormat
 
 		if($ScannedHosts)
 		{
-			Move-Item "$TEMP_DIR\Scanned_Hosts*csv" "$OUT_DIR\"
+			Move-Item -Path "$TEMP_DIR\Scanned_Hosts*csv" -Destination "$OUT_DIR\" 
 		}
 		else
 		{
-			Move-Item "$TEMP_DIR\$outfile" "$OUT_DIR\"
+			if(Test-Path "$TEMP_DIR\$outfile")
+			{
+				Move-Item -Path "$TEMP_DIR\$outfile" -Destination "$OUT_DIR\"
+			}
 			Write-Host -ForegroundColor Green "Data located at $OUT_DIR\$outfile"
 		}
 		Return
+	}
+	
+	if (-not (Test-Path "$OUT_DIR\CSV")) #verify/create directory for converted CSV files
+	{
+		mkdir "$OUT_DIR\CSV" |Out-Null
 	}
 
 	#set excel to invisible
@@ -3153,7 +3194,9 @@ Function ConvertFileFormat
 		}
 		else
 		{
-			$worksheet.name = $File
+			if($file -match '30'){$worksheet.name = '30DaysStale'}
+			elseif($file -match '45'){$worksheet.name = '45DaysStale'}
+			else {$worksheet.name = 'NoPassExpOrCLO'}
 		}
 
 
@@ -3215,7 +3258,7 @@ Function ConvertFileFormat
 	{
 		try {
 			if ($ScannedHosts) {Move-Item "$TEMP_DIR\$Scanned_Hosts*.csv" "$OUT_DIR\CSV" -Force -ErrorAction Stop}
-			else {Move-Item "$TEMP_DIR\*.csv" "$OUT_DIR\CSV" -Force -ErrorAction Stop}
+			else {Move-Item -Path "$TEMP_DIR\*.csv" -Destination "$OUT_DIR\CSV" -Force -ErrorAction Stop}
 			break
 		} catch {
 			sleep 1
@@ -3369,6 +3412,19 @@ Function ChunkFiles
 		Return $TRUE
 	}
 
+	Function TestSMB
+	{
+		$socket = New-Object net.sockets.tcpclient
+		$socket.ReceiveTimeout = 2500
+		$socket.connect("$HostIP",445)
+		if($socket.connected){
+			if(Test-Path "\\$HostIP\c$"){$True}
+			else{$False}
+		}
+		else{$False}
+		$socket.close()
+	}
+	
 	If($scan.creds)
 	{
 		$UserDomain = $scan.Creds.GetNetworkCredential().domain
@@ -3399,7 +3455,7 @@ Function ChunkFiles
 			{
 				If(-not (MapDrive $HostIP)){Return}
 			}
-			if(Test-Path  "\\$HostIP\c$\")
+			if(Test-SMB)
 			{
 				try {
 					if($scan.Creds)
@@ -3444,7 +3500,7 @@ Function ChunkFiles
 		{
 			If(-not (MapDrive $HostIP)){Return}
 		}
-        if (Test-Path  "\\$HostIP\c$\")
+        if (TestSMB)
         {
 			$Ver = $Ver.substring(0,3)
 			If($DeleteShare)
@@ -3486,7 +3542,7 @@ Function ChunkFiles
 	{
 		$Rcode = "PSExecShellCode.ps1"
 		$PSCode = $scan.PS1Code
-		$PSexecArgs = 'cmd /c echo . | powershell -ExecutionPolicy Bypass c:\PSExecShellCode.ps1'
+		$PSexecArgs = 'echo . | powershell -ExecutionPolicy Bypass c:\PSExecShellCode.ps1'
 		$WMIArgs = 'powershell -ExecutionPolicy Bypass c:\PSExecShellCode.ps1'
 		$ps=$true
 	}
@@ -3549,12 +3605,12 @@ Function ChunkFiles
 	{
 		if($scan.Creds)
 		{
-			$Success = (&$scan.psexec -accepteula -s -d "\\$HostIP" -u $UserLogon -p $($scan.Creds.GetNetworkCredential().password) $PSexecArgs 2>&1|
+			$Success = (&$scan.psexec -accepteula -s -d "\\$HostIP" -u $UserLogon -p $($scan.Creds.GetNetworkCredential().password) cmd /c $PSexecArgs 2>&1|
 			Select-String "started on $HostIP")
 		}
 		else
 		{
-			$Success = (&$scan.psexec -accepteula -s -d "\\$HostIP" $PSexecArgs 2>&1|Select-String "started on $HostIP")
+			$Success = (&$scan.psexec -accepteula -s -d "\\$HostIP" cmd /c $PSexecArgs 2>&1|Select-String "started on $HostIP")
 		}
 	}
 
