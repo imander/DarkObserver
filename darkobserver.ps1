@@ -1680,14 +1680,16 @@ Ping Sweep
 				[Array]$IPArray = $Input.split(",")
 				$IPList = Get-IPSubnet -Subnets $IPArray
 				if($IPList){ExecutePingSweep $IPList}
-				Return}
+				Return
+				}
 			2{
 				Write-Host "Enter IP range: " -NoNewLine
 				$Input = ReadYellow
 				[Array]$IPArray = $Input.split(",")
 				$IPList = Get-IPRange -Range $IPArray
 				if($IPList){ExecutePingSweep $IPList}
-				Return}
+				Return
+				}
 			3{
 				Write-Host "Enter IP file: " -NoNewLine
 				$Input= ReadYellow
@@ -1698,7 +1700,8 @@ Ping Sweep
 				}
 				$IPList = Get-IPFile -File $Input
 				if($IPList){ExecutePingSweep $IPList}
-				Return}
+				Return
+				}
 			"h"{Return $false}
 			"home"{Return $false}
 			"x"{ExitFunction}
@@ -2407,7 +2410,6 @@ Function Execute
 	CreateTempDir
 	DisplayMenu
 
-
 	#continue looping until all scans completed
 	for($i=0; $i -lt $script:ScanChoiceArray.count; $i++)
 	{
@@ -2422,7 +2424,7 @@ Function Execute
 				if($script:ScanDomain -or (-not ($ScanHostsFile -eq "ALL")))
 				{
 					$tempOutfile = $Script:outfile
-					$script:ActiveComputers = @(GetActiveComputers)
+					$script:ActiveComputers = GetActiveComputers
 					$Script:outfile = $tempOutfile
 				}
 				else
@@ -2540,7 +2542,7 @@ Function ExecutePSexec #Copy and execute deployable payload
 {
 	Write-Host -ForegroundColor Yellow "Executing payload on remote hosts"
 	$PSexecJob = Start-Job -ScriptBlock $PSexecWatcher
-	$Script:CollectComputers = RunScriptBlock $PSExec_SB $ActiveComputers $scan
+	$Script:CollectComputers = RunScriptBlock $RemoteExec_SB $ActiveComputers $scan
 	Stop-Job $PSexecJob
 	Remove-Job $PSexecJob
 }
@@ -2553,7 +2555,12 @@ Function CollectFiles #Collect results from remote hosts
 
 Function ProcessData
 {
-	if(-not (Test-Path "$TEMP_DIR\output.txt")){Return}
+	if(-not (Test-Path "$TEMP_DIR\output.txt"))
+	{
+		Write-Host -ForegroundColor Red "No Data Returned
+		"
+		Return
+	}
 	if((Get-Content $TEMP_DIR\output.txt).count -lt 1000000)
 	{
 		ParseData $script:ScanChoiceArray[$i] $TEMP_DIR
@@ -3522,13 +3529,12 @@ Function ChunkFiles
 }
 
 #scriptblock to execute psexec on remote hosts
-[ScriptBlock] $PSExec_SB = {
+[ScriptBlock] $RemoteExec_SB = {
     param($RHost, $scan)
-
 
     $HostName=$RHost.split(",")[0]
 	$HostIP=$RHost.split(",")[1]
-    $ver=$RHost.split(",")[3]
+    [double] $ver = $RHost.split(",")[3]
 
 	Function DeleteShare
 	{
@@ -3538,7 +3544,7 @@ Function ChunkFiles
 		}
 	}
 	
-    if($ver.split(".")[0] -ge 6) #powershell for vista+ (even though a lot of this probably won't work on vista)
+    if($ver -ge 6.1) #powershell for win7+
 	{
 		$Rcode = "PSExecShellCode.ps1"
 		$PSCode = $scan.PS1Code
@@ -3560,6 +3566,7 @@ Function ChunkFiles
 			"hashes392125281" {Return}
 		}
 	}
+	"$Rhost $Rcode" | Add-Content D:\log.txt
 
 	if($scan.Creds)
 	{
@@ -3622,7 +3629,7 @@ Function ChunkFiles
 	else
 	{
 		"$((get-date).ToString('yyyy-MMM-dd hh:mm:ss')),$HostName,Remote Execution failed" | Add-Content "$($scan.TEMP_DIR)\ErrorLog.csv"
-		#Remove-Item -Path "\\$HostIP\c$\PSExecShellCode.*" -Force -ErrorAction SilentlyContinue
+		Remove-Item -Path "\\$HostIP\c$\PSExecShellCode.*" -Force -ErrorAction SilentlyContinue
 		DeleteShare
 	}
 }
@@ -3657,7 +3664,7 @@ Function ChunkFiles
 
     $HostName = $RHost.split(",")[0]
 	$HostIP = $RHost.split(",")[1]
-    $ver=$RHost.split(",")[3]
+    [double] $ver = $RHost.split(",")[3]
 
 	if($scan.Creds)
 	{
@@ -3676,7 +3683,7 @@ Function ChunkFiles
 		if(-not $?){Return}
 	}
 
-	if($ver.split(".") -ge 6){$Rcode = "PSExecShellCode.ps1"}
+	if($ver -ge 6.1){$Rcode = "PSExecShellCode.ps1"}
     else {$Rcode = "PSExecShellCode.bat"}
 
 	for($i=0; $i -lt $scan.TimeOut; $i++) #wait until scan finishes
