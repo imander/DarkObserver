@@ -2564,14 +2564,7 @@ Function ProcessData
 	if((Get-Content $TEMP_DIR\output.txt).count -lt 1000000)
 	{
 		ParseData $script:ScanChoiceArray[$i] $TEMP_DIR
-		if(-not ($OutputFormat -eq "csv")) #No filtering with CSV's
-		{	
-			FilterData $script:ScanChoiceArray[$i]
-		}
-		else
-		{
-			ConvertFileFormat
-		}
+		FilterData $script:ScanChoiceArray[$i]
 	}
 	
 	else
@@ -2585,15 +2578,7 @@ Function ProcessData
 			$outfile = "$($of.split('.')[0])_$($chunk).$($of.split('.')[1])"
 			Write-Host -ForegroundColor Yellow "File chunk $($chunk)/$($Chunks.count)"
 			ParseData $script:ScanChoiceArray[$i] $TEMP_DIR\$chunk
-			if(-not ($OutputFormat -eq "csv"))
-			{
-				FilterData $script:ScanChoiceArray[$i]
-				ConvertFileFormat
-			}
-			else
-			{
-				ConvertFileFormat
-			}
+			FilterData $script:ScanChoiceArray[$i]
 		}
 	}
 }
@@ -2605,10 +2590,21 @@ Function ParseData
 
 	#set variables for different generated files
 	$script:Results = "$DataDirectory\$OutFile"
-	$script:ResultsUnique = "$DataDirectory\Unique.csv"
-	$script:ResultsFiltered = "$DataDirectory\Filtered.csv"
-	$script:ResultsUniqFilt = "$DataDirectory\Filtered_Unique.csv"
-	$script:Errors = "$DataDirectory\ErrorLog.csv"
+	if($OutputFormat -eq "csv")
+	{
+		$OutBase = $OutFile.Split('.')[0]
+		$script:ResultsUnique = "$DataDirectory\${OutBase}_Unique.csv"
+		$script:ResultsFiltered = "$DataDirectory\${OutBase}_Filtered.csv"
+		$script:ResultsUniqFilt = "$DataDirectory\${OutBase}_Filtered_Unique.csv"
+		$script:Errors = "$DataDirectory\${OutBase}_ErrorLog.csv"
+	}
+	else
+	{
+		$script:ResultsUnique = "$DataDirectory\Unique.csv"
+		$script:ResultsFiltered = "$DataDirectory\Filtered.csv"
+		$script:ResultsUniqFilt = "$DataDirectory\Filtered_Unique.csv"
+		$script:Errors = "$DataDirectory\ErrorLog.csv"
+	}
 
 	if((Test-Path $script:Errors) -and @(Get-Content $script:Errors).count -eq 1)
 	{
@@ -3421,12 +3417,15 @@ Function ChunkFiles
 
 	Function TestSMB
 	{
-		$socket = New-Object net.sockets.tcpclient
-		$socket.ReceiveTimeout = 2500
-		$socket.connect("$HostIP",445)
-		if($socket.connected){
-			if(Test-Path "\\$HostIP\c$"){$True}
-			else{$False}
+		Param($HostIP)
+		[socket] $socket = New-Object net.sockets.tcpclient
+		[IAsyncResult] $result = $socket.BeginConnect("$HostIP",445,$null,$null)
+		[Boolean] $success = $result.AsyncWaitHandle.WaitOne(2500,$true) #2.5 second timeout
+		if($success)
+		{
+			try {
+				if(Test-Path "\\$HostIP\c$" -ErrorAction Stop){$True}
+			} Catch {$False}
 		}
 		else{$False}
 		$socket.close()
@@ -3507,7 +3506,7 @@ Function ChunkFiles
 		{
 			If(-not (MapDrive $HostIP)){Return}
 		}
-        if (TestSMB)
+        if (TestSMB $HostIP)
         {
 			$Ver = $Ver.substring(0,3)
 			If($DeleteShare)
